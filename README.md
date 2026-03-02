@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/newtontech/nwchem-lsp/workflows/CI/badge.svg)](https://github.com/newtontech/nwchem-lsp/actions)
 [![Coverage](https://codecov.io/gh/newtontech/nwchem-lsp/branch/main/graph/badge.svg)](https://codecov.io/gh/newtontech/nwchem-lsp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://imgshields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Language Server Protocol implementation for NWChem quantum chemistry software.
 
@@ -15,6 +15,8 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
   - Basis sets and DFT functionals
   - Task operations and theories
 - **Hover Documentation**: Inline help for all keywords
+- **Document Symbols**: Outline view and navigation (v0.2.0)
+- **Code Formatting**: Automatic code formatting (v0.2.0)
 - **Error Detection**: 
   - Unclosed section blocks
   - Unknown basis sets and functionals
@@ -99,6 +101,13 @@ task dft optimize
 
 See the `examples/` directory for more sample input files.
 
+## New in v0.2.0
+
+- ✨ Added Document Symbols support for outline view
+- ✨ Added code formatting with configurable indentation
+- 🧪 Increased test coverage to 50 tests (100%)
+- 📝 Updated documentation
+
 ## Development
 
 ### Setup
@@ -152,7 +161,9 @@ src/nwchem_lsp/
 ├── features/
 │   ├── completion.py   # Auto-completion provider
 │   ├── hover.py        # Hover documentation provider
-│   └── diagnostic.py   # Diagnostics provider
+│   ├── diagnostic.py   # Diagnostics provider
+│   ├── symbols.py      # Document symbols provider (v0.2.0)
+│   └── formatting.py   # Code formatting provider (v0.2.0)
 └── data/
     └── keywords.py     # Keyword database
 ```

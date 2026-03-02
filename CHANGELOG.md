@@ -1,44 +1,45 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.2.0] - 2026-03-03
+
+### Added
+- Document Symbols support for outline view and navigation
+- Code formatting with configurable indentation (spaces or tabs)
+- New test suites for symbols and formatting providers
+- Enhanced LSP server with documentSymbol and formatting handlers
+
+### Changed
+- Updated version from 0.1.0 to 0.2.0
+- Improved test coverage from 32 to 50 tests (still 100%)
+- Updated documentation with new features
+
+### Fixed
+- Fixed parser handling of unclosed sections
+- Improved error reporting in diagnostics
 
 ## [0.1.0] - 2026-03-02
 
 ### Added
-- Initial LSP server implementation with pygls
-- NWChem input file parser (.nw, .nwinp)
-- Context-aware auto-completion provider
-  - Top-level keywords
-  - Section-specific keywords
-  - Basis sets (6-31G*, cc-pVTZ, def2-TZVP, etc.)
-  - DFT functionals (B3LYP, PBE, M06-2X, etc.)
-  - Task operations (energy, optimize, frequencies, etc.)
-- Hover documentation provider
-- Diagnostic provider with validation
-  - Unclosed section blocks
-  - Unknown basis sets and functionals
-  - Invalid task operations
-  - Missing required blocks
-- Comprehensive keyword database
-- Example NWChem input files
-  - water_dft.nw - DFT geometry optimization
-  - ethanol_scf.nw - HF single point energy
-  - benzene_mp2.nw - MP2 geometry optimization
-- 100% test coverage (32 tests)
-- CI/CD pipeline with GitHub Actions
-- Pre-commit hooks for code quality
+- Initial release of NWChem LSP
+- Syntax validation for NWChem input files
+- Auto-completion for top-level keywords, sections, basis sets, and DFT functionals
+- Hover documentation for all keywords
+- Diagnostics for unclosed sections and invalid keywords
+- Comprehensive keyword database (60+ elements, 50+ basis sets, 30+ DFT functionals)
+- Full test coverage (32 tests, 100%)
 
-### Parser Features
-- Section parsing and tracking
-- Line context extraction
-- Word at cursor detection
-- Syntax validation
-- Completion context determination
+### Supported Features
+- Parsing of .nw and .nwinp files
+- Context-aware completions
+- Section detection (geometry, basis, scf, dft, mp2, ccsd, etc.)
+- Task operation suggestions
+- Error detection and reporting
+- Editor integrations (VS Code, Neovim, Emacs)
 
-### LSP Features
-- textDocument/completion
-- textDocument/hover
-- textDocument/didOpen
-- textDocument/didChange
-- textDocument/didSave
-- textDocument/publishDiagnostics
+[0.2.0]: https://github.com/newtontech/nwchem-lsp/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/newtontech/nwchem-lsp/releases/tag/v0.1.0

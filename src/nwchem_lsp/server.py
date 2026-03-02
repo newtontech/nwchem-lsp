@@ -9,12 +9,16 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_DID_CHANGE,
     TEXT_DOCUMENT_DID_OPEN,
     TEXT_DOCUMENT_DID_SAVE,
+    TEXT_DOCUMENT_FORMATTING,
     TEXT_DOCUMENT_HOVER,
+    TEXT_DOCUMENT_DOCUMENT_SYMBOL,
     CompletionOptions,
     CompletionParams,
     DidChangeTextDocumentParams,
     DidOpenTextDocumentParams,
     DidSaveTextDocumentParams,
+    DocumentFormattingParams,
+    DocumentSymbolParams,
     HoverParams,
     InitializeParams,
     ServerCapabilities,
@@ -25,6 +29,8 @@ from .data.keywords import get_all_keyword_names
 from .features.completion import NwchemCompletionProvider
 from .features.diagnostic import DiagnosticProvider
 from .features.hover import NwchemHoverProvider
+from .features.symbols import NwchemSymbolProvider
+from .features.formatting import NwchemFormattingProvider
 
 
 class NWChemLanguageServer(LanguageServer):
@@ -32,12 +38,14 @@ class NWChemLanguageServer(LanguageServer):
 
     def __init__(self) -> None:
         """Initialize the NWChem language server."""
-        super().__init__("nwchem-lsp", "0.1.0")
+        super().__init__("nwchem-lsp", "0.2.0")
 
         # Initialize feature providers
         self.completion_provider = NwchemCompletionProvider(self)
         self.hover_provider = NwchemHoverProvider(self)
         self.diagnostic_provider = DiagnosticProvider(self)
+        self.symbol_provider = NwchemSymbolProvider(self)
+        self.formatting_provider = NwchemFormattingProvider(self)
 
         # Document cache
         self.documents: dict[str, str] = {}
@@ -67,6 +75,26 @@ class NWChemLanguageServer(LanguageServer):
 
             text = self.documents[uri]
             return self.hover_provider.get_hover(text, params.position)
+
+        @self.feature(TEXT_DOCUMENT_DOCUMENT_SYMBOL)
+        def document_symbol(params: DocumentSymbolParams) -> list[Any]:
+            """Handle document symbol request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            return self.symbol_provider.get_document_symbols(text)
+
+        @self.feature(TEXT_DOCUMENT_FORMATTING)
+        def formatting(params: DocumentFormattingParams) -> list[Any]:
+            """Handle formatting request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            return self.formatting_provider.format_document(text, params)
 
         @self.feature(TEXT_DOCUMENT_DID_OPEN)
         def did_open(params: DidOpenTextDocumentParams) -> None:
