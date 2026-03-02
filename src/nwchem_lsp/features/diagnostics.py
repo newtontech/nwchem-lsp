@@ -68,7 +68,16 @@ class DiagnosticsProvider:
         if first_word not in self.valid_keywords and not first_word.isdigit():
             # Check if it might be an element symbol
             if first_word.capitalize() not in [
-                "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+                "H",
+                "He",
+                "Li",
+                "Be",
+                "B",
+                "C",
+                "N",
+                "O",
+                "F",
+                "Ne",
             ]:
                 col = line.lower().find(first_word)
                 diagnostics.append(
@@ -130,7 +139,7 @@ class DiagnosticsProvider:
                             end=Position(line=line_num, character=col + len(words[1])),
                         ),
                         message=f"Invalid value '{arg_value}'. "
-                                f"Allowed: {', '.join(kw_info.allowed_values)}",
+                        f"Allowed: {', '.join(kw_info.allowed_values)}",
                         severity=DiagnosticSeverity.Error,
                         source="nwchem-lsp",
                     )

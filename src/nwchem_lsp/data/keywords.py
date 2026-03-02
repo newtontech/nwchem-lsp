@@ -29,63 +29,266 @@ class KeywordInfo:
 
 # Chemical elements
 ELEMENTS: List[str] = [
-    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
-    "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
-    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-    "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr",
-    "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn",
-    "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
-    "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
-    "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
-    "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th",
-    "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
-    "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds",
-    "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og",
+    "H",
+    "He",
+    "Li",
+    "Be",
+    "B",
+    "C",
+    "N",
+    "O",
+    "F",
+    "Ne",
+    "Na",
+    "Mg",
+    "Al",
+    "Si",
+    "P",
+    "S",
+    "Cl",
+    "Ar",
+    "K",
+    "Ca",
+    "Sc",
+    "Ti",
+    "V",
+    "Cr",
+    "Mn",
+    "Fe",
+    "Co",
+    "Ni",
+    "Cu",
+    "Zn",
+    "Ga",
+    "Ge",
+    "As",
+    "Se",
+    "Br",
+    "Kr",
+    "Rb",
+    "Sr",
+    "Y",
+    "Zr",
+    "Nb",
+    "Mo",
+    "Tc",
+    "Ru",
+    "Rh",
+    "Pd",
+    "Ag",
+    "Cd",
+    "In",
+    "Sn",
+    "Sb",
+    "Te",
+    "I",
+    "Xe",
+    "Cs",
+    "Ba",
+    "La",
+    "Ce",
+    "Pr",
+    "Nd",
+    "Pm",
+    "Sm",
+    "Eu",
+    "Gd",
+    "Tb",
+    "Dy",
+    "Ho",
+    "Er",
+    "Tm",
+    "Yb",
+    "Lu",
+    "Hf",
+    "Ta",
+    "W",
+    "Re",
+    "Os",
+    "Ir",
+    "Pt",
+    "Au",
+    "Hg",
+    "Tl",
+    "Pb",
+    "Bi",
+    "Po",
+    "At",
+    "Rn",
+    "Fr",
+    "Ra",
+    "Ac",
+    "Th",
+    "Pa",
+    "U",
+    "Np",
+    "Pu",
+    "Am",
+    "Cm",
+    "Bk",
+    "Cf",
+    "Es",
+    "Fm",
+    "Md",
+    "No",
+    "Lr",
+    "Rf",
+    "Db",
+    "Sg",
+    "Bh",
+    "Hs",
+    "Mt",
+    "Ds",
+    "Rg",
+    "Cn",
+    "Nh",
+    "Fl",
+    "Mc",
+    "Lv",
+    "Ts",
+    "Og",
 ]
 
 # DFT Exchange-Correlation Functionals
 DFT_FUNCTIONALS: List[str] = [
-    "LDA", "S", "BLYP", "PBE", "BP86", "PW91", "B97-D",
-    "B3LYP", "PBE0", "BHLYP", "B3PW91", "B1LYP",
-    "TPSS", "M06-L", "M06", "M06-2X", "M06-HF",
-    "SCAN", "RSCAN", "R2SCAN",
-    "LC-BLYP", "LC-PBE", "CAM-B3LYP", "wB97", "wB97X", "wB97X-D",
-    "M11", "M11-L", "M08-HX", "M08-SO", "MN12-L", "MN12-SX",
-    "X3LYP", "O3LYP", "B97-1", "B97-2", "B98", "PBEsol",
+    "LDA",
+    "S",
+    "BLYP",
+    "PBE",
+    "BP86",
+    "PW91",
+    "B97-D",
+    "B3LYP",
+    "PBE0",
+    "BHLYP",
+    "B3PW91",
+    "B1LYP",
+    "TPSS",
+    "M06-L",
+    "M06",
+    "M06-2X",
+    "M06-HF",
+    "SCAN",
+    "RSCAN",
+    "R2SCAN",
+    "LC-BLYP",
+    "LC-PBE",
+    "CAM-B3LYP",
+    "wB97",
+    "wB97X",
+    "wB97X-D",
+    "M11",
+    "M11-L",
+    "M08-HX",
+    "M08-SO",
+    "MN12-L",
+    "MN12-SX",
+    "X3LYP",
+    "O3LYP",
+    "B97-1",
+    "B97-2",
+    "B98",
+    "PBEsol",
 ]
 
 # Common basis sets
 BASIS_SETS: List[str] = [
-    "STO-3G", "3-21G", "6-31G", "6-311G",
-    "6-31G*", "6-31G(d)", "6-31G**", "6-31G(d,p)",
-    "6-311G*", "6-311G(d)", "6-311G**", "6-311G(d,p)",
-    "6-31+G*", "6-31++G**", "6-311+G*", "6-311++G**",
-    "cc-pVDZ", "cc-pVTZ", "cc-pVQZ", "cc-pV5Z", "cc-pV6Z",
-    "aug-cc-pVDZ", "aug-cc-pVTZ", "aug-cc-pVQZ", "aug-cc-pV5Z",
-    "cc-pCVDZ", "cc-pCVTZ", "cc-pCVQZ",
-    "def2-SVP", "def2-TZVP", "def2-TZVPP", "def2-QZVP", "def2-QZVPP",
-    "LANL2DZ", "LANL2TZ", "SDD", "DGDZVP", "MINI", "MIDI",
+    "STO-3G",
+    "3-21G",
+    "6-31G",
+    "6-311G",
+    "6-31G*",
+    "6-31G(d)",
+    "6-31G**",
+    "6-31G(d,p)",
+    "6-311G*",
+    "6-311G(d)",
+    "6-311G**",
+    "6-311G(d,p)",
+    "6-31+G*",
+    "6-31++G**",
+    "6-311+G*",
+    "6-311++G**",
+    "cc-pVDZ",
+    "cc-pVTZ",
+    "cc-pVQZ",
+    "cc-pV5Z",
+    "cc-pV6Z",
+    "aug-cc-pVDZ",
+    "aug-cc-pVTZ",
+    "aug-cc-pVQZ",
+    "aug-cc-pV5Z",
+    "cc-pCVDZ",
+    "cc-pCVTZ",
+    "cc-pCVQZ",
+    "def2-SVP",
+    "def2-TZVP",
+    "def2-TZVPP",
+    "def2-QZVP",
+    "def2-QZVPP",
+    "LANL2DZ",
+    "LANL2TZ",
+    "SDD",
+    "DGDZVP",
+    "MINI",
+    "MIDI",
 ]
 
 # Task operations
 TASK_OPERATIONS: List[str] = [
-    "energy", "gradient", "optimize", "saddle", "hessian",
-    "frequencies", "freq", "vib", "property", "dynamics",
-    "thermodynamics", "tce", "ccsd", "ccsd(t)", "ccsd[t]",
-    "mp2", "mp3", "mp4", "rimp2", "mcscf", "selci",
-    "pspw", "band", "paw", "ofpw",
+    "energy",
+    "gradient",
+    "optimize",
+    "saddle",
+    "hessian",
+    "frequencies",
+    "freq",
+    "vib",
+    "property",
+    "dynamics",
+    "thermodynamics",
+    "tce",
+    "ccsd",
+    "ccsd(t)",
+    "ccsd[t]",
+    "mp2",
+    "mp3",
+    "mp4",
+    "rimp2",
+    "mcscf",
+    "selci",
+    "pspw",
+    "band",
+    "paw",
+    "ofpw",
 ]
 
 # Task theories
-TASK_THEORIES: List[str] = [
-    "scf", "dft", "mp2", "ccsd", "ccsd(t)", "mcscf", "semi", "rimp2"
-]
+TASK_THEORIES: List[str] = ["scf", "dft", "mp2", "ccsd", "ccsd(t)", "mcscf", "semi", "rimp2"]
 
 # Top-level sections that require blocks
 TOP_LEVEL_SECTIONS: List[str] = [
-    "geometry", "basis", "scf", "dft", "mp2", "ccsd", "ccsd(t)",
-    "ecp", "so", "tce", "mcscf", "selci", "hessian", "vib", "property",
-    "rt_tddft", "pspw", "band", "paw", "ofpw", "bq",
+    "geometry",
+    "basis",
+    "scf",
+    "dft",
+    "mp2",
+    "ccsd",
+    "ccsd(t)",
+    "ecp",
+    "so",
+    "tce",
+    "mcscf",
+    "selci",
+    "hessian",
+    "vib",
+    "property",
+    "rt_tddft",
+    "pspw",
+    "band",
+    "paw",
+    "ofpw",
+    "bq",
 ]
 
 # Top-level NWChem keywords
@@ -123,7 +326,21 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
         section="top",
         required=False,
         requires_block=True,
-        arguments=["singlet", "doublet", "triplet", "quartet", "quintet", "rhf", "uhf", "rohf", "mcscf", "thresh", "maxiter", "direct", "semidirect"],
+        arguments=[
+            "singlet",
+            "doublet",
+            "triplet",
+            "quartet",
+            "quintet",
+            "rhf",
+            "uhf",
+            "rohf",
+            "mcscf",
+            "thresh",
+            "maxiter",
+            "direct",
+            "semidirect",
+        ],
         example="scf\n  singlet\n  rhf\n  maxiter 100\nend",
     ),
     "dft": KeywordInfo(
@@ -132,7 +349,18 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
         section="top",
         required=False,
         requires_block=True,
-        arguments=["xc", "grid", "tolerances", "convergence", "iterations", "direct", "noio", "odft", "cdft", "mult"],
+        arguments=[
+            "xc",
+            "grid",
+            "tolerances",
+            "convergence",
+            "iterations",
+            "direct",
+            "noio",
+            "odft",
+            "cdft",
+            "mult",
+        ],
         example="dft\n  xc b3lyp\n  grid fine\n  convergence energy 1e-8\nend",
     ),
     "mp2": KeywordInfo(
@@ -256,14 +484,39 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
 
 # DFT-specific keywords
 DFT_KEYWORDS: Dict[str, KeywordInfo] = {
-    "xc": KeywordInfo(name="xc", description="Exchange-correlation functional", section="dft", arguments=DFT_FUNCTIONALS, args=["functional"]),
-    "grid": KeywordInfo(name="grid", description="Numerical integration grid", section="dft", arguments=["coarse", "medium", "fine", "xfine", "ultrafine"]),
-    "convergence": KeywordInfo(name="convergence", description="SCF convergence criteria", section="dft", arguments=["energy", "density", "gradient"]),
-    "iterations": KeywordInfo(name="iterations", description="Maximum number of SCF iterations", section="dft", arguments=["integer"]),
-    "direct": KeywordInfo(name="direct", description="Force direct SCF (recalculate integrals)", section="dft"),
+    "xc": KeywordInfo(
+        name="xc",
+        description="Exchange-correlation functional",
+        section="dft",
+        arguments=DFT_FUNCTIONALS,
+        args=["functional"],
+    ),
+    "grid": KeywordInfo(
+        name="grid",
+        description="Numerical integration grid",
+        section="dft",
+        arguments=["coarse", "medium", "fine", "xfine", "ultrafine"],
+    ),
+    "convergence": KeywordInfo(
+        name="convergence",
+        description="SCF convergence criteria",
+        section="dft",
+        arguments=["energy", "density", "gradient"],
+    ),
+    "iterations": KeywordInfo(
+        name="iterations",
+        description="Maximum number of SCF iterations",
+        section="dft",
+        arguments=["integer"],
+    ),
+    "direct": KeywordInfo(
+        name="direct", description="Force direct SCF (recalculate integrals)", section="dft"
+    ),
     "noio": KeywordInfo(name="noio", description="Disable disk I/O for integrals", section="dft"),
     "odft": KeywordInfo(name="odft", description="Open-shell DFT calculation", section="dft"),
-    "mult": KeywordInfo(name="mult", description="Spin multiplicity", section="dft", arguments=["integer"]),
+    "mult": KeywordInfo(
+        name="mult", description="Spin multiplicity", section="dft", arguments=["integer"]
+    ),
 }
 
 # SCF-specific keywords
@@ -273,36 +526,78 @@ SCF_KEYWORDS: Dict[str, KeywordInfo] = {
     "triplet": KeywordInfo(name="triplet", description="Triplet spin state", section="scf"),
     "rhf": KeywordInfo(name="rhf", description="Restricted Hartree-Fock", section="scf"),
     "uhf": KeywordInfo(name="uhf", description="Unrestricted Hartree-Fock", section="scf"),
-    "rohf": KeywordInfo(name="rohf", description="Restricted open-shell Hartree-Fock", section="scf"),
-    "maxiter": KeywordInfo(name="maxiter", description="Maximum number of SCF iterations", section="scf", arguments=["integer"]),
-    "thresh": KeywordInfo(name="thresh", description="Convergence threshold", section="scf", arguments=["float"]),
+    "rohf": KeywordInfo(
+        name="rohf", description="Restricted open-shell Hartree-Fock", section="scf"
+    ),
+    "maxiter": KeywordInfo(
+        name="maxiter",
+        description="Maximum number of SCF iterations",
+        section="scf",
+        arguments=["integer"],
+    ),
+    "thresh": KeywordInfo(
+        name="thresh", description="Convergence threshold", section="scf", arguments=["float"]
+    ),
 }
 
 # Geometry keywords
 GEOMETRY_KEYWORDS: Dict[str, KeywordInfo] = {
-    "units": KeywordInfo(name="units", description="Units for geometry coordinates", section="geometry", arguments=["angstroms", "bohr", "nanometers", "picometers"]),
-    "autosym": KeywordInfo(name="autosym", description="Automatic symmetry detection", section="geometry"),
-    "noautoz": KeywordInfo(name="noautoz", description="Disable automatic Z-matrix generation", section="geometry"),
-    "center": KeywordInfo(name="center", description="Center geometry at origin", section="geometry"),
-    "nocenter": KeywordInfo(name="nocenter", description="Do not center geometry", section="geometry"),
-    "system": KeywordInfo(name="system", description="Periodic boundary conditions", section="geometry", arguments=["crystal", "slab", "polymer", "helix"]),
-    "angstroms": KeywordInfo(name="angstroms", description="Use angstrom units", section="geometry"),
+    "units": KeywordInfo(
+        name="units",
+        description="Units for geometry coordinates",
+        section="geometry",
+        arguments=["angstroms", "bohr", "nanometers", "picometers"],
+    ),
+    "autosym": KeywordInfo(
+        name="autosym", description="Automatic symmetry detection", section="geometry"
+    ),
+    "noautoz": KeywordInfo(
+        name="noautoz", description="Disable automatic Z-matrix generation", section="geometry"
+    ),
+    "center": KeywordInfo(
+        name="center", description="Center geometry at origin", section="geometry"
+    ),
+    "nocenter": KeywordInfo(
+        name="nocenter", description="Do not center geometry", section="geometry"
+    ),
+    "system": KeywordInfo(
+        name="system",
+        description="Periodic boundary conditions",
+        section="geometry",
+        arguments=["crystal", "slab", "polymer", "helix"],
+    ),
+    "angstroms": KeywordInfo(
+        name="angstroms", description="Use angstrom units", section="geometry"
+    ),
     "au": KeywordInfo(name="au", description="Use atomic units (bohr)", section="geometry"),
     "bohr": KeywordInfo(name="bohr", description="Use bohr units", section="geometry"),
 }
 
 # Basis set keywords
 BASIS_KEYWORDS: Dict[str, KeywordInfo] = {
-    "spherical": KeywordInfo(name="spherical", description="Use spherical harmonic basis functions", section="basis"),
-    "cartesian": KeywordInfo(name="cartesian", description="Use Cartesian basis functions", section="basis"),
-    "library": KeywordInfo(name="library", description="Use basis set from library", section="basis", arguments=BASIS_SETS),
-    "file": KeywordInfo(name="file", description="Read basis set from file", section="basis", arguments=["filename"]),
+    "spherical": KeywordInfo(
+        name="spherical", description="Use spherical harmonic basis functions", section="basis"
+    ),
+    "cartesian": KeywordInfo(
+        name="cartesian", description="Use Cartesian basis functions", section="basis"
+    ),
+    "library": KeywordInfo(
+        name="library",
+        description="Use basis set from library",
+        section="basis",
+        arguments=BASIS_SETS,
+    ),
+    "file": KeywordInfo(
+        name="file", description="Read basis set from file", section="basis", arguments=["filename"]
+    ),
 }
 
 # MP2 keywords
 MP2_KEYWORDS: Dict[str, KeywordInfo] = {
     "tight": KeywordInfo(name="tight", description="Use tight convergence criteria", section="mp2"),
-    "freeze": KeywordInfo(name="freeze", description="Freeze orbitals", section="mp2", arguments=["atomic", "integer"]),
+    "freeze": KeywordInfo(
+        name="freeze", description="Freeze orbitals", section="mp2", arguments=["atomic", "integer"]
+    ),
     "ri": KeywordInfo(name="ri", description="Use RI approximation", section="mp2"),
     "cd": KeywordInfo(name="cd", description="Use Cholesky decomposition", section="mp2"),
 }
@@ -310,16 +605,22 @@ MP2_KEYWORDS: Dict[str, KeywordInfo] = {
 # CC keywords
 CC_KEYWORDS: Dict[str, KeywordInfo] = {
     "tce": KeywordInfo(name="tce", description="Use Tensor Contraction Engine", section="cc"),
-    "freeze": KeywordInfo(name="freeze", description="Freeze orbitals", section="cc", arguments=["atomic", "integer"]),
+    "freeze": KeywordInfo(
+        name="freeze", description="Freeze orbitals", section="cc", arguments=["atomic", "integer"]
+    ),
     "thresh": KeywordInfo(name="thresh", description="Convergence threshold", section="cc"),
     "maxiter": KeywordInfo(name="maxiter", description="Maximum iterations", section="cc"),
 }
 
 # Task keywords
 TASK_KEYWORDS: Dict[str, KeywordInfo] = {
-    "energy": KeywordInfo(name="energy", description="Single point energy calculation", section="task"),
+    "energy": KeywordInfo(
+        name="energy", description="Single point energy calculation", section="task"
+    ),
     "optimize": KeywordInfo(name="optimize", description="Geometry optimization", section="task"),
-    "frequencies": KeywordInfo(name="frequencies", description="Frequency calculation", section="task"),
+    "frequencies": KeywordInfo(
+        name="frequencies", description="Frequency calculation", section="task"
+    ),
     "gradient": KeywordInfo(name="gradient", description="Gradient calculation", section="task"),
     "hessian": KeywordInfo(name="hessian", description="Hessian calculation", section="task"),
 }

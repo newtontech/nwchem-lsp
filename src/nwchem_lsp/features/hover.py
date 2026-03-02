@@ -3,20 +3,20 @@
 This module provides hover documentation for NWChem keywords.
 """
 
-from typing import Optional, Any
+from typing import Any, Optional
 
 from lsprotocol.types import Hover, HoverParams, MarkupContent, MarkupKind, Position
 from pygls.server import LanguageServer
 
 from ..data.keywords import (
-    TOP_LEVEL_KEYWORDS,
-    DFT_KEYWORDS,
-    SCF_KEYWORDS,
-    GEOMETRY_KEYWORDS,
     BASIS_KEYWORDS,
+    DFT_KEYWORDS,
+    GEOMETRY_KEYWORDS,
+    SCF_KEYWORDS,
+    TOP_LEVEL_KEYWORDS,
     get_keyword_info,
-    is_valid_keyword,
     get_section_keywords,
+    is_valid_keyword,
 )
 from ..parser.nwchem_parser import NwchemParser
 
@@ -26,7 +26,7 @@ class NwchemHoverProvider:
 
     def __init__(self, server: LanguageServer):
         """Initialize the hover provider.
-        
+
         Args:
             server: The language server instance
         """
@@ -34,11 +34,11 @@ class NwchemHoverProvider:
 
     def get_hover(self, text: str, position: Position) -> Optional[Hover]:
         """Get hover information for the given position.
-        
+
         Args:
             text: Document text
             position: Position in the document
-            
+
         Returns:
             Hover object or None
         """
@@ -61,7 +61,7 @@ class NwchemHoverProvider:
 
         # Try to get keyword info from specific section first
         info = get_keyword_info(word_lower, section)
-        
+
         # Fall back to top-level if not found
         if info is None:
             info = get_keyword_info(word_lower, "top")
@@ -73,10 +73,10 @@ class NwchemHoverProvider:
 
     def _create_hover(self, info) -> Hover:
         """Create a Hover object from keyword info.
-        
+
         Args:
             info: KeywordInfo object
-            
+
         Returns:
             Hover object
         """
@@ -87,22 +87,26 @@ class NwchemHoverProvider:
         ]
 
         if info.arguments:
-            content_lines.extend([
-                "",
-                "**Arguments:**",
-                ", ".join(f"`{arg}`" for arg in info.arguments[:10]),
-            ])
+            content_lines.extend(
+                [
+                    "",
+                    "**Arguments:**",
+                    ", ".join(f"`{arg}`" for arg in info.arguments[:10]),
+                ]
+            )
             if len(info.arguments) > 10:
                 content_lines[-1] += f" (and {len(info.arguments) - 10} more...)"
 
         if info.example:
-            content_lines.extend([
-                "",
-                "**Example:**",
-                "```",
-                info.example,
-                "```",
-            ])
+            content_lines.extend(
+                [
+                    "",
+                    "**Example:**",
+                    "```",
+                    info.example,
+                    "```",
+                ]
+            )
 
         if info.required:
             content_lines.extend(["", "*Required*"])
@@ -116,15 +120,13 @@ class NwchemHoverProvider:
             )
         )
 
-    def get_word_at_position(
-        self, document, position: Position
-    ) -> str:
+    def get_word_at_position(self, document, position: Position) -> str:
         """Get the word at the given position.
-        
+
         Args:
             document: The text document
             position: The position
-            
+
         Returns:
             The word at the position
         """
@@ -151,10 +153,10 @@ HoverProvider = NwchemHoverProvider
 
 def get_hover_provider(server: LanguageServer) -> NwchemHoverProvider:
     """Create a hover provider instance.
-    
+
     Args:
         server: The language server instance
-        
+
     Returns:
         Hover provider instance
     """

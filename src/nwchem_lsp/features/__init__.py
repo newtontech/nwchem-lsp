@@ -1,7 +1,7 @@
 """LSP features for NWChem."""
 
 from .completion import CompletionProvider
-from .hover import HoverProvider
 from .diagnostic import DiagnosticProvider
+from .hover import HoverProvider
 
 __all__ = ["CompletionProvider", "HoverProvider", "DiagnosticProvider"]

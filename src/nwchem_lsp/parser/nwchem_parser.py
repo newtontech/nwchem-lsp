@@ -38,14 +38,45 @@ class NwchemParser:
     """Parser for NWChem input files."""
 
     SECTION_KEYWORDS = {
-        "geometry", "basis", "scf", "dft", "mp2", "ccsd", "ccsd(t)",
-        "ecp", "so", "tce", "mcscf", "selci", "hessian", "vib", "property",
-        "rt_tddft", "pspw", "band", "paw", "ofpw", "bq", "charge", "cons",
+        "geometry",
+        "basis",
+        "scf",
+        "dft",
+        "mp2",
+        "ccsd",
+        "ccsd(t)",
+        "ecp",
+        "so",
+        "tce",
+        "mcscf",
+        "selci",
+        "hessian",
+        "vib",
+        "property",
+        "rt_tddft",
+        "pspw",
+        "band",
+        "paw",
+        "ofpw",
+        "bq",
+        "charge",
+        "cons",
     }
 
     TOP_LEVEL_KEYWORDS = {
-        "start", "restart", "title", "echo", "set", "unset", "stop",
-        "task", "charge", "memory", "permanent_dir", "scratch_dir", "print",
+        "start",
+        "restart",
+        "title",
+        "echo",
+        "set",
+        "unset",
+        "stop",
+        "task",
+        "charge",
+        "memory",
+        "permanent_dir",
+        "scratch_dir",
+        "print",
     }
 
     def __init__(self, source: str):
@@ -256,19 +287,20 @@ def get_line_keywords(line: str) -> List[str]:
 # Add parse() and validate() methods for compatibility
 def _add_compat_methods():
     """Add compatibility methods to NwchemParser."""
+
     def parse(self):
         """Parse and return all sections as blocks."""
         blocks = []
         for section_name, sections in self.sections.items():
             for section in sections:
                 # Add line_start attribute for compatibility
-                if not hasattr(section, 'line_start'):
+                if not hasattr(section, "line_start"):
                     section.line_start = section.start_line
-                if not hasattr(section, 'name'):
+                if not hasattr(section, "name"):
                     section.name = section_name
                 blocks.append(section)
         return blocks
-    
+
     def validate(self):
         """Validate and return errors as list of dicts."""
         is_valid, errors = self.is_valid_syntax()
@@ -276,8 +308,9 @@ def _add_compat_methods():
         for line, message in errors:
             result.append({"line": line, "column": 0, "message": message})
         return result
-    
+
     NwchemParser.parse = parse
     NwchemParser.validate = validate
+
 
 _add_compat_methods()
