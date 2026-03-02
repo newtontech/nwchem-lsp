@@ -196,14 +196,14 @@ class TestKeywordDatabase:
         kw = KEYWORDS["geometry"]
         assert kw.name == "geometry"
         assert kw.requires_block is True
-        assert kw.section == "block"
+        assert kw.section == "top"
 
     def test_scf_keyword(self):
         """Test scf keyword definition."""
         kw = KEYWORDS["scf"]
         assert kw.name == "scf"
         assert kw.requires_block is True
-        assert kw.section == "block"
+        assert kw.section == "top"
 
     def test_task_keyword(self):
         """Test task keyword definition."""

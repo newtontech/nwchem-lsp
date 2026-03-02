@@ -11,7 +11,7 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from ..data.keywords import ALL_KEYWORDS, get_keyword
-from ..parser.nwchem_parser import NWChemParser
+from ..parser.nwchem_parser import NwchemParser as NWChemParser
 
 
 class DiagnosticProvider:

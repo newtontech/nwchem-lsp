@@ -2,7 +2,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 
-from nwchem_lsp.server import server, main
+from nwchem_lsp.server import server, main, create_server
 
 
 class TestNWChemServer:
@@ -14,23 +14,26 @@ class TestNWChemServer:
         assert server.name == "nwchem-lsp"
         assert server.version == "0.1.0"
 
-    def test_completion_feature(self):
-        """Test completion feature."""
-        from nwchem_lsp.server import completion
-        result = completion(MagicMock())
-        assert result == []
+    def test_create_server(self):
+        """Test create_server function."""
+        srv = create_server()
+        assert srv is not None
+        assert srv.name == "nwchem-lsp"
 
-    def test_hover_feature(self):
-        """Test hover feature."""
-        from nwchem_lsp.server import hover
-        result = hover(MagicMock())
-        assert result is None
+    def test_completion_provider(self):
+        """Test completion provider exists."""
+        srv = create_server()
+        assert hasattr(srv, 'completion_provider')
 
-    def test_diagnostic_feature(self):
-        """Test diagnostic feature."""
-        from nwchem_lsp.server import diagnostic
-        result = diagnostic(MagicMock())
-        assert result == []
+    def test_hover_provider(self):
+        """Test hover provider exists."""
+        srv = create_server()
+        assert hasattr(srv, 'hover_provider')
+
+    def test_diagnostic_provider(self):
+        """Test diagnostic provider exists."""
+        srv = create_server()
+        assert hasattr(srv, 'diagnostic_provider')
 
 
 class TestMain:
