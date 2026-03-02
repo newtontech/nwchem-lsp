@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from typing import Any
 
 from lsprotocol.types import (
@@ -23,8 +22,8 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from .data.keywords import get_all_keyword_names
-from .features.completion import CompletionProvider
-from .features.hover import HoverProvider
+from .features.completion import NwchemCompletionProvider
+from .features.hover import NwchemHoverProvider
 from .features.diagnostic import DiagnosticProvider
 
 
@@ -36,8 +35,8 @@ class NWChemLanguageServer(LanguageServer):
         super().__init__("nwchem-lsp", "0.1.0")
         
         # Initialize feature providers
-        self.completion_provider = CompletionProvider(self)
-        self.hover_provider = HoverProvider(self)
+        self.completion_provider = NwchemCompletionProvider(self)
+        self.hover_provider = NwchemHoverProvider(self)
         self.diagnostic_provider = DiagnosticProvider(self)
         
         # Document cache
@@ -114,9 +113,12 @@ def create_server() -> NWChemLanguageServer:
     return server
 
 
+# Global server instance for backwards compatibility
+server = create_server()
+
+
 def main() -> None:
     """Main entry point for the language server."""
-    server = create_server()
     server.start_io()
 
 

@@ -3,7 +3,7 @@
 This module provides hover documentation for NWChem keywords.
 """
 
-from typing import Optional
+from typing import Optional, Any
 
 from lsprotocol.types import Hover, HoverParams, MarkupContent, MarkupKind, Position
 from pygls.server import LanguageServer
@@ -32,19 +32,19 @@ class NwchemHoverProvider:
         """
         self.server = server
 
-    def get_hover(self, params: HoverParams) -> Optional[Hover]:
+    def get_hover(self, text: str, position: Position) -> Optional[Hover]:
         """Get hover information for the given position.
         
         Args:
-            params: Hover parameters from LSP client
+            text: Document text
+            position: Position in the document
             
         Returns:
             Hover object or None
         """
-        document = self.server.workspace.get_text_document(params.text_document.uri)
-        source = document.source
-        line_number = params.position.line
-        column = params.position.character
+        source = text
+        line_number = position.line
+        column = position.character
 
         # Parse to get context
         parser = NwchemParser(source)
@@ -143,6 +143,10 @@ class NwchemHoverProvider:
             end += 1
 
         return line[start:end]
+
+
+# Alias for backwards compatibility
+HoverProvider = NwchemHoverProvider
 
 
 def get_hover_provider(server: LanguageServer) -> NwchemHoverProvider:
