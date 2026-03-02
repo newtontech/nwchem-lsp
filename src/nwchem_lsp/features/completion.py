@@ -4,12 +4,11 @@ This module provides keyword completions based on the current context
 in an NWChem input file.
 """
 
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from lsprotocol.types import (
     CompletionItem,
     CompletionItemKind,
-    CompletionParams,
     Position,
 )
 from pygls.server import LanguageServer
@@ -41,19 +40,19 @@ class NwchemCompletionProvider:
         """
         self.server = server
 
-    def get_completions(self, params: CompletionParams) -> List[CompletionItem]:
+    def get_completions(self, text: str, position: Position) -> List[CompletionItem]:
         """Get completion items for the given position.
         
         Args:
-            params: Completion parameters from LSP client
+            text: Document text
+            position: Position in the document
             
         Returns:
             List of completion items
         """
-        document = self.server.workspace.get_text_document(params.text_document.uri)
-        source = document.source
-        line_number = params.position.line
-        column = params.position.character
+        source = text
+        line_number = position.line
+        column = position.character
 
         # Parse the source to get context
         parser = NwchemParser(source)
@@ -120,7 +119,8 @@ class NwchemCompletionProvider:
         items: List[CompletionItem] = []
         keywords = get_keywords_by_section(section)
 
-        for name in keywords:
+        for kw in keywords:
+            name = kw.name
             if prefix and not name.startswith(prefix.lower()):
                 continue
 
@@ -236,6 +236,10 @@ class NwchemCompletionProvider:
             items.append(item)
 
         return items
+
+
+# Alias for backwards compatibility
+CompletionProvider = NwchemCompletionProvider
 
 
 def get_completion_provider(server: LanguageServer) -> NwchemCompletionProvider:

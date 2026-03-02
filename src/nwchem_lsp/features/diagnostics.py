@@ -7,7 +7,7 @@ from ..data.keywords import (
     get_keyword_info,
     is_valid_keyword,
 )
-from ..parser.nwchem_parser import NWChemParser
+from ..parser.nwchem_parser import NwchemParser as NWChemParser
 
 
 class DiagnosticsProvider:

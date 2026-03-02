@@ -5,7 +5,7 @@ input file keywords, including top-level sections, task operations,
 DFT functionals, basis sets, and chemical elements.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set
 
 
@@ -19,6 +19,12 @@ class KeywordInfo:
     required: bool = False
     arguments: Optional[List[str]] = None
     example: Optional[str] = None
+    args: List[str] = field(default_factory=list)
+    optional_args: List[str] = field(default_factory=list)
+    requires_block: bool = False
+    deprecated: bool = False
+    deprecated_replacement: Optional[str] = None
+    allowed_values: Optional[List[str]] = None
 
 
 # Chemical elements
@@ -70,6 +76,18 @@ TASK_OPERATIONS: List[str] = [
     "pspw", "band", "paw", "ofpw",
 ]
 
+# Task theories
+TASK_THEORIES: List[str] = [
+    "scf", "dft", "mp2", "ccsd", "ccsd(t)", "mcscf", "semi", "rimp2"
+]
+
+# Top-level sections that require blocks
+TOP_LEVEL_SECTIONS: List[str] = [
+    "geometry", "basis", "scf", "dft", "mp2", "ccsd", "ccsd(t)",
+    "ecp", "so", "tce", "mcscf", "selci", "hessian", "vib", "property",
+    "rt_tddft", "pspw", "band", "paw", "ofpw", "bq",
+]
+
 # Top-level NWChem keywords
 TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
     "geometry": KeywordInfo(
@@ -77,16 +95,19 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
         description="Define molecular geometry section",
         section="top",
         required=True,
+        requires_block=True,
         arguments=["units", "angstroms", "bohr", "autosym", "noautoz", "nocenter", "center"],
-        example="geometry units angstroms\\n  O  0.0  0.0  0.0\\n  H  0.0  0.8  0.6\\n  H  0.0 -0.8  0.6\\nend",
+        example="geometry units angstroms\n  O  0.0  0.0  0.0\n  H  0.0  0.8  0.6\n  H  0.0 -0.8  0.6\nend",
+        args=["units", "angstroms", "bohr"],
     ),
     "basis": KeywordInfo(
         name="basis",
         description="Define basis set specification",
         section="top",
         required=True,
+        requires_block=True,
         arguments=["spherical", "cartesian"],
-        example="basis spherical\\n  * library 6-31G*\\nend",
+        example="basis spherical\n  * library 6-31G*\nend",
     ),
     "charge": KeywordInfo(
         name="charge",
@@ -101,47 +122,54 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
         description="Self-Consistent Field (Hartree-Fock) calculation",
         section="top",
         required=False,
+        requires_block=True,
         arguments=["singlet", "doublet", "triplet", "quartet", "quintet", "rhf", "uhf", "rohf", "mcscf", "thresh", "maxiter", "direct", "semidirect"],
-        example="scf\\n  singlet\\n  rhf\\n  maxiter 100\\nend",
+        example="scf\n  singlet\n  rhf\n  maxiter 100\nend",
     ),
     "dft": KeywordInfo(
         name="dft",
         description="Density Functional Theory calculation",
         section="top",
         required=False,
+        requires_block=True,
         arguments=["xc", "grid", "tolerances", "convergence", "iterations", "direct", "noio", "odft", "cdft", "mult"],
-        example="dft\\n  xc b3lyp\\n  grid fine\\n  convergence energy 1e-8\\nend",
+        example="dft\n  xc b3lyp\n  grid fine\n  convergence energy 1e-8\nend",
     ),
     "mp2": KeywordInfo(
         name="mp2",
         description="Second-order Moller-Plesset perturbation theory",
         section="top",
         required=False,
+        requires_block=True,
         arguments=["tight", "freeze", "scratch disk", "ri", "cd", "thize", "thize_g"],
-        example="mp2\\n  freeze atomic\\nend",
+        example="mp2\n  freeze atomic\nend",
     ),
     "ccsd": KeywordInfo(
         name="ccsd",
         description="Coupled Cluster Singles and Doubles",
         section="top",
         required=False,
+        requires_block=True,
         arguments=["tce", "freeze", "thresh", "maxiter", "io", "diis", "nodis", "ccsd(t)"],
-        example="ccsd\\n  freeze atomic\\n  thresh 1e-6\\nend",
+        example="ccsd\n  freeze atomic\n  thresh 1e-6\nend",
     ),
     "ecp": KeywordInfo(
         name="ecp",
         description="Effective Core Potential specification",
         section="top",
         required=False,
+        requires_block=True,
         arguments=["library"],
-        example="ecp\\n  Pt library LANL2DZ\\nend",
+        example="ecp\n  Pt library LANL2DZ\nend",
     ),
     "task": KeywordInfo(
         name="task",
         description="Execute a computational task",
         section="top",
         required=True,
+        requires_block=False,
         arguments=TASK_OPERATIONS,
+        args=["theory", "operation"],
         example="task dft optimize",
     ),
     "set": KeywordInfo(
@@ -228,7 +256,7 @@ TOP_LEVEL_KEYWORDS: Dict[str, KeywordInfo] = {
 
 # DFT-specific keywords
 DFT_KEYWORDS: Dict[str, KeywordInfo] = {
-    "xc": KeywordInfo(name="xc", description="Exchange-correlation functional", section="dft", arguments=DFT_FUNCTIONALS),
+    "xc": KeywordInfo(name="xc", description="Exchange-correlation functional", section="dft", arguments=DFT_FUNCTIONALS, args=["functional"]),
     "grid": KeywordInfo(name="grid", description="Numerical integration grid", section="dft", arguments=["coarse", "medium", "fine", "xfine", "ultrafine"]),
     "convergence": KeywordInfo(name="convergence", description="SCF convergence criteria", section="dft", arguments=["energy", "density", "gradient"]),
     "iterations": KeywordInfo(name="iterations", description="Maximum number of SCF iterations", section="dft", arguments=["integer"]),
@@ -258,6 +286,9 @@ GEOMETRY_KEYWORDS: Dict[str, KeywordInfo] = {
     "center": KeywordInfo(name="center", description="Center geometry at origin", section="geometry"),
     "nocenter": KeywordInfo(name="nocenter", description="Do not center geometry", section="geometry"),
     "system": KeywordInfo(name="system", description="Periodic boundary conditions", section="geometry", arguments=["crystal", "slab", "polymer", "helix"]),
+    "angstroms": KeywordInfo(name="angstroms", description="Use angstrom units", section="geometry"),
+    "au": KeywordInfo(name="au", description="Use atomic units (bohr)", section="geometry"),
+    "bohr": KeywordInfo(name="bohr", description="Use bohr units", section="geometry"),
 }
 
 # Basis set keywords
@@ -268,6 +299,36 @@ BASIS_KEYWORDS: Dict[str, KeywordInfo] = {
     "file": KeywordInfo(name="file", description="Read basis set from file", section="basis", arguments=["filename"]),
 }
 
+# MP2 keywords
+MP2_KEYWORDS: Dict[str, KeywordInfo] = {
+    "tight": KeywordInfo(name="tight", description="Use tight convergence criteria", section="mp2"),
+    "freeze": KeywordInfo(name="freeze", description="Freeze orbitals", section="mp2", arguments=["atomic", "integer"]),
+    "ri": KeywordInfo(name="ri", description="Use RI approximation", section="mp2"),
+    "cd": KeywordInfo(name="cd", description="Use Cholesky decomposition", section="mp2"),
+}
+
+# CC keywords
+CC_KEYWORDS: Dict[str, KeywordInfo] = {
+    "tce": KeywordInfo(name="tce", description="Use Tensor Contraction Engine", section="cc"),
+    "freeze": KeywordInfo(name="freeze", description="Freeze orbitals", section="cc", arguments=["atomic", "integer"]),
+    "thresh": KeywordInfo(name="thresh", description="Convergence threshold", section="cc"),
+    "maxiter": KeywordInfo(name="maxiter", description="Maximum iterations", section="cc"),
+}
+
+# Task keywords
+TASK_KEYWORDS: Dict[str, KeywordInfo] = {
+    "energy": KeywordInfo(name="energy", description="Single point energy calculation", section="task"),
+    "optimize": KeywordInfo(name="optimize", description="Geometry optimization", section="task"),
+    "frequencies": KeywordInfo(name="frequencies", description="Frequency calculation", section="task"),
+    "gradient": KeywordInfo(name="gradient", description="Gradient calculation", section="task"),
+    "hessian": KeywordInfo(name="hessian", description="Hessian calculation", section="task"),
+}
+
+# Charge keywords
+CHARGE_KEYWORDS: Dict[str, KeywordInfo] = {
+    "charge": KeywordInfo(name="charge", description="Set molecular charge", section="charge"),
+}
+
 # All keywords by section
 ALL_KEYWORDS: Dict[str, Dict[str, KeywordInfo]] = {
     "top": TOP_LEVEL_KEYWORDS,
@@ -275,13 +336,27 @@ ALL_KEYWORDS: Dict[str, Dict[str, KeywordInfo]] = {
     "scf": SCF_KEYWORDS,
     "geometry": GEOMETRY_KEYWORDS,
     "basis": BASIS_KEYWORDS,
+    "mp2": MP2_KEYWORDS,
+    "cc": CC_KEYWORDS,
+    "task": TASK_KEYWORDS,
+    "charge": CHARGE_KEYWORDS,
 }
+
+# Flattened KEYWORDS dictionary for compatibility
+KEYWORDS: Dict[str, KeywordInfo] = {}
+for section_dict in ALL_KEYWORDS.values():
+    KEYWORDS.update(section_dict)
 
 
 def get_keyword_info(name: str, section: str = "top") -> Optional[KeywordInfo]:
     """Get information about a specific keyword."""
     section_dict = ALL_KEYWORDS.get(section, {})
     return section_dict.get(name.lower())
+
+
+def get_keyword(name: str) -> Optional[KeywordInfo]:
+    """Get keyword info by name (case-insensitive)."""
+    return KEYWORDS.get(name.lower())
 
 
 def get_all_keywords() -> List[str]:
@@ -292,10 +367,15 @@ def get_all_keywords() -> List[str]:
     return sorted(list(keywords))
 
 
-def get_keywords_by_section(section: str) -> List[str]:
+def get_all_keyword_names() -> List[str]:
+    """Get all keyword names (alias for get_all_keywords)."""
+    return get_all_keywords()
+
+
+def get_keywords_by_section(section: str) -> List[KeywordInfo]:
     """Get keywords for a specific section."""
     section_dict = ALL_KEYWORDS.get(section.lower(), {})
-    return sorted(list(section_dict.keys()))
+    return list(section_dict.values())
 
 
 def get_section_keywords(section: str) -> Dict[str, KeywordInfo]:
@@ -308,6 +388,19 @@ def is_valid_keyword(name: str, section: str = "top") -> bool:
     return get_keyword_info(name, section) is not None
 
 
+def is_section_block(name: str) -> bool:
+    """Check if a keyword is a section block keyword."""
+    kw = KEYWORDS.get(name.lower())
+    if kw:
+        return kw.requires_block
+    return name.lower() in TOP_LEVEL_SECTIONS
+
+
 def get_keyword_sections() -> List[str]:
     """Get a list of all available keyword sections."""
     return sorted(list(ALL_KEYWORDS.keys()))
+
+
+def get_all_sections() -> List[str]:
+    """Get all available sections."""
+    return get_keyword_sections()
