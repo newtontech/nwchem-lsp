@@ -9,6 +9,8 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_DID_CHANGE,
     TEXT_DOCUMENT_DID_OPEN,
     TEXT_DOCUMENT_DID_SAVE,
+    TEXT_DOCUMENT_CODE_ACTION,
+    CodeActionParams,
     TEXT_DOCUMENT_FORMATTING,
     TEXT_DOCUMENT_HOVER,
     TEXT_DOCUMENT_DOCUMENT_SYMBOL,
@@ -31,6 +33,7 @@ from .features.diagnostic import DiagnosticProvider
 from .features.hover import NwchemHoverProvider
 from .features.symbols import NwchemSymbolProvider
 from .features.formatting import NwchemFormattingProvider
+from .features.code_actions import CodeActionsProvider
 
 
 class NWChemLanguageServer(LanguageServer):
@@ -46,6 +49,7 @@ class NWChemLanguageServer(LanguageServer):
         self.diagnostic_provider = DiagnosticProvider(self)
         self.symbol_provider = NwchemSymbolProvider(self)
         self.formatting_provider = NwchemFormattingProvider(self)
+        self.code_actions_provider = CodeActionsProvider()
 
         # Document cache
         self.documents: dict[str, str] = {}
@@ -129,6 +133,17 @@ class NWChemLanguageServer(LanguageServer):
                 text = self.documents[uri]
                 diagnostics = self.diagnostic_provider.get_diagnostics(text)
                 self.publish_diagnostics(uri, diagnostics)
+
+        @self.feature(TEXT_DOCUMENT_CODE_ACTION)
+        def code_action(params: CodeActionParams) -> list:
+            """Handle code action request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            diagnostics = params.context.diagnostics if params.context else []
+            return self.code_actions_provider.get_code_actions(text, diagnostics)
 
 
 def create_server() -> NWChemLanguageServer:

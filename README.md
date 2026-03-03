@@ -17,6 +17,11 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
 - **Hover Documentation**: Inline help for all keywords
 - **Document Symbols**: Outline view and navigation (v0.2.0)
 - **Code Formatting**: Automatic code formatting (v0.2.0)
+- **Code Actions (Quick Fixes)**: Auto-fix common errors (v0.3.0)
+  - Add missing 'end' keywords for unclosed sections
+  - Remove unexpected 'end' keywords
+  - Correct common typos (gemoetry → geometry, etc.)
+  - Add missing 'start' directive
 - **Error Detection**: 
   - Unclosed section blocks
   - Unknown basis sets and functionals
@@ -101,6 +106,15 @@ task dft optimize
 
 See the `examples/` directory for more sample input files.
 
+## New in v0.3.0
+
+- ✨ Added Code Actions (Quick Fixes) support
+  - Auto-fix unclosed sections by adding 'end'
+  - Remove unexpected 'end' keywords
+  - Correct common typos with fuzzy matching
+  - Add missing 'start' directive
+- 🧪 Increased test coverage to 102 tests (100%)
+
 ## New in v0.2.0
 
 - ✨ Added Document Symbols support for outline view
@@ -163,7 +177,8 @@ src/nwchem_lsp/
 │   ├── hover.py        # Hover documentation provider
 │   ├── diagnostic.py   # Diagnostics provider
 │   ├── symbols.py      # Document symbols provider (v0.2.0)
-│   └── formatting.py   # Code formatting provider (v0.2.0)
+│   ├── formatting.py   # Code formatting provider (v0.2.0)
+│   └── code_actions.py # Code actions/quick fixes provider (v0.3.0)
 └── data/
     └── keywords.py     # Keyword database
 ```

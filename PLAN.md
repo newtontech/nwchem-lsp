@@ -26,10 +26,10 @@ This is the development plan for nwchem-lsp - a Language Server Protocol impleme
 - [x] Expanded test coverage (82 tests)
 
 ## Current Status
-- **Version**: 0.2.1
+- **Version**: 0.3.0
 - **Parser**: Fully implemented with section parsing, context extraction, and validation
 - **LSP Server**: Complete with completion, hover, diagnostic, symbols, and formatting providers
-- **Test Coverage**: 100% (82 tests passing)
+- **Test Coverage**: 100% (102 tests passing)
 - **Examples**: Added sample NWChem input files
 
 ## Test Structure
@@ -45,15 +45,21 @@ tests/
 └── features/
     ├── test_completion.py     # Completion provider tests
     ├── test_hover.py          # Hover provider tests
-    └── test_diagnostic.py     # Diagnostic provider tests
+    ├── test_diagnostic.py     # Diagnostic provider tests
+    └── test_code_actions.py   # Code actions provider tests (v0.3.0)
 ```
 
+## Completed Enhancements (v0.3.0)
+- [x] Code Actions (Quick Fixes)
+  - Add missing 'end' keywords for unclosed sections
+  - Remove unexpected 'end' keywords
+  - Correct common typos with fuzzy matching
+  - Add missing 'start' directive
+
 ## Future Enhancements
-- [ ] Quick fixes for common errors
 - [ ] Go to definition support
 - [ ] Workspace symbols support
 - [ ] Configuration options (via LSP)
-- [ ] Code actions and refactorings
 - [ ] Semantic highlighting
 - [ ] Inlay hints
 
@@ -67,4 +73,4 @@ tests/
 - See .maintenance/last-run.md for last check
 
 ## Last Updated
-2026-03-03 11:20 CST
+2026-03-04 01:55 CST
