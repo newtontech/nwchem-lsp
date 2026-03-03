@@ -6,8 +6,8 @@ from nwchem_lsp.parser.nwchem_parser import (
     NwchemParser,
     NWchemSection,
     ParseContext,
-    parse_nwchem_source,
     get_line_keywords,
+    parse_nwchem_source,
 )
 
 

@@ -1,7 +1,6 @@
 """Tests for formatting provider."""
 
 import pytest
-
 from lsprotocol.types import (
     DocumentFormattingParams,
     FormattingOptions,
@@ -136,8 +135,9 @@ class TestGetFormattingProvider:
 
     def test_factory(self):
         """Test factory function."""
-        from nwchem_lsp.features.formatting import get_formatting_provider
         from pygls.server import LanguageServer
+
+        from nwchem_lsp.features.formatting import get_formatting_provider
 
         server = LanguageServer("test", "1.0")
         provider = get_formatting_provider(server)

@@ -5,15 +5,15 @@ from __future__ import annotations
 from typing import Any
 
 from lsprotocol.types import (
+    TEXT_DOCUMENT_CODE_ACTION,
     TEXT_DOCUMENT_COMPLETION,
     TEXT_DOCUMENT_DID_CHANGE,
     TEXT_DOCUMENT_DID_OPEN,
     TEXT_DOCUMENT_DID_SAVE,
-    TEXT_DOCUMENT_CODE_ACTION,
-    CodeActionParams,
+    TEXT_DOCUMENT_DOCUMENT_SYMBOL,
     TEXT_DOCUMENT_FORMATTING,
     TEXT_DOCUMENT_HOVER,
-    TEXT_DOCUMENT_DOCUMENT_SYMBOL,
+    CodeActionParams,
     CompletionOptions,
     CompletionParams,
     DidChangeTextDocumentParams,
@@ -28,12 +28,12 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from .data.keywords import get_all_keyword_names
+from .features.code_actions import CodeActionsProvider
 from .features.completion import NwchemCompletionProvider
 from .features.diagnostic import DiagnosticProvider
+from .features.formatting import NwchemFormattingProvider
 from .features.hover import NwchemHoverProvider
 from .features.symbols import NwchemSymbolProvider
-from .features.formatting import NwchemFormattingProvider
-from .features.code_actions import CodeActionsProvider
 
 
 class NWChemLanguageServer(LanguageServer):

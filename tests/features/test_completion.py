@@ -68,8 +68,9 @@ class TestGetCompletionProvider:
 
     def test_factory(self):
         """Test factory function."""
-        from nwchem_lsp.features.completion import get_completion_provider
         from pygls.server import LanguageServer
+
+        from nwchem_lsp.features.completion import get_completion_provider
 
         server = LanguageServer("test", "1.0")
         provider = get_completion_provider(server)

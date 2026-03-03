@@ -59,8 +59,9 @@ class TestGetHoverProvider:
 
     def test_factory(self):
         """Test factory function."""
-        from nwchem_lsp.features.hover import get_hover_provider
         from pygls.server import LanguageServer
+
+        from nwchem_lsp.features.hover import get_hover_provider
 
         server = LanguageServer("test", "1.0")
         provider = get_hover_provider(server)

@@ -3,6 +3,8 @@
 Provides quick fixes for common NWChem input file errors.
 """
 
+from typing import Optional
+
 from lsprotocol.types import (
     CodeAction,
     CodeActionKind,
@@ -25,9 +27,7 @@ class CodeActionsProvider:
         self.valid_keywords = set(get_all_keyword_names())
         self.section_keywords = NwchemParser.SECTION_KEYWORDS
 
-    def get_code_actions(
-        self, source: str, diagnostics: list[Diagnostic]
-    ) -> list[CodeAction]:
+    def get_code_actions(self, source: str, diagnostics: list[Diagnostic]) -> list[CodeAction]:
         """Get code actions for the given diagnostics."""
         actions: list[CodeAction] = []
 
@@ -39,9 +39,7 @@ class CodeActionsProvider:
         actions.extend(self._get_general_actions(source))
         return actions
 
-    def _get_action_for_diagnostic(
-        self, source: str, diagnostic: Diagnostic
-    ) -> CodeAction | None:
+    def _get_action_for_diagnostic(self, source: str, diagnostic: Diagnostic) -> Optional[CodeAction]:
         """Get a code action for a specific diagnostic."""
         message = diagnostic.message.lower()
 
@@ -94,7 +92,7 @@ class CodeActionsProvider:
             ),
         )
 
-    def _fix_unexpected_end(self, source: str, diagnostic: Diagnostic) -> CodeAction | None:
+    def _fix_unexpected_end(self, source: str, diagnostic: Diagnostic) -> Optional[CodeAction]:
         """Create a fix for unexpected 'end' by removing it."""
         line_num = diagnostic.range.start.line
         lines = source.split("\n")
@@ -121,9 +119,7 @@ class CodeActionsProvider:
                 )
         return None
 
-    def _fix_unknown_keyword(
-        self, source: str, diagnostic: Diagnostic
-    ) -> CodeAction | None:
+    def _fix_unknown_keyword(self, source: str, diagnostic: Diagnostic) -> Optional[CodeAction]:
         """Create a fix for unknown keyword by suggesting a correction."""
         unknown_kw = ""
         if "unknown keyword '" in diagnostic.message.lower():
@@ -160,7 +156,7 @@ class CodeActionsProvider:
             ),
         )
 
-    def _find_closest_keyword(self, unknown: str) -> str | None:
+    def _find_closest_keyword(self, unknown: str) -> Optional[str]:
         """Find the closest matching valid keyword."""
         if len(unknown) < 2:
             return None
@@ -245,7 +241,7 @@ class CodeActionsProvider:
 
         return actions
 
-    def _create_add_start_action(self, source: str) -> CodeAction | None:
+    def _create_add_start_action(self, source: str) -> Optional[CodeAction]:
         """Create an action to add missing 'start' directive."""
         lines = source.split("\n")
 

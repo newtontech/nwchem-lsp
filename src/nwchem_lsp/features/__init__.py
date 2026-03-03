@@ -1,10 +1,10 @@
 """LSP features for NWChem."""
 
 from .completion import NwchemCompletionProvider
-from .hover import NwchemHoverProvider
 from .diagnostic import DiagnosticProvider
-from .symbols import NwchemSymbolProvider
 from .formatting import NwchemFormattingProvider
+from .hover import NwchemHoverProvider
+from .symbols import NwchemSymbolProvider
 
 __all__ = [
     "NwchemCompletionProvider",

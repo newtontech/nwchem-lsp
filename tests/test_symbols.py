@@ -106,8 +106,9 @@ class TestGetSymbolProvider:
 
     def test_factory(self):
         """Test factory function."""
-        from nwchem_lsp.features.symbols import get_symbol_provider
         from pygls.server import LanguageServer
+
+        from nwchem_lsp.features.symbols import get_symbol_provider
 
         server = LanguageServer("test", "1.0")
         provider = get_symbol_provider(server)
