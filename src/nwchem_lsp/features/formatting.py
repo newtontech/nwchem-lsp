@@ -25,9 +25,7 @@ class NwchemFormattingProvider:
         """
         self.server = server
 
-    def format_document(
-        self, text: str, params: DocumentFormattingParams
-    ) -> List[TextEdit]:
+    def format_document(self, text: str, params: DocumentFormattingParams) -> List[TextEdit]:
         """Format the entire document.
 
         Args:
@@ -42,30 +40,32 @@ class NwchemFormattingProvider:
         edits: List[TextEdit] = []
 
         indent_size = params.options.tab_size if params.options else 2
-        indent_str = " " * indent_size if not (params.options and params.options.insert_spaces) else "\t"
-        
+        indent_str = (
+            " " * indent_size if not (params.options and params.options.insert_spaces) else "\t"
+        )
+
         current_indent = 0
         in_section = False
 
         for i, line in enumerate(lines):
             stripped = line.strip()
-            
+
             # Skip empty lines and comments
             if not stripped:
                 formatted_lines.append("")
                 continue
-            
+
             if stripped.startswith("#"):
                 formatted_lines.append(stripped)
                 continue
-            
+
             # Check for section end
             if stripped.lower() == "end":
                 current_indent = max(0, current_indent - 1)
                 in_section = False
                 formatted_lines.append(indent_str * current_indent + stripped)
                 continue
-            
+
             # Check for section start
             parts = stripped.split()
             if parts and parts[0].lower() in self._get_section_keywords():
@@ -73,7 +73,7 @@ class NwchemFormattingProvider:
                 current_indent += 1
                 in_section = True
                 continue
-            
+
             # Regular line - apply current indentation
             if in_section:
                 formatted_lines.append(indent_str * current_indent + stripped)

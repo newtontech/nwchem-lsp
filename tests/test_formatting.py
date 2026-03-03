@@ -15,6 +15,7 @@ from nwchem_lsp.features.formatting import NwchemFormattingProvider
 def provider():
     """Create a formatting provider instance."""
     from pygls.server import LanguageServer
+
     server = LanguageServer("test", "1.0")
     return NwchemFormattingProvider(server)
 
@@ -27,7 +28,7 @@ def formatting_params():
         options=FormattingOptions(
             tab_size=2,
             insert_spaces=True,
-        )
+        ),
     )
 
 
@@ -104,16 +105,16 @@ end
 H 0 0 0
 end
 """
-        
+
         params_4_spaces = DocumentFormattingParams(
             text_document=TextDocumentIdentifier(uri="test.nw"),
-            options=FormattingOptions(tab_size=4, insert_spaces=True)
+            options=FormattingOptions(tab_size=4, insert_spaces=True),
         )
         params_tabs = DocumentFormattingParams(
             text_document=TextDocumentIdentifier(uri="test.nw"),
-            options=FormattingOptions(tab_size=2, insert_spaces=False)
+            options=FormattingOptions(tab_size=2, insert_spaces=False),
         )
-        
+
         # Both should produce edits
         edits_4 = provider.format_document(text, params_4_spaces)
         edits_tabs = provider.format_document(text, params_tabs)
@@ -122,7 +123,7 @@ end
     def test_get_section_keywords(self, provider):
         """Test that section keywords are correctly identified."""
         keywords = provider._get_section_keywords()
-        
+
         assert "geometry" in keywords
         assert "basis" in keywords
         assert "scf" in keywords
@@ -137,8 +138,8 @@ class TestGetFormattingProvider:
         """Test factory function."""
         from nwchem_lsp.features.formatting import get_formatting_provider
         from pygls.server import LanguageServer
-        
+
         server = LanguageServer("test", "1.0")
         provider = get_formatting_provider(server)
-        
+
         assert isinstance(provider, NwchemFormattingProvider)

@@ -10,6 +10,7 @@ from nwchem_lsp.features.completion import NwchemCompletionProvider
 def provider():
     """Create a completion provider instance."""
     from pygls.server import LanguageServer
+
     server = LanguageServer("test", "1.0")
     return NwchemCompletionProvider(server)
 
@@ -69,8 +70,8 @@ class TestGetCompletionProvider:
         """Test factory function."""
         from nwchem_lsp.features.completion import get_completion_provider
         from pygls.server import LanguageServer
-        
+
         server = LanguageServer("test", "1.0")
         provider = get_completion_provider(server)
-        
+
         assert isinstance(provider, NwchemCompletionProvider)

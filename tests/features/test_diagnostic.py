@@ -10,6 +10,7 @@ from nwchem_lsp.features.diagnostics import DiagnosticsProvider
 def diagnostic_provider():
     """Create a diagnostic provider instance."""
     from pygls.server import LanguageServer
+
     server = LanguageServer("test", "1.0")
     return DiagnosticProvider(server)
 

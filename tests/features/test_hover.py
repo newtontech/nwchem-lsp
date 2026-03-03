@@ -10,6 +10,7 @@ from nwchem_lsp.features.hover import NwchemHoverProvider
 def provider():
     """Create a hover provider instance."""
     from pygls.server import LanguageServer
+
     server = LanguageServer("test", "1.0")
     return NwchemHoverProvider(server)
 
@@ -43,10 +44,11 @@ end"""
 
     def test_get_word_at_position(self, provider):
         """Test word extraction."""
+
         # Create a mock document
         class MockDoc:
             lines = ["geometry units angstroms"]
-        
+
         word = provider.get_word_at_position(MockDoc(), Position(line=0, character=5))
         # Should extract "geometry" or part of it
         assert isinstance(word, str)
@@ -59,8 +61,8 @@ class TestGetHoverProvider:
         """Test factory function."""
         from nwchem_lsp.features.hover import get_hover_provider
         from pygls.server import LanguageServer
-        
+
         server = LanguageServer("test", "1.0")
         provider = get_hover_provider(server)
-        
+
         assert isinstance(provider, NwchemHoverProvider)

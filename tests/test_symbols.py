@@ -10,6 +10,7 @@ from nwchem_lsp.features.symbols import NwchemSymbolProvider
 def provider():
     """Create a symbol provider instance."""
     from pygls.server import LanguageServer
+
     server = LanguageServer("test", "1.0")
     return NwchemSymbolProvider(server)
 
@@ -51,7 +52,7 @@ task scf
 """
         symbols = provider.get_document_symbols(text)
         assert len(symbols) >= 2
-        
+
         names = [s.name.lower() for s in symbols]
         assert "geometry" in names
         assert "basis" in names
@@ -64,7 +65,7 @@ end
 """
         symbols = provider.get_document_symbols(text)
         assert len(symbols) == 1
-        
+
         symbol = symbols[0]
         assert symbol.range.start.line == 0
         assert symbol.range.end.line >= 0
@@ -80,10 +81,10 @@ scf
 end
 """
         symbols = provider.get_document_symbols(text)
-        
+
         geometry_symbol = next((s for s in symbols if s.name == "GEOMETRY"), None)
         scf_symbol = next((s for s in symbols if s.name == "SCF"), None)
-        
+
         if geometry_symbol:
             assert geometry_symbol.kind == SymbolKind.Class
         if scf_symbol:
@@ -107,8 +108,8 @@ class TestGetSymbolProvider:
         """Test factory function."""
         from nwchem_lsp.features.symbols import get_symbol_provider
         from pygls.server import LanguageServer
-        
+
         server = LanguageServer("test", "1.0")
         provider = get_symbol_provider(server)
-        
+
         assert isinstance(provider, NwchemSymbolProvider)
