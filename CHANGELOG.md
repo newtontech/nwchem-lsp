@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-03-04
+
+### Added
+- **Code Actions (Quick Fixes)**: LSP code actions for common errors
+  - Auto-fix unclosed sections by adding 'end' keyword
+  - Remove unexpected 'end' keywords
+  - Correct common typos with fuzzy matching (gemoetry → geometry, etc.)
+  - Add missing 'start' directive
+- 20 new tests for code actions feature
+- Total test count increased to 102 (100% coverage maintained)
+
+### Changed
+- Integrated CodeActionsProvider with LSP server
+- Updated documentation to reflect new features
+
+## [0.2.0] - 2026-03-03
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
