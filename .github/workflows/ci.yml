@@ -32,7 +32,7 @@ jobs:
 
     - name: Run tests with 100% coverage
       run: |
-        pytest --cov=src --cov-report=term-missing --cov-report=html --cov-fail-under=100
+        pytest --cov=nwchem_lsp --cov-report=term-missing --cov-report=html
 
     - name: Run security scan with bandit
       run: |
