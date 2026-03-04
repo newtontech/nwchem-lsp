@@ -22,6 +22,11 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
   - Remove unexpected 'end' keywords
   - Correct common typos (gemoetry → geometry, etc.)
   - Add missing 'start' directive
+- **Go to Definition**: Navigate from 'end' to section start
+  - Add missing 'end' keywords for unclosed sections
+  - Remove unexpected 'end' keywords
+  - Correct common typos (gemoetry → geometry, etc.)
+  - Add missing 'start' directive
 - **Error Detection**: 
   - Unclosed section blocks
   - Unknown basis sets and functionals

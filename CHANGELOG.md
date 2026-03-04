@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+- **Go to Definition**: LSP definition support for navigating NWChem input files
+  - Jump from 'end' keyword to corresponding section start
+  - Support for all section types (geometry, basis, dft, scf, etc.)
+- 16 new tests for definition provider feature
+- Total test count increased to 118 (100% coverage maintained)
+
 All notable changes to this project will be documented in this file.
 
 ## [0.3.0] - 2026-03-04

@@ -13,9 +13,11 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_DOCUMENT_SYMBOL,
     TEXT_DOCUMENT_FORMATTING,
     TEXT_DOCUMENT_HOVER,
+    TEXT_DOCUMENT_DEFINITION,
     CodeActionParams,
     CompletionOptions,
     CompletionParams,
+    DefinitionParams,
     DidChangeTextDocumentParams,
     DidOpenTextDocumentParams,
     DidSaveTextDocumentParams,
@@ -29,6 +31,7 @@ from pygls.server import LanguageServer
 
 from .data.keywords import get_all_keyword_names
 from .features.code_actions import CodeActionsProvider
+from .features.definition import DefinitionProvider, get_definition_provider
 from .features.completion import NwchemCompletionProvider
 from .features.diagnostic import DiagnosticProvider
 from .features.formatting import NwchemFormattingProvider
@@ -50,6 +53,7 @@ class NWChemLanguageServer(LanguageServer):
         self.symbol_provider = NwchemSymbolProvider(self)
         self.formatting_provider = NwchemFormattingProvider(self)
         self.code_actions_provider = CodeActionsProvider()
+        self.definition_provider = get_definition_provider()
 
         # Document cache
         self.documents: dict[str, str] = {}
@@ -144,6 +148,16 @@ class NWChemLanguageServer(LanguageServer):
             text = self.documents[uri]
             diagnostics = params.context.diagnostics if params.context else []
             return self.code_actions_provider.get_code_actions(text, diagnostics)
+
+        @self.feature(TEXT_DOCUMENT_DEFINITION)
+        def definition(params: DefinitionParams) -> Any:
+            """Handle definition request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return None
+
+            text = self.documents[uri]
+            return self.definition_provider.get_definition(text, params.position)
 
 
 def create_server() -> NWChemLanguageServer:
