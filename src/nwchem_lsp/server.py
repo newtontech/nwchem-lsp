@@ -41,7 +41,7 @@ class NWChemLanguageServer(LanguageServer):
 
     def __init__(self) -> None:
         """Initialize the NWChem language server."""
-        super().__init__("nwchem-lsp", "0.2.1")
+        super().__init__("nwchem-lsp", "0.3.0")
 
         # Initialize feature providers
         self.completion_provider = NwchemCompletionProvider(self)

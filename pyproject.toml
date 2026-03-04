@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nwchem-lsp"
-version = "0.2.1"
+version = "0.3.0"
 description = "Language Server Protocol for NWChem input files (.nw, .nwinp)"
 readme = "README.md"
 license = {text = "MIT"}
@@ -50,13 +50,13 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=nwchem_lsp --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=0 -v"
+addopts = "--cov=nwchem_lsp --cov-report=term-missing --cov-report=html --cov-report=xml -v"
 asyncio_mode = "auto"
 
 [tool.coverage.run]
-source = ["nwchem_lsp"]
-omit = ["*/tests/*", "*/test_*"]
+source = ["src/nwchem_lsp"]
 branch = true
+parallel = true
 
 [tool.coverage.report]
 exclude_lines = [
@@ -69,4 +69,3 @@ exclude_lines = [
     "pass",
     "..."
 ]
-fail_under = 0
