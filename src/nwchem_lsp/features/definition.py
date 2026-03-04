@@ -17,9 +17,7 @@ class DefinitionProvider:
         """Initialize definition provider."""
         pass
 
-    def get_definition(
-        self, source: str, position: Position
-    ) -> Optional[Location]:
+    def get_definition(self, source: str, position: Position) -> Optional[Location]:
         """Get definition location for the symbol at the given position.
 
         Args:

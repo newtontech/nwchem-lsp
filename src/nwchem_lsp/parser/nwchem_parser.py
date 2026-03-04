@@ -153,7 +153,8 @@ class NwchemParser:
         """Get the section name at a specific line number."""
         for section_name, sections in self.sections.items():
             for section in sections:
-                if section.start_line <= line_number <= section.end_line:
+                end_line = section.end_line if section.end_line is not None else line_number
+                if section.start_line <= line_number <= end_line:
                     return section_name
         return None
 

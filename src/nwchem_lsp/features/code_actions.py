@@ -39,7 +39,9 @@ class CodeActionsProvider:
         actions.extend(self._get_general_actions(source))
         return actions
 
-    def _get_action_for_diagnostic(self, source: str, diagnostic: Diagnostic) -> Optional[CodeAction]:
+    def _get_action_for_diagnostic(
+        self, source: str, diagnostic: Diagnostic
+    ) -> Optional[CodeAction]:
         """Get a code action for a specific diagnostic."""
         message = diagnostic.message.lower()
 
