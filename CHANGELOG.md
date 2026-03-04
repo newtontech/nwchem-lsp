@@ -5,18 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.4.0] - 2026-03-04
+## [0.5.0] - 2026-03-05
 
 ### Added
-- **Workspace Symbols**: Global symbol search across all open documents
-  - Search for sections (geometry, basis, dft, etc.) across workspace
-  - Search by title/start directive
-  - Full integration with LSP workspace/symbol request
-- **Configuration Options**: LSP configuration support
-  - Formatting options (indent size, tabs/spaces, max line length)
-  - Validation options (basis sets, functionals, strict mode)
-  - Completion options (case sensitivity, fuzzy matching)
-  - Diagnostic options (warnings, info, max count)
+- **Folding Ranges**: Code folding support for NWChem sections
+  - Fold/unfold geometry, basis, dft, and other sections
+  - Visual indicators for collapsible regions
+- **Find References**: Navigate to all occurrences of a section
+  - Jump between section start and end keywords
+  - Quick navigation within document
+- **Rename Refactoring**: Rename sections with automatic updates
+  - Safe renaming with validation
+  - Workspace-wide edits
+- 26 new tests for v0.5.0 features (total: 186 tests)
+- 100% test coverage maintained
+
+### Changed
+- Updated version from 0.4.0 to 0.5.0
+- Added new LSP handlers for foldingRange, references, and rename
+
+## [0.4.0] - 2026-03-04
 - **Semantic Highlighting**: Token-based syntax highlighting
   - Section names (namespace)
   - Task operations (function)

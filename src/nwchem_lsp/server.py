@@ -17,6 +17,9 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_HOVER,
     TEXT_DOCUMENT_INLAY_HINT,
     TEXT_DOCUMENT_SEMANTIC_TOKENS_FULL,
+    TEXT_DOCUMENT_FOLDING_RANGE,
+    TEXT_DOCUMENT_REFERENCES,
+    TEXT_DOCUMENT_RENAME,
     WORKSPACE_CONFIGURATION,
     WORKSPACE_SYMBOL,
     CodeActionParams,
@@ -32,6 +35,9 @@ from lsprotocol.types import (
     InlayHintParams,
     InitializeParams,
     SemanticTokensParams,
+    FoldingRangeParams,
+    ReferenceParams,
+    RenameParams,
     ServerCapabilities,
     WorkspaceSymbolParams,
 )
@@ -49,6 +55,9 @@ from .features.inlay_hints import InlayHintsProvider, get_inlay_hints_provider
 from .features.semantic_tokens import SemanticTokensProvider, get_semantic_tokens_provider
 from .features.symbols import NwchemSymbolProvider
 from .features.workspace_symbols import WorkspaceSymbolProvider, get_workspace_symbol_provider
+from .features.folding_range import FoldingRangeProvider, get_folding_range_provider
+from .features.references import ReferencesProvider, get_references_provider
+from .features.rename import RenameProvider, get_rename_provider
 
 
 class NWChemLanguageServer(LanguageServer):
@@ -56,7 +65,7 @@ class NWChemLanguageServer(LanguageServer):
 
     def __init__(self) -> None:
         """Initialize the NWChem language server."""
-        super().__init__("nwchem-lsp", "0.4.0")
+        super().__init__("nwchem-lsp", "0.5.0")
 
         # Initialize feature providers
         self.completion_provider = NwchemCompletionProvider(self)
@@ -70,6 +79,9 @@ class NWChemLanguageServer(LanguageServer):
         self.config_provider = get_config_provider(self)
         self.semantic_tokens_provider = get_semantic_tokens_provider(self)
         self.inlay_hints_provider = get_inlay_hints_provider(self)
+        self.folding_range_provider = get_folding_range_provider(self)
+        self.references_provider = get_references_provider(self)
+        self.rename_provider = get_rename_provider(self)
 
         # Document cache
         self.documents: dict[str, str] = {}
@@ -191,6 +203,40 @@ class NWChemLanguageServer(LanguageServer):
 
             text = self.documents[uri]
             return self.semantic_tokens_provider.get_semantic_tokens(text)
+
+        @self.feature(TEXT_DOCUMENT_FOLDING_RANGE)
+        def folding_range(params: FoldingRangeParams) -> list[Any]:
+            """Handle folding range request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            return self.folding_range_provider.get_folding_ranges(text)
+
+        @self.feature(TEXT_DOCUMENT_REFERENCES)
+        def references(params: ReferenceParams) -> list[Any]:
+            """Handle references request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            return self.references_provider.get_references(
+                text, uri, params.position, params.context.include_declaration
+            )
+
+        @self.feature(TEXT_DOCUMENT_RENAME)
+        def rename(params: RenameParams) -> Any:
+            """Handle rename request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return None
+
+            text = self.documents[uri]
+            return self.rename_provider.get_rename_edits(
+                text, uri, params.position, params.new_name
+            )
 
         @self.feature(TEXT_DOCUMENT_INLAY_HINT)
         def inlay_hint(params: InlayHintParams) -> list[Any]:

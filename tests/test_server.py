@@ -14,7 +14,7 @@ class TestNWChemServer:
         """Test server instance exists."""
         assert server is not None
         assert server.name == "nwchem-lsp"
-        assert server.version == "0.4.0"
+        assert server.version == "0.5.0"
 
     def test_create_server(self):
         """Test create_server function."""

@@ -68,6 +68,11 @@ tests/
 ```
 
 ## Future Enhancements
+- [x] Folding ranges support
+- [x] References support
+- [x] Rename support
+- [ ] Call hierarchy
+- [ ] Type hierarchy
 - [ ] Rename support
 - [ ] References support
 - [ ] Call hierarchy

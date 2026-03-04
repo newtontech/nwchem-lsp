@@ -24,6 +24,9 @@ NWChem LSP is a Language Server Protocol implementation for NWChem quantum chemi
 | Definition | Go to definition |
 | Semantic Tokens | Syntax highlighting |
 | Inlay Hints | Inline information |
+| Folding Range | Code folding |
+| References | Find references |
+| Rename | Rename refactoring |
 
 ### Data Module
 - Chemical elements (1-118)
@@ -34,7 +37,7 @@ NWChem LSP is a Language Server Protocol implementation for NWChem quantum chemi
 
 ## Testing
 
-- **Total Tests**: 160
+- **Total Tests**: 186
 - **Coverage**: 100%
 - **Test Categories**: Unit, Integration, Parser, Feature
 

@@ -20,6 +20,11 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
 - **Code Formatting**: Automatic code formatting
 - **Go to Definition**: Navigate from 'end' to section start
 
+### v0.5.0 Features
+- **Folding Ranges**: Code folding for sections
+- **Find References**: Navigate to section occurrences
+- **Rename Refactoring**: Rename sections safely
+
 ### v0.4.0 Features
 - **Workspace Symbols**: Global symbol search across all open documents
 - **Configuration Options**: Customizable LSP settings
@@ -117,6 +122,13 @@ task dft optimize
 See the `examples/` directory for more sample input files.
 
 ## Changelog
+
+### v0.5.0 (2026-03-05)
+- ✨ Added Folding Ranges support
+- ✨ Added Find References support
+- ✨ Added Rename Refactoring support
+- 🧪 Increased test coverage to 186 tests (100%)
+
 
 ### v0.4.0 (2026-03-04)
 - ✨ Added Workspace Symbols support
