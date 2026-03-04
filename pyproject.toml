@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nwchem-lsp"
-version = "0.3.0"
+version = "0.4.0"
 description = "Language Server Protocol for NWChem input files (.nw, .nwinp)"
 readme = "README.md"
 license = {text = "MIT"}
