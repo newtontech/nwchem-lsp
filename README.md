@@ -2,12 +2,13 @@
 
 [![CI](https://github.com/newtontech/nwchem-lsp/workflows/CI/badge.svg)](https://github.com/newtontech/nwchem-lsp/actions)
 [![Coverage](https://codecov.io/gh/newtontech/nwchem-lsp/branch/main/graph/badge.svg)](https://codecov.io/gh/newtontech/nwchem-lsp)
-[![License: MIT](https://imgshields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Language Server Protocol implementation for NWChem quantum chemistry software.
 
 ## Features
 
+### Core LSP Features
 - **Syntax Validation**: Real-time diagnostics for NWChem input files
 - **Auto-completion**: Context-aware keyword completion
   - Top-level keywords (geometry, basis, scf, dft, etc.)
@@ -15,23 +16,27 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
   - Basis sets and DFT functionals
   - Task operations and theories
 - **Hover Documentation**: Inline help for all keywords
-- **Document Symbols**: Outline view and navigation (v0.2.0)
-- **Code Formatting**: Automatic code formatting (v0.2.0)
-- **Code Actions (Quick Fixes)**: Auto-fix common errors (v0.3.0)
-  - Add missing 'end' keywords for unclosed sections
-  - Remove unexpected 'end' keywords
-  - Correct common typos (gemoetry → geometry, etc.)
-  - Add missing 'start' directive
+- **Document Symbols**: Outline view and navigation
+- **Code Formatting**: Automatic code formatting
 - **Go to Definition**: Navigate from 'end' to section start
-  - Add missing 'end' keywords for unclosed sections
-  - Remove unexpected 'end' keywords
-  - Correct common typos (gemoetry → geometry, etc.)
-  - Add missing 'start' directive
-- **Error Detection**: 
-  - Unclosed section blocks
-  - Unknown basis sets and functionals
-  - Invalid task operations
-  - Missing required blocks
+
+### v0.4.0 Features
+- **Workspace Symbols**: Global symbol search across all open documents
+- **Configuration Options**: Customizable LSP settings
+- **Semantic Highlighting**: Token-based syntax coloring
+- **Inlay Hints**: Inline information display (units, charge states, etc.)
+
+### Code Actions (Quick Fixes)
+- Add missing 'end' keywords for unclosed sections
+- Remove unexpected 'end' keywords
+- Correct common typos (gemoetry → geometry, etc.)
+- Add missing 'start' directive
+
+### Error Detection
+- Unclosed section blocks
+- Unknown basis sets and functionals
+- Invalid task operations
+- Missing required blocks
 
 ## Installation
 
@@ -111,21 +116,24 @@ task dft optimize
 
 See the `examples/` directory for more sample input files.
 
-## New in v0.3.0
+## Changelog
 
+### v0.4.0 (2026-03-04)
+- ✨ Added Workspace Symbols support
+- ✨ Added Configuration Options (LSP settings)
+- ✨ Added Semantic Highlighting
+- ✨ Added Inlay Hints
+- 🧪 Increased test coverage to 160 tests (100%)
+
+### v0.3.0 (2026-03-04)
 - ✨ Added Code Actions (Quick Fixes) support
-  - Auto-fix unclosed sections by adding 'end'
-  - Remove unexpected 'end' keywords
-  - Correct common typos with fuzzy matching
-  - Add missing 'start' directive
-- 🧪 Increased test coverage to 102 tests (100%)
+- ✨ Added Go to Definition support
+- 🧪 Increased test coverage to 118 tests (100%)
 
-## New in v0.2.0
-
-- ✨ Added Document Symbols support for outline view
-- ✨ Added code formatting with configurable indentation
-- 🧪 Increased test coverage to 50 tests (100%)
-- 📝 Updated documentation
+### v0.2.0 (2026-03-03)
+- ✨ Added Document Symbols support
+- ✨ Added code formatting
+- 🧪 Increased test coverage to 82 tests (100%)
 
 ## Development
 
@@ -181,9 +189,14 @@ src/nwchem_lsp/
 │   ├── completion.py   # Auto-completion provider
 │   ├── hover.py        # Hover documentation provider
 │   ├── diagnostic.py   # Diagnostics provider
-│   ├── symbols.py      # Document symbols provider (v0.2.0)
-│   ├── formatting.py   # Code formatting provider (v0.2.0)
-│   └── code_actions.py # Code actions/quick fixes provider (v0.3.0)
+│   ├── symbols.py      # Document symbols provider
+│   ├── formatting.py   # Code formatting provider
+│   ├── code_actions.py # Code actions/quick fixes
+│   ├── definition.py   # Go to definition provider
+│   ├── workspace_symbols.py  # Workspace symbols (v0.4.0)
+│   ├── semantic_tokens.py    # Semantic highlighting (v0.4.0)
+│   ├── inlay_hints.py        # Inlay hints (v0.4.0)
+│   └── config.py             # Configuration management (v0.4.0)
 └── data/
     └── keywords.py     # Keyword database
 ```

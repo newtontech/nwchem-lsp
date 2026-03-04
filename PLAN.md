@@ -25,12 +25,25 @@ This is the development plan for nwchem-lsp - a Language Server Protocol impleme
 - [x] Code formatting support
 - [x] Expanded test coverage (82 tests)
 
+### Phase 5: Code Actions & Definition ✅ (v0.3.0)
+- [x] Code Actions (Quick Fixes)
+  - Add missing 'end' keywords for unclosed sections
+  - Remove unexpected 'end' keywords
+  - Correct common typos with fuzzy matching
+  - Add missing 'start' directive
+- [x] Go to definition support
+
+### Phase 6: Advanced LSP Features ✅ (v0.4.0)
+- [x] Workspace symbols support
+- [x] Configuration options (via LSP)
+- [x] Semantic highlighting
+- [x] Inlay hints
+
 ## Current Status
-- **Version**: 0.4.0-dev
+- **Version**: 0.4.0
 - **Parser**: Fully implemented with section parsing, context extraction, and validation
-- **LSP Server**: Complete with completion, hover, diagnostic, symbols, and formatting providers
-- **Test Coverage**: 100% (118 tests passing)
-- **Examples**: Added sample NWChem input files
+- **LSP Server**: Complete with all standard LSP features
+- **Test Coverage**: 100% (160 tests passing)
 
 ## Test Structure
 ```
@@ -46,23 +59,20 @@ tests/
     ├── test_completion.py     # Completion provider tests
     ├── test_hover.py          # Hover provider tests
     ├── test_diagnostic.py     # Diagnostic provider tests
-    ├── test_code_actions.py   # Code actions provider tests (v0.3.0)
-    └── test_definition.py     # Definition provider tests (v0.4.0-dev)
+    ├── test_code_actions.py   # Code actions tests (v0.3.0)
+    ├── test_definition.py     # Definition provider tests (v0.3.0)
+    ├── test_workspace_symbols.py  # Workspace symbols tests (v0.4.0)
+    ├── test_semantic_tokens.py    # Semantic tokens tests (v0.4.0)
+    ├── test_inlay_hints.py        # Inlay hints tests (v0.4.0)
+    └── test_config.py             # Configuration tests (v0.4.0)
 ```
 
-## Completed Enhancements (v0.3.0)
-- [x] Code Actions (Quick Fixes)
-  - Add missing 'end' keywords for unclosed sections
-  - Remove unexpected 'end' keywords
-  - Correct common typos with fuzzy matching
-  - Add missing 'start' directive
-
 ## Future Enhancements
-- [x] Go to definition support
-- [ ] Workspace symbols support
-- [ ] Configuration options (via LSP)
-- [ ] Semantic highlighting
-- [ ] Inlay hints
+- [ ] Rename support
+- [ ] References support
+- [ ] Call hierarchy
+- [ ] Type hierarchy
+- [ ] Folding ranges
 
 ## Testing
 - Run tests: `pytest tests/`
@@ -74,4 +84,4 @@ tests/
 - See .maintenance/last-run.md for last check
 
 ## Last Updated
-2026-03-04 10:20 CST
+2026-03-04 18:20 CST
