@@ -67,10 +67,7 @@ class FoldingRangeProvider:
             List of folding ranges within the specified range
         """
         all_ranges = self.get_folding_ranges(text)
-        return [
-            r for r in all_ranges
-            if r.start_line >= start_line and r.end_line <= end_line
-        ]
+        return [r for r in all_ranges if r.start_line >= start_line and r.end_line <= end_line]
 
 
 def get_folding_range_provider(server: Optional[LanguageServer] = None) -> FoldingRangeProvider:

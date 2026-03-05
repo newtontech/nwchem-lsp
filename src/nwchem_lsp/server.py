@@ -13,13 +13,13 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_DID_OPEN,
     TEXT_DOCUMENT_DID_SAVE,
     TEXT_DOCUMENT_DOCUMENT_SYMBOL,
+    TEXT_DOCUMENT_FOLDING_RANGE,
     TEXT_DOCUMENT_FORMATTING,
     TEXT_DOCUMENT_HOVER,
     TEXT_DOCUMENT_INLAY_HINT,
-    TEXT_DOCUMENT_SEMANTIC_TOKENS_FULL,
-    TEXT_DOCUMENT_FOLDING_RANGE,
     TEXT_DOCUMENT_REFERENCES,
     TEXT_DOCUMENT_RENAME,
+    TEXT_DOCUMENT_SEMANTIC_TOKENS_FULL,
     WORKSPACE_CONFIGURATION,
     WORKSPACE_SYMBOL,
     CodeActionParams,
@@ -31,13 +31,13 @@ from lsprotocol.types import (
     DidSaveTextDocumentParams,
     DocumentFormattingParams,
     DocumentSymbolParams,
-    HoverParams,
-    InlayHintParams,
-    InitializeParams,
-    SemanticTokensParams,
     FoldingRangeParams,
+    HoverParams,
+    InitializeParams,
+    InlayHintParams,
     ReferenceParams,
     RenameParams,
+    SemanticTokensParams,
     ServerCapabilities,
     WorkspaceSymbolParams,
 )
@@ -49,15 +49,15 @@ from .features.completion import NwchemCompletionProvider
 from .features.config import ConfigProvider, get_config_provider
 from .features.definition import DefinitionProvider, get_definition_provider
 from .features.diagnostic import DiagnosticProvider
+from .features.folding_range import FoldingRangeProvider, get_folding_range_provider
 from .features.formatting import NwchemFormattingProvider
 from .features.hover import NwchemHoverProvider
 from .features.inlay_hints import InlayHintsProvider, get_inlay_hints_provider
+from .features.references import ReferencesProvider, get_references_provider
+from .features.rename import RenameProvider, get_rename_provider
 from .features.semantic_tokens import SemanticTokensProvider, get_semantic_tokens_provider
 from .features.symbols import NwchemSymbolProvider
 from .features.workspace_symbols import WorkspaceSymbolProvider, get_workspace_symbol_provider
-from .features.folding_range import FoldingRangeProvider, get_folding_range_provider
-from .features.references import ReferencesProvider, get_references_provider
-from .features.rename import RenameProvider, get_rename_provider
 
 
 class NWChemLanguageServer(LanguageServer):

@@ -9,10 +9,10 @@ from typing import List, Optional
 from lsprotocol.types import (
     Position,
     Range,
+    SemanticTokenModifiers,
     SemanticTokens,
     SemanticTokensLegend,
     SemanticTokensParams,
-    SemanticTokenModifiers,
     SemanticTokenTypes,
 )
 from pygls.server import LanguageServer
@@ -31,15 +31,15 @@ class SemanticTokensProvider:
 
     # Token types in order of legend
     TOKEN_TYPES = [
-        SemanticTokenTypes.Namespace,    # 0: Section names (geometry, basis, etc.)
-        SemanticTokenTypes.Function,     # 1: Task operations
-        SemanticTokenTypes.Variable,     # 2: Keywords
-        SemanticTokenTypes.String,       # 3: String values (titles)
-        SemanticTokenTypes.Number,       # 4: Numeric values
-        SemanticTokenTypes.Keyword,      # 5: Reserved words (end, start)
-        SemanticTokenTypes.Type,         # 6: Basis sets
-        SemanticTokenTypes.Property,     # 7: DFT functionals
-        SemanticTokenTypes.Class,        # 8: Elements
+        SemanticTokenTypes.Namespace,  # 0: Section names (geometry, basis, etc.)
+        SemanticTokenTypes.Function,  # 1: Task operations
+        SemanticTokenTypes.Variable,  # 2: Keywords
+        SemanticTokenTypes.String,  # 3: String values (titles)
+        SemanticTokenTypes.Number,  # 4: Numeric values
+        SemanticTokenTypes.Keyword,  # 5: Reserved words (end, start)
+        SemanticTokenTypes.Type,  # 6: Basis sets
+        SemanticTokenTypes.Property,  # 7: DFT functionals
+        SemanticTokenTypes.Class,  # 8: Elements
     ]
 
     # Token modifiers
@@ -52,9 +52,24 @@ class SemanticTokensProvider:
 
     # Section names (namespace type)
     SECTION_NAMES = {
-        "geometry", "basis", "scf", "dft", "mp2", "ccsd", "ccsd(t)",
-        "task", "property", "vib", "hessian", "tce", "mcscf", "ecp",
-        "charge", "title", "start", "restart",
+        "geometry",
+        "basis",
+        "scf",
+        "dft",
+        "mp2",
+        "ccsd",
+        "ccsd(t)",
+        "task",
+        "property",
+        "vib",
+        "hessian",
+        "tce",
+        "mcscf",
+        "ecp",
+        "charge",
+        "title",
+        "start",
+        "restart",
     }
 
     # Reserved keywords
@@ -183,9 +198,7 @@ class SemanticTokensProvider:
         except ValueError:
             return False
 
-    def get_semantic_tokens_range(
-        self, text: str, range_: Range
-    ) -> SemanticTokens:
+    def get_semantic_tokens_range(self, text: str, range_: Range) -> SemanticTokens:
         """Get semantic tokens for a specific range.
 
         Args:

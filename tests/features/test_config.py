@@ -1,9 +1,9 @@
 """Tests for configuration provider."""
 
 import pytest
+from pygls.server import LanguageServer
 
 from nwchem_lsp.features.config import ConfigProvider, NwchemConfig, get_config_provider
-from pygls.server import LanguageServer
 
 
 class TestNwchemConfig:

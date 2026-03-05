@@ -2,9 +2,9 @@
 
 import pytest
 from lsprotocol.types import InlayHintKind
+from pygls.server import LanguageServer
 
 from nwchem_lsp.features.inlay_hints import InlayHintsProvider
-from pygls.server import LanguageServer
 
 
 class TestInlayHintsProvider:

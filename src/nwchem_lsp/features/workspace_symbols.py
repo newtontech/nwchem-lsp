@@ -49,9 +49,7 @@ class WorkspaceSymbolProvider:
         """
         self.server = server
 
-    def get_workspace_symbols(
-        self, query: str, documents: dict[str, str]
-    ) -> List[WorkspaceSymbol]:
+    def get_workspace_symbols(self, query: str, documents: dict[str, str]) -> List[WorkspaceSymbol]:
         """Get workspace symbols matching the query.
 
         Args:
@@ -116,7 +114,7 @@ class WorkspaceSymbolProvider:
             if match:
                 return match.group(1).strip()
             # Match start ...
-            match = re.match(r'^start\s+(\S+)$', line_stripped, re.IGNORECASE)
+            match = re.match(r"^start\s+(\S+)$", line_stripped, re.IGNORECASE)
             if match:
                 return match.group(1).strip()
         return None
@@ -154,9 +152,7 @@ class WorkspaceSymbolProvider:
             container_name="NWChem Input",
         )
 
-    def resolve_workspace_symbol(
-        self, symbol: WorkspaceSymbol
-    ) -> Optional[WorkspaceSymbol]:
+    def resolve_workspace_symbol(self, symbol: WorkspaceSymbol) -> Optional[WorkspaceSymbol]:
         """Resolve a workspace symbol (for lazy resolution).
 
         Args:

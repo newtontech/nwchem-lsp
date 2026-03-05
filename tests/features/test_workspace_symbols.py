@@ -2,9 +2,9 @@
 
 import pytest
 from lsprotocol.types import SymbolKind
+from pygls.server import LanguageServer
 
 from nwchem_lsp.features.workspace_symbols import WorkspaceSymbolProvider
-from pygls.server import LanguageServer
 
 
 class TestWorkspaceSymbolProvider:
@@ -114,7 +114,7 @@ end
 
     def test_resolve_workspace_symbol(self, provider):
         """Test symbol resolution."""
-        from lsprotocol.types import WorkspaceSymbol, Location, Range, Position
+        from lsprotocol.types import Location, Position, Range, WorkspaceSymbol
 
         symbol = WorkspaceSymbol(
             name="TEST",

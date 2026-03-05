@@ -84,9 +84,7 @@ class InlayHintsProvider:
             if not line or line.strip().startswith("#"):
                 continue
 
-            line_hints = self._get_hints_for_line(
-                line, line_idx, parser
-            )
+            line_hints = self._get_hints_for_line(line, line_idx, parser)
             hints.extend(line_hints)
 
         return hints
@@ -118,9 +116,32 @@ class InlayHintsProvider:
         if current_section == "geometry" and len(words) >= 4:
             element = words[0].capitalize()
             if element in [
-                "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
-                "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar",
-                "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe",
+                "H",
+                "He",
+                "Li",
+                "Be",
+                "B",
+                "C",
+                "N",
+                "O",
+                "F",
+                "Ne",
+                "Na",
+                "Mg",
+                "Al",
+                "Si",
+                "P",
+                "S",
+                "Cl",
+                "Ar",
+                "K",
+                "Ca",
+                "Sc",
+                "Ti",
+                "V",
+                "Cr",
+                "Mn",
+                "Fe",
             ]:
                 # Check if coordinates look like numbers
                 if self._is_coordinate_line(words):
@@ -183,9 +204,7 @@ class InlayHintsProvider:
 
         return hints
 
-    def _get_current_section(
-        self, parser: NwchemParser, line_idx: int
-    ) -> Optional[str]:
+    def _get_current_section(self, parser: NwchemParser, line_idx: int) -> Optional[str]:
         """Get the current section at the given line.
 
         Args:

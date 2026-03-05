@@ -2,9 +2,9 @@
 
 import pytest
 from lsprotocol.types import SemanticTokenTypes
+from pygls.server import LanguageServer
 
 from nwchem_lsp.features.semantic_tokens import SemanticTokensProvider
-from pygls.server import LanguageServer
 
 
 class TestSemanticTokensProvider:

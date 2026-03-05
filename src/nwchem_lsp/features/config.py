@@ -74,9 +74,7 @@ class NwchemConfig:
             show_coordinate_units=config_dict.get("showCoordinateUnits", True),
             show_charge_info=config_dict.get("showChargeInfo", True),
             show_task_hints=config_dict.get("showTaskHints", True),
-            enable_semantic_highlighting=config_dict.get(
-                "enableSemanticHighlighting", True
-            ),
+            enable_semantic_highlighting=config_dict.get("enableSemanticHighlighting", True),
         )
 
     def to_dict(self) -> Dict[str, Any]:
