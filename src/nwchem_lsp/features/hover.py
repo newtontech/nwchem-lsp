@@ -7,11 +7,13 @@ from typing import Any, Optional
 
 from lsprotocol.types import Hover, HoverParams, MarkupContent, MarkupKind, Position
 from pygls.server import LanguageServer
+from pygls.workspace import TextDocument
 
 from ..data.keywords import (
     BASIS_KEYWORDS,
     DFT_KEYWORDS,
     GEOMETRY_KEYWORDS,
+    KeywordInfo,
     SCF_KEYWORDS,
     TOP_LEVEL_KEYWORDS,
     get_keyword_info,
@@ -71,7 +73,7 @@ class NwchemHoverProvider:
 
         return None
 
-    def _create_hover(self, info) -> Hover:
+    def _create_hover(self, info: KeywordInfo) -> Hover:
         """Create a Hover object from keyword info.
 
         Args:
@@ -120,7 +122,7 @@ class NwchemHoverProvider:
             )
         )
 
-    def get_word_at_position(self, document, position: Position) -> str:
+    def get_word_at_position(self, document: TextDocument, position: Position) -> str:
         """Get the word at the given position.
 
         Args:
@@ -130,6 +132,8 @@ class NwchemHoverProvider:
         Returns:
             The word at the position
         """
+        if position.line >= len(document.lines):
+            return ""
         line = document.lines[position.line]
         if not line:
             return ""

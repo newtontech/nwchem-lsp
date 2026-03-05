@@ -7,7 +7,7 @@ context determination.
 
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -32,10 +32,15 @@ class NWchemSection:
     end_line: Optional[int]
     keywords: List[str]
     content: List[str]
+    line_start: int = 0  # Compatibility alias for start_line, set dynamically
 
 
 class NwchemParser:
     """Parser for NWChem input files."""
+
+    # These will be dynamically added by _add_compat_methods
+    parse: ClassVar[Callable[["NwchemParser"], list[Any]]]
+    validate: ClassVar[Callable[["NwchemParser"], list[dict[str, Any]]]]
 
     SECTION_KEYWORDS = {
         "geometry",
@@ -286,12 +291,12 @@ def get_line_keywords(line: str) -> List[str]:
 
 
 # Add parse() and validate() methods for compatibility
-def _add_compat_methods():
+def _add_compat_methods() -> None:
     """Add compatibility methods to NwchemParser."""
 
-    def parse(self):
+    def parse(self: Any) -> list[Any]:
         """Parse and return all sections as blocks."""
-        blocks = []
+        blocks: list[Any] = []
         for section_name, sections in self.sections.items():
             for section in sections:
                 # Add line_start attribute for compatibility
@@ -302,10 +307,10 @@ def _add_compat_methods():
                 blocks.append(section)
         return blocks
 
-    def validate(self):
+    def validate(self: Any) -> list[dict[str, Any]]:
         """Validate and return errors as list of dicts."""
         is_valid, errors = self.is_valid_syntax()
-        result = []
+        result: list[dict[str, Any]] = []
         for line, message in errors:
             result.append({"line": line, "column": 0, "message": message})
         return result

@@ -11,7 +11,7 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from ..data.keywords import ALL_KEYWORDS, get_keyword
-from ..parser.nwchem_parser import NwchemParser as NWChemParser
+from ..parser.nwchem_parser import NWchemSection, NwchemParser as NWChemParser
 
 
 class DiagnosticProvider:
@@ -170,7 +170,7 @@ class DiagnosticProvider:
 
     def _check_block(
         self,
-        block,
+        block: NWchemSection,
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
@@ -192,7 +192,7 @@ class DiagnosticProvider:
 
     def _check_basis_block(
         self,
-        block,
+        block: NWchemSection,
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
@@ -228,7 +228,7 @@ class DiagnosticProvider:
 
     def _check_dft_block(
         self,
-        block,
+        block: NWchemSection,
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
@@ -263,7 +263,7 @@ class DiagnosticProvider:
 
     def _check_task_block(
         self,
-        block,
+        block: NWchemSection,
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
@@ -317,7 +317,7 @@ class DiagnosticProvider:
 
     def _check_scf_block(
         self,
-        block,
+        block: NWchemSection,
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
