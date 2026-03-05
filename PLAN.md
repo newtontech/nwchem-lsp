@@ -40,10 +40,10 @@ This is the development plan for nwchem-lsp - a Language Server Protocol impleme
 - [x] Inlay hints
 
 ## Current Status
-- **Version**: 0.4.0
+- ****Version**: 0.5.0
 - **Parser**: Fully implemented with section parsing, context extraction, and validation
 - **LSP Server**: Complete with all standard LSP features
-- **Test Coverage**: 100% (160 tests passing)
+- **Test Coverage**: 100% (186 tests passing)
 
 ## Test Structure
 ```
