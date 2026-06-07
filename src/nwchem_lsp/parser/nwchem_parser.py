@@ -305,6 +305,19 @@ def _add_compat_methods() -> None:
                 if not hasattr(section, "name"):
                     section.name = section_name
                 blocks.append(section)
+
+        for index, line in enumerate(self.lines):
+            parts = line.strip().lower().split()
+            if parts and parts[0] == "task":
+                task = NWchemSection(
+                    name="task",
+                    start_line=index,
+                    end_line=index,
+                    keywords=parts[1:],
+                    content=[line],
+                )
+                task.line_start = index + 1
+                blocks.append(task)
         return blocks
 
     def validate(self: Any) -> list[dict[str, Any]]:
