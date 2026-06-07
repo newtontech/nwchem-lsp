@@ -11,6 +11,7 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from ..data.keywords import ALL_KEYWORDS, get_keyword
+from ..exceptions import ParseError, ValidationError
 from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
 
@@ -105,8 +106,34 @@ class DiagnosticProvider:
         """
         diagnostics: list[Diagnostic] = []
 
-        parser = NWChemParser(text)
-        blocks = parser.parse()
+        try:
+            parser = NWChemParser(text)
+            blocks = parser.parse()
+        except (ParseError, ValidationError) as exc:
+            diagnostics.append(
+                Diagnostic(
+                    range=Range(
+                        start=Position(line=0, character=0), end=Position(line=0, character=1),
+                    ),
+                    message=str(exc),
+                    severity=DiagnosticSeverity.Error,
+                    source="nwchem-lsp",
+                )
+            )
+            return diagnostics
+        except Exception as exc:
+            diagnostics.append(
+                Diagnostic(
+                    range=Range(
+                        start=Position(line=0, character=0), end=Position(line=0, character=1),
+                    ),
+                    message=f"Parser error: {exc}",
+                    severity=DiagnosticSeverity.Error,
+                    source="nwchem-lsp",
+                )
+            )
+            return diagnostics
+
         lines = text.split("\n")
 
         # Check for required blocks
