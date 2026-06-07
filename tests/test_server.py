@@ -1,8 +1,10 @@
 """Tests for NWChem LSP server."""
-import pytest
+
 from unittest.mock import MagicMock, patch
 
-from nwchem_lsp.server import server, main, create_server
+import pytest
+
+from nwchem_lsp.server import create_server, main, server
 
 
 class TestNWChemServer:
@@ -12,7 +14,7 @@ class TestNWChemServer:
         """Test server instance exists."""
         assert server is not None
         assert server.name == "nwchem-lsp"
-        assert server.version == "0.1.0"
+        assert server.version == "0.5.0"
 
     def test_create_server(self):
         """Test create_server function."""
@@ -23,31 +25,32 @@ class TestNWChemServer:
     def test_completion_provider(self):
         """Test completion provider exists."""
         srv = create_server()
-        assert hasattr(srv, 'completion_provider')
+        assert hasattr(srv, "completion_provider")
 
     def test_hover_provider(self):
         """Test hover provider exists."""
         srv = create_server()
-        assert hasattr(srv, 'hover_provider')
+        assert hasattr(srv, "hover_provider")
 
     def test_diagnostic_provider(self):
         """Test diagnostic provider exists."""
         srv = create_server()
-        assert hasattr(srv, 'diagnostic_provider')
+        assert hasattr(srv, "diagnostic_provider")
 
 
 class TestMain:
     """Test main entry point."""
 
-    @patch('nwchem_lsp.server.server.start_io')
+    @patch("nwchem_lsp.server.server.start_io")
     def test_main(self, mock_start):
         """Test main function."""
         main()
         mock_start.assert_called_once()
 
-    @patch('nwchem_lsp.server.server.start_io')
+    @patch("nwchem_lsp.server.server.start_io")
     def test_main_module(self, mock_start):
         """Test main as module."""
         import nwchem_lsp.server as server_module
+
         server_module.main()
         mock_start.assert_called_once()

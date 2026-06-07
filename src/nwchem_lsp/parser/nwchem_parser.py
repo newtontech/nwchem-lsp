@@ -7,7 +7,7 @@ context determination.
 
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -32,20 +32,56 @@ class NWchemSection:
     end_line: Optional[int]
     keywords: List[str]
     content: List[str]
+    line_start: int = 0  # Compatibility alias for start_line, set dynamically
 
 
 class NwchemParser:
     """Parser for NWChem input files."""
 
+    # These will be dynamically added by _add_compat_methods
+    parse: ClassVar[Callable[["NwchemParser"], list[Any]]]
+    validate: ClassVar[Callable[["NwchemParser"], list[dict[str, Any]]]]
+
     SECTION_KEYWORDS = {
-        "geometry", "basis", "scf", "dft", "mp2", "ccsd", "ccsd(t)",
-        "ecp", "so", "tce", "mcscf", "selci", "hessian", "vib", "property",
-        "rt_tddft", "pspw", "band", "paw", "ofpw", "bq", "charge", "cons",
+        "geometry",
+        "basis",
+        "scf",
+        "dft",
+        "mp2",
+        "ccsd",
+        "ccsd(t)",
+        "ecp",
+        "so",
+        "tce",
+        "mcscf",
+        "selci",
+        "hessian",
+        "vib",
+        "property",
+        "rt_tddft",
+        "pspw",
+        "band",
+        "paw",
+        "ofpw",
+        "bq",
+        "charge",
+        "cons",
     }
 
     TOP_LEVEL_KEYWORDS = {
-        "start", "restart", "title", "echo", "set", "unset", "stop",
-        "task", "charge", "memory", "permanent_dir", "scratch_dir", "print",
+        "start",
+        "restart",
+        "title",
+        "echo",
+        "set",
+        "unset",
+        "stop",
+        "task",
+        "charge",
+        "memory",
+        "permanent_dir",
+        "scratch_dir",
+        "print",
     }
 
     def __init__(self, source: str):
@@ -122,7 +158,8 @@ class NwchemParser:
         """Get the section name at a specific line number."""
         for section_name, sections in self.sections.items():
             for section in sections:
-                if section.start_line <= line_number <= section.end_line:
+                end_line = section.end_line if section.end_line is not None else line_number
+                if section.start_line <= line_number <= end_line:
                     return section_name
         return None
 
@@ -254,30 +291,45 @@ def get_line_keywords(line: str) -> List[str]:
 
 
 # Add parse() and validate() methods for compatibility
-def _add_compat_methods():
+def _add_compat_methods() -> None:
     """Add compatibility methods to NwchemParser."""
-    def parse(self):
+
+    def parse(self: Any) -> list[Any]:
         """Parse and return all sections as blocks."""
-        blocks = []
+        blocks: list[Any] = []
         for section_name, sections in self.sections.items():
             for section in sections:
                 # Add line_start attribute for compatibility
-                if not hasattr(section, 'line_start'):
+                if not hasattr(section, "line_start"):
                     section.line_start = section.start_line
-                if not hasattr(section, 'name'):
+                if not hasattr(section, "name"):
                     section.name = section_name
                 blocks.append(section)
+
+        for index, line in enumerate(self.lines):
+            parts = line.strip().lower().split()
+            if parts and parts[0] == "task":
+                task = NWchemSection(
+                    name="task",
+                    start_line=index,
+                    end_line=index,
+                    keywords=parts[1:],
+                    content=[line],
+                )
+                task.line_start = index + 1
+                blocks.append(task)
         return blocks
-    
-    def validate(self):
+
+    def validate(self: Any) -> list[dict[str, Any]]:
         """Validate and return errors as list of dicts."""
         is_valid, errors = self.is_valid_syntax()
-        result = []
+        result: list[dict[str, Any]] = []
         for line, message in errors:
             result.append({"line": line, "column": 0, "message": message})
         return result
-    
+
     NwchemParser.parse = parse
     NwchemParser.validate = validate
+
 
 _add_compat_methods()

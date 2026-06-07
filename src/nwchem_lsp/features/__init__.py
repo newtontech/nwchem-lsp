@@ -1,7 +1,15 @@
 """LSP features for NWChem."""
 
-from .completion import CompletionProvider
-from .hover import HoverProvider
+from .completion import NwchemCompletionProvider
 from .diagnostic import DiagnosticProvider
+from .formatting import NwchemFormattingProvider
+from .hover import NwchemHoverProvider
+from .symbols import NwchemSymbolProvider
 
-__all__ = ["CompletionProvider", "HoverProvider", "DiagnosticProvider"]
+__all__ = [
+    "NwchemCompletionProvider",
+    "NwchemHoverProvider",
+    "DiagnosticProvider",
+    "NwchemSymbolProvider",
+    "NwchemFormattingProvider",
+]
