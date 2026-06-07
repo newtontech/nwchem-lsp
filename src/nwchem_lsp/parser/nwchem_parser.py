@@ -15,6 +15,9 @@ import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..data.keywords import TOP_LEVEL_SECTIONS
+from ..utils.text_utils import get_word_at_position
+
 
 @dataclass
 class ParseContext:
@@ -44,31 +47,7 @@ class NWchemSection:
 class NwchemParser:
     """Parser for NWChem input files."""
 
-    SECTION_KEYWORDS = {
-        "geometry",
-        "basis",
-        "scf",
-        "dft",
-        "mp2",
-        "ccsd",
-        "ccsd(t)",
-        "ecp",
-        "so",
-        "tce",
-        "mcscf",
-        "selci",
-        "hessian",
-        "vib",
-        "property",
-        "rt_tddft",
-        "pspw",
-        "band",
-        "paw",
-        "ofpw",
-        "bq",
-        "charge",
-        "cons",
-    }
+    SECTION_KEYWORDS = set(TOP_LEVEL_SECTIONS)
 
     TOP_LEVEL_KEYWORDS = {
         "start",
@@ -201,19 +180,7 @@ class NwchemParser:
 
     def _get_word_at_position(self, line: str, column: int) -> str:
         """Extract the word at a specific column position."""
-        if not line or column < 0 or column > len(line):
-            return ""
-
-        start = column
-        end = column
-
-        while start > 0 and line[start - 1].isalnum():
-            start -= 1
-
-        while end < len(line) and line[end].isalnum():
-            end += 1
-
-        return line[start:end]
+        return get_word_at_position(line, column)
 
     def get_completion_context(self, line_number: int, column: int) -> Dict[str, Any]:
         """Get context information for completion requests."""

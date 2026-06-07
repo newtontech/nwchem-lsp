@@ -289,6 +289,8 @@ TOP_LEVEL_SECTIONS: List[str] = [
     "paw",
     "ofpw",
     "bq",
+    "charge",
+    "cons",
 ]
 
 # Top-level NWChem keywords
@@ -661,16 +663,26 @@ def get_keyword(name: str) -> Optional[KeywordInfo]:
 
 
 def get_all_keywords() -> List[str]:
+    """Get a list of all available keyword names.
+
+    Deprecated: use :func:`get_all_keyword_names` instead.
+    """
+    import warnings
+
+    warnings.warn(
+        "get_all_keywords() is deprecated, use get_all_keyword_names() instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return get_all_keyword_names()
+
+
+def get_all_keyword_names() -> List[str]:
     """Get a list of all available keyword names."""
     keywords: Set[str] = set()
     for section_dict in ALL_KEYWORDS.values():
         keywords.update(section_dict.keys())
     return sorted(list(keywords))
-
-
-def get_all_keyword_names() -> List[str]:
-    """Get all keyword names (alias for get_all_keywords)."""
-    return get_all_keywords()
 
 
 def get_keywords_by_section(section: str) -> List[KeywordInfo]:
@@ -698,10 +710,20 @@ def is_section_block(name: str) -> bool:
 
 
 def get_keyword_sections() -> List[str]:
-    """Get a list of all available keyword sections."""
-    return sorted(list(ALL_KEYWORDS.keys()))
+    """Get a list of all available keyword sections.
+
+    Deprecated: use :func:`get_all_sections` instead.
+    """
+    import warnings
+
+    warnings.warn(
+        "get_keyword_sections() is deprecated, use get_all_sections() instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return get_all_sections()
 
 
 def get_all_sections() -> List[str]:
     """Get all available sections."""
-    return get_keyword_sections()
+    return sorted(list(ALL_KEYWORDS.keys()))

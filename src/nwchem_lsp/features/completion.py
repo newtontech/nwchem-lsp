@@ -31,6 +31,32 @@ from ..parser.nwchem_parser import NwchemParser
 logger = logging.getLogger(__name__)
 
 
+def _matches_prefix(item: str, prefix: str) -> bool:
+    """Check whether *item* starts with *prefix* (case-insensitive).
+
+    Returns ``True`` when *prefix* is empty so that callers can use
+    ``if not _matches_prefix(...): continue`` without an extra guard.
+    """
+    if not prefix:
+        return True
+    return item.lower().startswith(prefix.lower())
+
+
+def _make_completion_item(
+    label: str,
+    kind: CompletionItemKind,
+    detail: str = "",
+    documentation: str = "",
+) -> CompletionItem:
+    """Factory helper to reduce repeated CompletionItem construction."""
+    return CompletionItem(
+        label=label,
+        kind=kind,
+        detail=detail or None,
+        documentation=documentation or None,
+    )
+
+
 class NwchemCompletionProvider:
     """Provides completion items for NWChem input files."""
 
@@ -97,16 +123,17 @@ class NwchemCompletionProvider:
         items: List[CompletionItem] = []
 
         for name, info in TOP_LEVEL_KEYWORDS.items():
-            if prefix and not name.startswith(prefix.lower()):
+            if not _matches_prefix(name, prefix):
                 continue
 
-            item = CompletionItem(
-                label=name,
-                kind=CompletionItemKind.Keyword,
-                detail=info.description,
-                documentation=info.example or "",
+            items.append(
+                _make_completion_item(
+                    label=name,
+                    kind=CompletionItemKind.Keyword,
+                    detail=info.description,
+                    documentation=info.example or "",
+                )
             )
-            items.append(item)
 
         return items
 
@@ -125,23 +152,18 @@ class NwchemCompletionProvider:
 
         for kw in keywords:
             name = kw.name
-            if prefix and not name.startswith(prefix.lower()):
+            if not _matches_prefix(name, prefix):
                 continue
 
             info = get_keyword_info(name, section)
-            if info:
-                item = CompletionItem(
+            items.append(
+                _make_completion_item(
                     label=name,
                     kind=CompletionItemKind.Property,
-                    detail=info.description,
-                    documentation=info.example or "",
+                    detail=info.description if info else "",
+                    documentation=info.example or "" if info else "",
                 )
-            else:
-                item = CompletionItem(
-                    label=name,
-                    kind=CompletionItemKind.Property,
-                )
-            items.append(item)
+            )
 
         return items
 
@@ -157,15 +179,16 @@ class NwchemCompletionProvider:
         items: List[CompletionItem] = []
 
         for functional in DFT_FUNCTIONALS:
-            if prefix and not functional.lower().startswith(prefix.lower()):
+            if not _matches_prefix(functional, prefix):
                 continue
 
-            item = CompletionItem(
-                label=functional,
-                kind=CompletionItemKind.Value,
-                detail=f"DFT Functional: {functional}",
+            items.append(
+                _make_completion_item(
+                    label=functional,
+                    kind=CompletionItemKind.Value,
+                    detail=f"DFT Functional: {functional}",
+                )
             )
-            items.append(item)
 
         return items
 
@@ -181,15 +204,16 @@ class NwchemCompletionProvider:
         items: List[CompletionItem] = []
 
         for basis in BASIS_SETS:
-            if prefix and not basis.lower().startswith(prefix.lower()):
+            if not _matches_prefix(basis, prefix):
                 continue
 
-            item = CompletionItem(
-                label=basis,
-                kind=CompletionItemKind.Value,
-                detail=f"Basis Set: {basis}",
+            items.append(
+                _make_completion_item(
+                    label=basis,
+                    kind=CompletionItemKind.Value,
+                    detail=f"Basis Set: {basis}",
+                )
             )
-            items.append(item)
 
         return items
 
@@ -205,18 +229,43 @@ class NwchemCompletionProvider:
         items: List[CompletionItem] = []
 
         for operation in TASK_OPERATIONS:
-            if prefix and not operation.lower().startswith(prefix.lower()):
+            if not _matches_prefix(operation, prefix):
                 continue
 
-            item = CompletionItem(
-                label=operation,
-                kind=CompletionItemKind.EnumMember,
-                detail=f"Task: {operation}",
+            items.append(
+                _make_completion_item(
+                    label=operation,
+                    kind=CompletionItemKind.EnumMember,
+                    detail=f"Task: {operation}",
+                )
             )
-            items.append(item)
 
         return items
 
+    def _get_element_completions(self, prefix: str = "") -> List[CompletionItem]:
+        """Get chemical element completions.
+
+        Args:
+            prefix: Current word prefix
+
+        Returns:
+            List of completion items
+        """
+        items: List[CompletionItem] = []
+
+        for element in ELEMENTS:
+            if not _matches_prefix(element, prefix):
+                continue
+
+            items.append(
+                _make_completion_item(
+                    label=element,
+                    kind=CompletionItemKind.Constant,
+                    detail=f"Element: {element}",
+                )
+            )
+
+        return items
 
 # Alias for backwards compatibility
 CompletionProvider = NwchemCompletionProvider
