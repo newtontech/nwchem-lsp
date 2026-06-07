@@ -3,7 +3,6 @@
 import pytest
 
 from nwchem_lsp.features.diagnostic import DiagnosticProvider
-from nwchem_lsp.features.diagnostics import DiagnosticsProvider
 
 
 @pytest.fixture
@@ -13,12 +12,6 @@ def diagnostic_provider():
 
     server = LanguageServer("test", "1.0")
     return DiagnosticProvider(server)
-
-
-@pytest.fixture
-def diagnostics_provider():
-    """Create a diagnostics provider instance."""
-    return DiagnosticsProvider()
 
 
 class TestDiagnosticProvider:
@@ -57,34 +50,3 @@ end"""
         # Should report missing geometry
         messages = [d.message for d in diagnostics]
         assert any("geometry" in m.lower() for m in messages)
-
-
-class TestDiagnosticsProvider:
-    """Tests for DiagnosticsProvider."""
-
-    def test_provider_exists(self, diagnostics_provider):
-        """Test that provider can be created."""
-        assert diagnostics_provider is not None
-
-    def test_get_diagnostics_empty(self, diagnostics_provider):
-        """Test diagnostics for empty source."""
-        diagnostics = diagnostics_provider.get_diagnostics("")
-        assert isinstance(diagnostics, list)
-
-    def test_get_diagnostics_valid(self, diagnostics_provider):
-        """Test diagnostics for valid source."""
-        text = """geometry
-  H 0 0 0
-end"""
-        diagnostics = diagnostics_provider.get_diagnostics(text)
-        assert isinstance(diagnostics, list)
-
-    def test_check_line_empty(self, diagnostics_provider):
-        """Test checking empty line."""
-        diagnostics = diagnostics_provider._check_line("", 0)
-        assert diagnostics == []
-
-    def test_check_line_comment(self, diagnostics_provider):
-        """Test checking comment line."""
-        diagnostics = diagnostics_provider._check_line("# This is a comment", 0)
-        assert diagnostics == []

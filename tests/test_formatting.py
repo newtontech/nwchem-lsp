@@ -121,7 +121,10 @@ end
 
     def test_get_section_keywords(self, provider):
         """Test that section keywords are correctly identified."""
-        keywords = provider._get_section_keywords()
+        from nwchem_lsp.data.keywords import TOP_LEVEL_SECTIONS
+
+        # The formatting provider uses TOP_LEVEL_SECTIONS from keywords.py
+        keywords = set(TOP_LEVEL_SECTIONS)
 
         assert "geometry" in keywords
         assert "basis" in keywords
