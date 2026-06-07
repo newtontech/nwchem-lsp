@@ -4,6 +4,7 @@ This module provides keyword completions based on the current context
 in an NWChem input file.
 """
 
+import logging
 from typing import Any, List, Optional
 
 from lsprotocol.types import (
@@ -26,6 +27,8 @@ from ..data.keywords import (
     get_keywords_by_section,
 )
 from ..parser.nwchem_parser import NwchemParser
+
+logger = logging.getLogger(__name__)
 
 
 class NwchemCompletionProvider:
@@ -54,8 +57,12 @@ class NwchemCompletionProvider:
         column = position.character
 
         # Parse the source to get context
-        parser = NwchemParser(source)
-        context = parser.get_completion_context(line_number, column)
+        try:
+            parser = NwchemParser(source)
+            context = parser.get_completion_context(line_number, column)
+        except Exception:
+            logger.exception("Error parsing source for completions")
+            return []
 
         completion_type = context.get("type", "top_level")
         current_word = context.get("word", "")

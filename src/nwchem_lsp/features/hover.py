@@ -5,6 +5,7 @@ This module provides hover documentation for NWChem keywords.
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Optional
 
 from lsprotocol.types import Hover, HoverParams, MarkupContent, MarkupKind, Position
@@ -24,6 +25,8 @@ from ..data.keywords import (
 )
 from ..exceptions import ParseError
 from ..parser.nwchem_parser import NwchemParser
+
+logger = logging.getLogger(__name__)
 
 
 class NwchemHoverProvider:
@@ -55,8 +58,11 @@ class NwchemHoverProvider:
         try:
             parser = NwchemParser(source)
             context = parser.get_context(line_number, column)
-        except (ParseError, Exception):
-            # Return None on parse errors to prevent server crashes
+        except ParseError as exc:
+            logger.warning("Parse error in hover provider: %s", exc)
+            return None
+        except Exception:
+            logger.exception("Unexpected error in hover provider")
             return None
 
         word = context.word_at_cursor
