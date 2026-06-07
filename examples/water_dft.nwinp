@@ -1,0 +1,20 @@
+start water_dft
+
+title "Water DFT optimization - .nwinp example"
+
+geometry units angstroms
+  O  0.000  0.000  0.000
+  H  0.000  0.790  0.580
+  H  0.000 -0.790  0.580
+end
+
+basis spherical
+  * library 6-31G*
+end
+
+dft
+  xc b3lyp
+  grid fine
+end
+
+task dft optimize

@@ -5,10 +5,10 @@ import pytest
 from nwchem_lsp.data.keywords import (
     ELEMENTS,
     KEYWORDS,
-    KeywordInfo,
     TASK_OPERATIONS,
     TASK_THEORIES,
     TOP_LEVEL_SECTIONS,
+    KeywordInfo,
     get_all_keyword_names,
     get_keyword_info,
     get_keywords_by_section,

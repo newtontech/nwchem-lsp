@@ -4,7 +4,7 @@ This module provides keyword completions based on the current context
 in an NWChem input file.
 """
 
-from typing import List, Optional, Any
+from typing import Any, List, Optional
 
 from lsprotocol.types import (
     CompletionItem,
@@ -14,15 +14,15 @@ from lsprotocol.types import (
 from pygls.server import LanguageServer
 
 from ..data.keywords import (
+    BASIS_KEYWORDS,
     BASIS_SETS,
     DFT_FUNCTIONALS,
+    DFT_KEYWORDS,
     ELEMENTS,
+    GEOMETRY_KEYWORDS,
+    SCF_KEYWORDS,
     TASK_OPERATIONS,
     TOP_LEVEL_KEYWORDS,
-    DFT_KEYWORDS,
-    SCF_KEYWORDS,
-    GEOMETRY_KEYWORDS,
-    BASIS_KEYWORDS,
     get_keyword_info,
     get_keywords_by_section,
 )
@@ -34,7 +34,7 @@ class NwchemCompletionProvider:
 
     def __init__(self, server: LanguageServer):
         """Initialize the completion provider.
-        
+
         Args:
             server: The language server instance
         """
@@ -42,11 +42,11 @@ class NwchemCompletionProvider:
 
     def get_completions(self, text: str, position: Position) -> List[CompletionItem]:
         """Get completion items for the given position.
-        
+
         Args:
             text: Document text
             position: Position in the document
-            
+
         Returns:
             List of completion items
         """
@@ -81,10 +81,10 @@ class NwchemCompletionProvider:
 
     def _get_top_level_completions(self, prefix: str = "") -> List[CompletionItem]:
         """Get top-level keyword completions.
-        
+
         Args:
             prefix: Current word prefix to filter by
-            
+
         Returns:
             List of completion items
         """
@@ -104,15 +104,13 @@ class NwchemCompletionProvider:
 
         return items
 
-    def _get_section_completions(
-        self, section: str, prefix: str = ""
-    ) -> List[CompletionItem]:
+    def _get_section_completions(self, section: str, prefix: str = "") -> List[CompletionItem]:
         """Get completions for a specific section.
-        
+
         Args:
             section: Section name (e.g., 'dft', 'scf')
             prefix: Current word prefix
-            
+
         Returns:
             List of completion items
         """
@@ -143,10 +141,10 @@ class NwchemCompletionProvider:
 
     def _get_dft_functional_completions(self, prefix: str = "") -> List[CompletionItem]:
         """Get DFT functional completions.
-        
+
         Args:
             prefix: Current word prefix
-            
+
         Returns:
             List of completion items
         """
@@ -167,10 +165,10 @@ class NwchemCompletionProvider:
 
     def _get_basis_set_completions(self, prefix: str = "") -> List[CompletionItem]:
         """Get basis set completions.
-        
+
         Args:
             prefix: Current word prefix
-            
+
         Returns:
             List of completion items
         """
@@ -191,10 +189,10 @@ class NwchemCompletionProvider:
 
     def _get_task_operation_completions(self, prefix: str = "") -> List[CompletionItem]:
         """Get task operation completions.
-        
+
         Args:
             prefix: Current word prefix
-            
+
         Returns:
             List of completion items
         """
@@ -215,10 +213,10 @@ class NwchemCompletionProvider:
 
     def _get_element_completions(self, prefix: str = "") -> List[CompletionItem]:
         """Get chemical element completions.
-        
+
         Args:
             prefix: Current word prefix
-            
+
         Returns:
             List of completion items
         """
@@ -244,10 +242,10 @@ CompletionProvider = NwchemCompletionProvider
 
 def get_completion_provider(server: LanguageServer) -> NwchemCompletionProvider:
     """Create a completion provider instance.
-    
+
     Args:
         server: The language server instance
-        
+
     Returns:
         Completion provider instance
     """

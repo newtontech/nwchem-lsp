@@ -8,6 +8,7 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
 
 ## Features
 
+### Core LSP Features
 - **Syntax Validation**: Real-time diagnostics for NWChem input files
 - **Auto-completion**: Context-aware keyword completion
   - Top-level keywords (geometry, basis, scf, dft, etc.)
@@ -15,11 +16,32 @@ Language Server Protocol implementation for NWChem quantum chemistry software.
   - Basis sets and DFT functionals
   - Task operations and theories
 - **Hover Documentation**: Inline help for all keywords
-- **Error Detection**: 
-  - Unclosed section blocks
-  - Unknown basis sets and functionals
-  - Invalid task operations
-  - Missing required blocks
+- **Document Symbols**: Outline view and navigation
+- **Code Formatting**: Automatic code formatting
+- **Go to Definition**: Navigate from 'end' to section start
+
+### v0.5.0 Features
+- **Folding Ranges**: Code folding for sections
+- **Find References**: Navigate to section occurrences
+- **Rename Refactoring**: Rename sections safely
+
+### v0.4.0 Features
+- **Workspace Symbols**: Global symbol search across all open documents
+- **Configuration Options**: Customizable LSP settings
+- **Semantic Highlighting**: Token-based syntax coloring
+- **Inlay Hints**: Inline information display (units, charge states, etc.)
+
+### Code Actions (Quick Fixes)
+- Add missing 'end' keywords for unclosed sections
+- Remove unexpected 'end' keywords
+- Correct common typos (gemoetry → geometry, etc.)
+- Add missing 'start' directive
+
+### Error Detection
+- Unclosed section blocks
+- Unknown basis sets and functionals
+- Invalid task operations
+- Missing required blocks
 
 ## Installation
 
@@ -99,6 +121,32 @@ task dft optimize
 
 See the `examples/` directory for more sample input files.
 
+## Changelog
+
+### v0.5.0 (2026-03-05)
+- ✨ Added Folding Ranges support
+- ✨ Added Find References support
+- ✨ Added Rename Refactoring support
+- 🧪 Increased test coverage to 186 tests (100%)
+
+
+### v0.4.0 (2026-03-04)
+- ✨ Added Workspace Symbols support
+- ✨ Added Configuration Options (LSP settings)
+- ✨ Added Semantic Highlighting
+- ✨ Added Inlay Hints
+- 🧪 Increased test coverage to 160 tests (100%)
+
+### v0.3.0 (2026-03-04)
+- ✨ Added Code Actions (Quick Fixes) support
+- ✨ Added Go to Definition support
+- 🧪 Increased test coverage to 118 tests (100%)
+
+### v0.2.0 (2026-03-03)
+- ✨ Added Document Symbols support
+- ✨ Added code formatting
+- 🧪 Increased test coverage to 82 tests (100%)
+
 ## Development
 
 ### Setup
@@ -152,7 +200,15 @@ src/nwchem_lsp/
 ├── features/
 │   ├── completion.py   # Auto-completion provider
 │   ├── hover.py        # Hover documentation provider
-│   └── diagnostic.py   # Diagnostics provider
+│   ├── diagnostic.py   # Diagnostics provider
+│   ├── symbols.py      # Document symbols provider
+│   ├── formatting.py   # Code formatting provider
+│   ├── code_actions.py # Code actions/quick fixes
+│   ├── definition.py   # Go to definition provider
+│   ├── workspace_symbols.py  # Workspace symbols (v0.4.0)
+│   ├── semantic_tokens.py    # Semantic highlighting (v0.4.0)
+│   ├── inlay_hints.py        # Inlay hints (v0.4.0)
+│   └── config.py             # Configuration management (v0.4.0)
 └── data/
     └── keywords.py     # Keyword database
 ```
