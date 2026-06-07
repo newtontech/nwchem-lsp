@@ -3,6 +3,8 @@
 This module provides hover documentation for NWChem keywords.
 """
 
+from __future__ import annotations
+
 from typing import Any, Optional
 
 from lsprotocol.types import Hover, HoverParams, MarkupContent, MarkupKind, Position
@@ -20,6 +22,7 @@ from ..data.keywords import (
     get_section_keywords,
     is_valid_keyword,
 )
+from ..exceptions import ParseError
 from ..parser.nwchem_parser import NwchemParser
 
 
@@ -49,8 +52,12 @@ class NwchemHoverProvider:
         column = position.character
 
         # Parse to get context
-        parser = NwchemParser(source)
-        context = parser.get_context(line_number, column)
+        try:
+            parser = NwchemParser(source)
+            context = parser.get_context(line_number, column)
+        except (ParseError, Exception):
+            # Return None on parse errors to prevent server crashes
+            return None
 
         word = context.word_at_cursor
         if not word:

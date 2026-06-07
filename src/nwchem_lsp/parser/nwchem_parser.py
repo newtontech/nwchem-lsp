@@ -9,9 +9,11 @@ parser exists at `src/parsers/nw.ts` for reference only -- it is deprecated
 and not maintained. See the README "Parser Status" section for details.
 """
 
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
-from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 
 @dataclass
@@ -41,10 +43,6 @@ class NWchemSection:
 
 class NwchemParser:
     """Parser for NWChem input files."""
-
-    # These will be dynamically added by _add_compat_methods
-    parse: ClassVar[Callable[["NwchemParser"], list[Any]]]
-    validate: ClassVar[Callable[["NwchemParser"], list[dict[str, Any]]]]
 
     SECTION_KEYWORDS = {
         "geometry",
@@ -278,27 +276,7 @@ class NwchemParser:
 
         return len(errors) == 0, errors
 
-
-def parse_nwchem_source(source: str) -> NwchemParser:
-    """Parse NWChem input source."""
-    return NwchemParser(source)
-
-
-def get_line_keywords(line: str) -> List[str]:
-    """Extract keywords from a line."""
-    stripped = line.strip().lower()
-    if not stripped or stripped.startswith("#"):
-        return []
-
-    parts = stripped.split()
-    return parts
-
-
-# Add parse() and validate() methods for compatibility
-def _add_compat_methods() -> None:
-    """Add compatibility methods to NwchemParser."""
-
-    def parse(self: Any) -> list[Any]:
+    def parse(self) -> list[Any]:
         """Parse and return all sections as blocks."""
         blocks: list[Any] = []
         for section_name, sections in self.sections.items():
@@ -324,7 +302,7 @@ def _add_compat_methods() -> None:
                 blocks.append(task)
         return blocks
 
-    def validate(self: Any) -> list[dict[str, Any]]:
+    def validate(self) -> list[dict[str, Any]]:
         """Validate and return errors as list of dicts."""
         is_valid, errors = self.is_valid_syntax()
         result: list[dict[str, Any]] = []
@@ -332,8 +310,17 @@ def _add_compat_methods() -> None:
             result.append({"line": line, "column": 0, "message": message})
         return result
 
-    NwchemParser.parse = parse
-    NwchemParser.validate = validate
+
+def parse_nwchem_source(source: str) -> NwchemParser:
+    """Parse NWChem input source."""
+    return NwchemParser(source)
 
 
-_add_compat_methods()
+def get_line_keywords(line: str) -> List[str]:
+    """Extract keywords from a line."""
+    stripped = line.strip().lower()
+    if not stripped or stripped.startswith("#"):
+        return []
+
+    parts = stripped.split()
+    return parts
