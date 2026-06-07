@@ -12,7 +12,7 @@ and not maintained. See the README "Parser Status" section for details.
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -39,6 +39,53 @@ class NWchemSection:
     keywords: List[str]
     content: List[str]
     line_start: int = 0  # Compatibility alias for start_line, set dynamically
+
+
+@dataclass
+class AtomCoordinate:
+    """A single atom coordinate in a geometry block."""
+
+    element: str
+    x: float
+    y: float
+    z: float
+    tag: Optional[str] = None
+
+
+@dataclass
+class GeometryBlock:
+    """Parsed geometry block with units and atom coordinates."""
+
+    units: str = "angstroms"
+    coordinates: List[AtomCoordinate] = field(default_factory=list)
+
+
+@dataclass
+class BasisBlock:
+    """Parsed basis block with library info and elements."""
+
+    basis_set: str = ""
+    library: bool = False
+    elements: List[str] = field(default_factory=list)
+
+
+@dataclass
+class SCFBlock:
+    """Parsed SCF block with calculation parameters."""
+
+    maxiter: Optional[int] = None
+    thresh: Optional[float] = None
+    tol2e: Optional[float] = None
+    direct: Optional[bool] = None
+    vectors: Optional[str] = None
+
+
+@dataclass
+class TaskDirective:
+    """A parsed task directive with theory and operation."""
+
+    theory: str
+    operation: str = "energy"
 
 
 class NwchemParser:
@@ -309,6 +356,168 @@ class NwchemParser:
         for line, message in errors:
             result.append({"line": line, "column": 0, "message": message})
         return result
+
+    # --- Structured block parsers (parity with TypeScript nw.ts) ---
+
+    def parse_task_directives(self) -> List[TaskDirective]:
+        """Parse all task directives from the source.
+
+        Returns a list of TaskDirective objects. When the operation is
+        omitted, it defaults to 'energy', matching NWChem behaviour.
+        """
+        tasks: List[TaskDirective] = []
+        for line in self.lines:
+            stripped = line.strip().lower()
+            if not stripped or stripped.startswith("#"):
+                continue
+            if stripped.startswith("task"):
+                parts = stripped.split()
+                if len(parts) >= 2:
+                    tasks.append(
+                        TaskDirective(
+                            theory=parts[1],
+                            operation=parts[2] if len(parts) >= 3 else "energy",
+                        )
+                    )
+        return tasks
+
+    def parse_geometry_block(self) -> Optional[GeometryBlock]:
+        """Parse the first geometry block into a structured GeometryBlock.
+
+        Returns None when no geometry section is present.
+        """
+        sections = self.sections.get("geometry")
+        if not sections:
+            return None
+
+        section = sections[0]
+        atoms: List[AtomCoordinate] = []
+        units = "angstroms"
+
+        for line in section.content:
+            trimmed = line.strip()
+            if not trimmed or trimmed.startswith("#"):
+                continue
+
+            lower_line = trimmed.lower()
+
+            # Units specification
+            if "units" in lower_line:
+                match = re.search(r"units\s+(\w+)", lower_line)
+                if match:
+                    units = match.group(1)
+                continue
+
+            # Skip end keyword and section header
+            if lower_line == "end" or lower_line.startswith("end "):
+                continue
+            if lower_line == "geometry":
+                continue
+
+            # Parse atom coordinates: "C 0.0 0.0 0.0" or "C 0.0 0.0 0.0 tag"
+            parts = trimmed.split()
+            if len(parts) >= 4:
+                element = parts[0]
+                try:
+                    x = float(parts[1])
+                    y = float(parts[2])
+                    z = float(parts[3])
+                    atoms.append(
+                        AtomCoordinate(
+                            element=element,
+                            x=x,
+                            y=y,
+                            z=z,
+                            tag=parts[4] if len(parts) > 4 else None,
+                        )
+                    )
+                except ValueError:
+                    continue
+
+        return GeometryBlock(units=units, coordinates=atoms)
+
+    def parse_basis_blocks(self) -> List[BasisBlock]:
+        """Parse all basis blocks into structured BasisBlock objects.
+
+        Returns an empty list when no basis section is present.
+        """
+        sections = self.sections.get("basis")
+        if not sections:
+            return []
+
+        result: List[BasisBlock] = []
+        for section in sections:
+            elements: List[str] = []
+            basis_set = ""
+            library = False
+
+            for line in section.content:
+                trimmed = line.strip()
+                if not trimmed or trimmed.startswith("#"):
+                    continue
+
+                lower_line = trimmed.lower()
+                if lower_line == "end" or lower_line.startswith("end "):
+                    continue
+
+                # Check for library keyword
+                if "library" in lower_line:
+                    library = True
+                    match = re.search(r"library\s+(\S+)", lower_line)
+                    if match:
+                        basis_set = match.group(1)
+
+                # Parse element specifications (1-2 letter element symbols)
+                parts = trimmed.split()
+                if parts and re.match(r"^[A-Za-z]{1,2}$", parts[0]):
+                    elements.append(parts[0])
+
+            result.append(
+                BasisBlock(basis_set=basis_set, library=library, elements=elements)
+            )
+        return result
+
+    def parse_scf_block(self) -> Optional[SCFBlock]:
+        """Parse the first SCF block into a structured SCFBlock.
+
+        Returns None when no SCF section is present.
+        """
+        sections = self.sections.get("scf")
+        if not sections:
+            return None
+
+        section = sections[0]
+        scf = SCFBlock()
+
+        for line in section.content:
+            trimmed = line.strip().lower()
+            if not trimmed or trimmed.startswith("#") or trimmed == "end":
+                continue
+
+            if trimmed.startswith("maxiter"):
+                match = re.search(r"maxiter\s+(\d+)", trimmed)
+                if match:
+                    scf.maxiter = int(match.group(1))
+
+            if trimmed.startswith("thresh"):
+                match = re.search(r"thresh\s+([\d.eE+-]+)", trimmed)
+                if match:
+                    scf.thresh = float(match.group(1))
+
+            if trimmed.startswith("tol2e"):
+                match = re.search(r"tol2e\s+([\d.eE+-]+)", trimmed)
+                if match:
+                    scf.tol2e = float(match.group(1))
+
+            if trimmed.startswith("direct"):
+                scf.direct = True
+
+            if trimmed.startswith("vectors"):
+                match = re.search(r"vectors\s+(.+)", trimmed)
+                if match:
+                    scf.vectors = match.group(1).strip()
+
+        return scf
 
 
 def parse_nwchem_source(source: str) -> NwchemParser:
