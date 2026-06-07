@@ -189,6 +189,21 @@ pre-commit install
 pre-commit run --all-files
 ```
 
+## Parser Status
+
+This repository contains two NWChem input file parsers:
+
+| Parser | Location | Status |
+|--------|----------|--------|
+| **Python** (authoritative) | `src/nwchem_lsp/parser/nwchem_parser.py` | Active, tested, distributed |
+| **TypeScript** (orphaned) | `src/parsers/nw.ts` | Deprecated, reference only |
+
+The TypeScript parser was an early prototype but is no longer built, tested, or
+included in any distribution. The Python parser is the sole authoritative
+implementation. Both parsers share the same section keywords, top-level
+keywords, and validation logic, but may diverge on edge cases since the TS
+parser is not maintained. Do not use the TS parser in production.
+
 ## Architecture
 
 ```
