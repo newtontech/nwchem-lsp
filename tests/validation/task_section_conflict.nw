@@ -1,0 +1,21 @@
+# Test fixture: Task theory conflicts with section
+# Task uses DFT but SCF section is present
+
+title "Task vs section conflict test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+  rhf
+end
+
+task dft energy

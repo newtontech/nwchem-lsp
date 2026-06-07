@@ -57,6 +57,7 @@ from .features.references import ReferencesProvider, get_references_provider
 from .features.rename import RenameProvider, get_rename_provider
 from .features.semantic_tokens import SemanticTokensProvider, get_semantic_tokens_provider
 from .features.symbols import NwchemSymbolProvider
+from .features.validation import NWChemValidationProvider
 from .features.workspace_symbols import WorkspaceSymbolProvider, get_workspace_symbol_provider
 
 
@@ -82,6 +83,7 @@ class NWChemLanguageServer(LanguageServer):
         self.folding_range_provider = get_folding_range_provider(self)
         self.references_provider = get_references_provider(self)
         self.rename_provider = get_rename_provider(self)
+        self.validation_provider = NWChemValidationProvider()
 
         # Document cache
         self.documents: dict[str, str] = {}
@@ -146,8 +148,13 @@ class NWChemLanguageServer(LanguageServer):
             text = params.text_document.text
             self.documents[uri] = text
 
-            # Publish diagnostics
+            # Publish diagnostics (including validation)
             diagnostics = self.diagnostic_provider.get_diagnostics(text)
+            parser = NWChemParser(text)
+            validation_diagnostics = self.validation_provider.validate_to_diagnostics(
+                text, parser.sections
+            )
+            diagnostics.extend(validation_diagnostics)
             self.publish_diagnostics(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_DID_CHANGE)
@@ -160,8 +167,13 @@ class NWChemLanguageServer(LanguageServer):
                 text = params.content_changes[-1].text
                 self.documents[uri] = text
 
-                # Publish diagnostics
+                # Publish diagnostics (including validation)
                 diagnostics = self.diagnostic_provider.get_diagnostics(text)
+                parser = NWChemParser(text)
+                validation_diagnostics = self.validation_provider.validate_to_diagnostics(
+                    text, parser.sections
+                )
+                diagnostics.extend(validation_diagnostics)
                 self.publish_diagnostics(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_DID_SAVE)
@@ -171,6 +183,11 @@ class NWChemLanguageServer(LanguageServer):
             if uri in self.documents:
                 text = self.documents[uri]
                 diagnostics = self.diagnostic_provider.get_diagnostics(text)
+                parser = NWChemParser(text)
+                validation_diagnostics = self.validation_provider.validate_to_diagnostics(
+                    text, parser.sections
+                )
+                diagnostics.extend(validation_diagnostics)
                 self.publish_diagnostics(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_CODE_ACTION)
