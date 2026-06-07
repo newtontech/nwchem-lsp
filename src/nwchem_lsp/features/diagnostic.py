@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 from lsprotocol.types import (
     Diagnostic,
     DiagnosticSeverity,
@@ -14,6 +16,8 @@ from ..data.keywords import ALL_KEYWORDS, get_keyword
 from ..exceptions import ParseError, ValidationError
 from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
+
+logger = logging.getLogger(__name__)
 
 
 class DiagnosticProvider:
@@ -110,6 +114,7 @@ class DiagnosticProvider:
             parser = NWChemParser(text)
             blocks = parser.parse()
         except (ParseError, ValidationError) as exc:
+            logger.warning("Parse/validation error in diagnostics: %s", exc)
             diagnostics.append(
                 Diagnostic(
                     range=Range(
@@ -122,6 +127,7 @@ class DiagnosticProvider:
             )
             return diagnostics
         except Exception as exc:
+            logger.exception("Unexpected error during parsing in diagnostics")
             diagnostics.append(
                 Diagnostic(
                     range=Range(
@@ -141,7 +147,14 @@ class DiagnosticProvider:
 
         # Check each block
         for block in blocks:
-            self._check_block(block, lines, diagnostics)
+            try:
+                self._check_block(block, lines, diagnostics)
+            except Exception:
+                logger.exception(
+                    "Error checking block '%s' starting at line %d",
+                    getattr(block, "name", "<unknown>"),
+                    getattr(block, "start_line", -1),
+                )
 
         return diagnostics
 
