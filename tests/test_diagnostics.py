@@ -1,6 +1,6 @@
 """Tests for NWChem diagnostics."""
 
-from nwchem_lsp.features.diagnostic import DiagnosticProvider
+from nwchem_lsp.features.diagnostic import NwchemDiagnosticProvider
 
 
 def test_task_directive_satisfies_required_task_check() -> None:
@@ -15,7 +15,7 @@ end
 
 task scf energy
 """
-    provider = DiagnosticProvider(None)
+    provider = NwchemDiagnosticProvider(None)
 
     diagnostics = provider.get_diagnostics(source)
 
@@ -35,7 +35,7 @@ end
 
 task scf not_an_operation
 """
-    provider = DiagnosticProvider(None)
+    provider = NwchemDiagnosticProvider(None)
 
     diagnostics = provider.get_diagnostics(source)
 
