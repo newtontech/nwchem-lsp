@@ -25,6 +25,7 @@ from ..data.keywords import (
 )
 from ..exceptions import ParseError
 from ..parser.nwchem_parser import NwchemParser
+from ..utils.text_utils import get_word_at_position
 
 logger = logging.getLogger(__name__)
 
@@ -148,20 +149,7 @@ class NwchemHoverProvider:
         if position.line >= len(document.lines):
             return ""
         line = document.lines[position.line]
-        if not line:
-            return ""
-
-        # Find word boundaries
-        start = position.character
-        end = position.character
-
-        while start > 0 and line[start - 1].isalnum():
-            start -= 1
-
-        while end < len(line) and line[end].isalnum():
-            end += 1
-
-        return line[start:end]
+        return get_word_at_position(line, position.character)
 
 
 # Alias for backwards compatibility
