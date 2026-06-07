@@ -7,6 +7,7 @@ from ..data.keywords import (
     get_keyword_info,
     is_valid_keyword,
 )
+from ..exceptions import ParseError, ValidationError
 from ..parser.nwchem_parser import NwchemParser as NWChemParser
 
 
@@ -22,8 +23,36 @@ class DiagnosticsProvider:
         diagnostics: list[Diagnostic] = []
 
         # Get structural diagnostics
-        parser = NWChemParser(source)
-        structural = parser.validate()
+        try:
+            parser = NWChemParser(source)
+            structural = parser.validate()
+        except (ParseError, ValidationError) as exc:
+            diagnostics.append(
+                Diagnostic(
+                    range=Range(
+                        start=Position(line=0, character=0),
+                        end=Position(line=0, character=1),
+                    ),
+                    message=str(exc),
+                    severity=DiagnosticSeverity.Error,
+                    source="nwchem-lsp",
+                )
+            )
+            return diagnostics
+        except Exception as exc:
+            diagnostics.append(
+                Diagnostic(
+                    range=Range(
+                        start=Position(line=0, character=0),
+                        end=Position(line=0, character=1),
+                    ),
+                    message=f"Parser error: {exc}",
+                    severity=DiagnosticSeverity.Error,
+                    source="nwchem-lsp",
+                )
+            )
+            return diagnostics
+
         for error in structural:
             diagnostics.append(
                 Diagnostic(
