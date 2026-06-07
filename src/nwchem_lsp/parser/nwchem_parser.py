@@ -3,6 +3,10 @@
 This module provides parsing capabilities for NWChem input files (.nw),
 including section identification, line context extraction, and completion
 context determination.
+
+This is the authoritative parser implementation. An orphaned TypeScript
+parser exists at `src/parsers/nw.ts` for reference only -- it is deprecated
+and not maintained. See the README "Parser Status" section for details.
 """
 
 import re

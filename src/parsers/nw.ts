@@ -1,8 +1,14 @@
 /**
  * NWChem Input File Parser
- * 
+ *
  * Parses NWChem quantum chemistry input files (.nw)
  * including geometry, basis, scf blocks, and task directives.
+ *
+ * @deprecated This TypeScript parser is orphaned and no longer maintained.
+ * The authoritative parser is the Python implementation at
+ * `src/nwchem_lsp/parser/nwchem_parser.py`. This file is kept for reference
+ * only and is not included in any build, test, or distribution pipeline.
+ * See README.md "Parser Status" for details.
  */
 
 export interface ParseContext {
