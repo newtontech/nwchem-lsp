@@ -13,6 +13,8 @@ from lsprotocol.types import (
 )
 from pygls.server import LanguageServer
 
+from ..data.keywords import TOP_LEVEL_SECTIONS
+
 
 class NwchemFormattingProvider:
     """Provides formatting for NWChem input files."""
@@ -41,7 +43,7 @@ class NwchemFormattingProvider:
 
         indent_size = params.options.tab_size if params.options else 2
         indent_str = (
-            " " * indent_size if not (params.options and params.options.insert_spaces) else "\t"
+            " " * indent_size if (params.options and params.options.insert_spaces) else "\t"
         )
 
         current_indent = 0
@@ -68,7 +70,7 @@ class NwchemFormattingProvider:
 
             # Check for section start
             parts = stripped.split()
-            if parts and parts[0].lower() in self._get_section_keywords():
+            if parts and parts[0].lower() in TOP_LEVEL_SECTIONS:
                 formatted_lines.append(stripped)
                 current_indent += 1
                 in_section = True
@@ -97,38 +99,6 @@ class NwchemFormattingProvider:
             )
 
         return edits
-
-    def _get_section_keywords(self) -> set:
-        """Get set of section keywords.
-
-        Returns:
-            Set of section keyword names
-        """
-        return {
-            "geometry",
-            "basis",
-            "scf",
-            "dft",
-            "mp2",
-            "ccsd",
-            "ccsd(t)",
-            "ecp",
-            "so",
-            "tce",
-            "mcscf",
-            "selci",
-            "hessian",
-            "vib",
-            "property",
-            "rt_tddft",
-            "pspw",
-            "band",
-            "paw",
-            "ofpw",
-            "bq",
-            "charge",
-            "cons",
-        }
 
 
 # Alias for backwards compatibility
