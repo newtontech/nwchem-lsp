@@ -2,7 +2,7 @@
 
 import pytest
 
-from nwchem_lsp.features.diagnostic import DiagnosticProvider
+from nwchem_lsp.features.diagnostic import NwchemDiagnosticProvider
 
 
 @pytest.fixture
@@ -11,11 +11,11 @@ def diagnostic_provider():
     from pygls.server import LanguageServer
 
     server = LanguageServer("test", "1.0")
-    return DiagnosticProvider(server)
+    return NwchemDiagnosticProvider(server)
 
 
-class TestDiagnosticProvider:
-    """Tests for DiagnosticProvider."""
+class TestNwchemDiagnosticProvider:
+    """Tests for NwchemDiagnosticProvider."""
 
     def test_provider_exists(self, diagnostic_provider):
         """Test that provider can be created."""

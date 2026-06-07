@@ -18,7 +18,6 @@ from ..data.keywords import (
     BASIS_SETS,
     DFT_FUNCTIONALS,
     DFT_KEYWORDS,
-    ELEMENTS,
     GEOMETRY_KEYWORDS,
     SCF_KEYWORDS,
     TASK_OPERATIONS,
@@ -206,30 +205,6 @@ class NwchemCompletionProvider:
                 label=operation,
                 kind=CompletionItemKind.EnumMember,
                 detail=f"Task: {operation}",
-            )
-            items.append(item)
-
-        return items
-
-    def _get_element_completions(self, prefix: str = "") -> List[CompletionItem]:
-        """Get chemical element completions.
-
-        Args:
-            prefix: Current word prefix
-
-        Returns:
-            List of completion items
-        """
-        items: List[CompletionItem] = []
-
-        for element in ELEMENTS:
-            if prefix and not element.lower().startswith(prefix.lower()):
-                continue
-
-            item = CompletionItem(
-                label=element,
-                kind=CompletionItemKind.Constant,
-                detail=f"Element: {element}",
             )
             items.append(item)
 

@@ -48,7 +48,7 @@ from .features.code_actions import CodeActionsProvider
 from .features.completion import NwchemCompletionProvider
 from .features.config import ConfigProvider, get_config_provider
 from .features.definition import DefinitionProvider, get_definition_provider
-from .features.diagnostic import DiagnosticProvider
+from .features.diagnostic import NwchemDiagnosticProvider
 from .features.folding_range import FoldingRangeProvider, get_folding_range_provider
 from .features.formatting import NwchemFormattingProvider
 from .features.hover import NwchemHoverProvider
@@ -70,7 +70,7 @@ class NWChemLanguageServer(LanguageServer):
         # Initialize feature providers
         self.completion_provider = NwchemCompletionProvider(self)
         self.hover_provider = NwchemHoverProvider(self)
-        self.diagnostic_provider = DiagnosticProvider(self)
+        self.diagnostic_provider = NwchemDiagnosticProvider(self)
         self.symbol_provider = NwchemSymbolProvider(self)
         self.formatting_provider = NwchemFormattingProvider(self)
         self.code_actions_provider = CodeActionsProvider()

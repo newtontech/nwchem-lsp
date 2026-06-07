@@ -16,7 +16,7 @@ from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
 
 
-class DiagnosticProvider:
+class NwchemDiagnosticProvider:
     """Provider for NWChem diagnostics."""
 
     # Valid basis sets
@@ -395,4 +395,4 @@ class DiagnosticProvider:
                         )
 
 
-__all__ = ["DiagnosticProvider"]
+__all__ = ["NwchemDiagnosticProvider"]
