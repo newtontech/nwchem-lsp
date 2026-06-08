@@ -1,0 +1,18 @@
+# Test fixture: Unknown task operation
+
+title "Unknown operation test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+end
+
+task scf bogus_operation

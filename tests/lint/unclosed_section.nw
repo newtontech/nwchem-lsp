@@ -1,0 +1,13 @@
+# Test fixture: Unclosed section
+
+title "Unclosed section test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+
+basis spherical
+  * library 6-31g
+end
+
+task scf energy

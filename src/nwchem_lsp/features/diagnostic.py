@@ -18,6 +18,8 @@ from ..exceptions import ParseError, ValidationError
 from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
 
+from .lint import NwchemLintProvider
+
 # Mapping from DiagnosticSeverity enum to human-readable strings.
 _SEVERITY_NAMES: dict[int, str] = {
     DiagnosticSeverity.Error: "error",
@@ -107,6 +109,8 @@ class DiagnosticProvider:
         self.server = server
         # Per-URI cache of the most recent diagnostics, used for snapshots.
         self._diagnostics_cache: dict[str, list[Diagnostic]] = {}
+        # Schema-aware lint provider
+        self.lint_provider = NwchemLintProvider()
 
     def get_diagnostics(self, text: str) -> list[Diagnostic]:
         """Get diagnostics for the document.
@@ -151,6 +155,13 @@ class DiagnosticProvider:
 
         # Check for required blocks
         self._check_required_blocks(blocks, diagnostics)
+
+        # Schema-aware lint checks
+        try:
+            lint_diagnostics = self.lint_provider.lint(text)
+            diagnostics.extend(lint_diagnostics)
+        except Exception:
+            logger.exception("Error running lint checks")
 
         # Check each block
         for block in blocks:
