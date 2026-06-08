@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import logging
+from typing import Any
 
 from lsprotocol.types import (
     Diagnostic,
@@ -18,6 +20,14 @@ from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
 
 logger = logging.getLogger(__name__)
+
+# Mapping from DiagnosticSeverity enum to human-readable strings.
+_SEVERITY_NAMES: dict[int, str] = {
+    DiagnosticSeverity.Error: "error",
+    DiagnosticSeverity.Warning: "warning",
+    DiagnosticSeverity.Information: "information",
+    DiagnosticSeverity.Hint: "hint",
+}
 
 
 class NwchemDiagnosticProvider:
@@ -98,6 +108,8 @@ class NwchemDiagnosticProvider:
             server: The language server instance.
         """
         self.server = server
+        # Per-URI cache of the most recent diagnostics, used for snapshots.
+        self._diagnostics_cache: dict[str, list[Diagnostic]] = {}
 
     def get_diagnostics(self, text: str) -> list[Diagnostic]:
         """Get diagnostics for the document.
@@ -157,6 +169,102 @@ class NwchemDiagnosticProvider:
                 )
 
         return diagnostics
+
+    def update_cache(self, uri: str, diagnostics: list[Diagnostic]) -> None:
+        """Store diagnostics in the per-URI cache.
+
+        Called by the server after every publish_diagnostics so snapshots
+        always reflect the latest state.
+
+        Args:
+            uri: Document URI.
+            diagnostics: Diagnostics to cache.
+        """
+        self._diagnostics_cache[uri] = list(diagnostics)
+
+    # ------------------------------------------------------------------
+    # Snapshot API
+    # ------------------------------------------------------------------
+
+    def _diagnostic_to_dict(self, diag: Diagnostic) -> dict[str, Any]:
+        """Convert an LSP Diagnostic to a JSON-serializable dict.
+
+        The output is deterministic: fields are ordered and severity is
+        represented as both a numeric code and a human-readable string.
+
+        Args:
+            diag: LSP Diagnostic object.
+
+        Returns:
+            JSON-serializable dictionary.
+        """
+        severity_value = diag.severity if diag.severity is not None else DiagnosticSeverity.Error
+        return {
+            "range": {
+                "start": {
+                    "line": diag.range.start.line,
+                    "character": diag.range.start.character,
+                },
+                "end": {
+                    "line": diag.range.end.line,
+                    "character": diag.range.end.character,
+                },
+            },
+            "severity": severity_value,
+            "severity_label": _SEVERITY_NAMES.get(severity_value, "unknown"),
+            "source": diag.source or "nwchem-lsp",
+            "code": str(diag.code) if diag.code is not None else None,
+            "message": diag.message,
+        }
+
+    def get_diagnostics_snapshot(self, uri: str) -> list[dict[str, Any]]:
+        """Return a JSON-serializable snapshot of diagnostics for a single URI.
+
+        The snapshot reflects the most recently published diagnostics for the
+        document.  Returns an empty list when the URI has not been seen.
+
+        Args:
+            uri: Document URI.
+
+        Returns:
+            List of diagnostic dicts suitable for JSON serialization.
+        """
+        diagnostics = self._diagnostics_cache.get(uri, [])
+        return [self._diagnostic_to_dict(d) for d in diagnostics]
+
+    def get_all_snapshots(self) -> dict[str, list[dict[str, Any]]]:
+        """Return snapshots for every tracked URI.
+
+        Returns:
+            Mapping of URI to its list of diagnostic dicts.
+        """
+        return {
+            uri: [self._diagnostic_to_dict(d) for d in diags]
+            for uri, diags in self._diagnostics_cache.items()
+        }
+
+    def snapshot_to_json(self, uri: str | None = None) -> str:
+        """Render diagnostics as a JSON string.
+
+        When *uri* is provided, returns a JSON array of diagnostics for that
+        single document.  When *uri* is ``None``, returns a JSON object keyed
+        by URI.
+
+        Args:
+            uri: Optional document URI to scope the snapshot.
+
+        Returns:
+            Deterministic JSON string.
+        """
+        if uri is not None:
+            data: Any = self.get_diagnostics_snapshot(uri)
+        else:
+            data = self.get_all_snapshots()
+        return json.dumps(data, indent=2, sort_keys=True)
+
+    # ------------------------------------------------------------------
+    # Block-level checks
+    # ------------------------------------------------------------------
 
     def _check_required_blocks(
         self,
