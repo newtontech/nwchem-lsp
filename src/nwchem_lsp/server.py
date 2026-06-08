@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from lsprotocol.types import (
@@ -89,6 +90,16 @@ class NWChemLanguageServer(LanguageServer):
         # Register handlers
         self._register_handlers()
 
+    def _publish_and_cache(self, uri: str, diagnostics: list) -> None:
+        """Publish diagnostics to the client and update the cache.
+
+        Args:
+            uri: Document URI.
+            diagnostics: Computed diagnostics.
+        """
+        self.publish_diagnostics(uri, diagnostics)
+        self.diagnostic_provider.update_cache(uri, diagnostics)
+
     def _register_handlers(self) -> None:
         """Register LSP handlers."""
 
@@ -148,7 +159,7 @@ class NWChemLanguageServer(LanguageServer):
 
             # Publish diagnostics
             diagnostics = self.diagnostic_provider.get_diagnostics(text)
-            self.publish_diagnostics(uri, diagnostics)
+            self._publish_and_cache(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_DID_CHANGE)
         def did_change(params: DidChangeTextDocumentParams) -> None:
@@ -162,7 +173,7 @@ class NWChemLanguageServer(LanguageServer):
 
                 # Publish diagnostics
                 diagnostics = self.diagnostic_provider.get_diagnostics(text)
-                self.publish_diagnostics(uri, diagnostics)
+                self._publish_and_cache(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_DID_SAVE)
         def did_save(params: DidSaveTextDocumentParams) -> None:
@@ -171,7 +182,7 @@ class NWChemLanguageServer(LanguageServer):
             if uri in self.documents:
                 text = self.documents[uri]
                 diagnostics = self.diagnostic_provider.get_diagnostics(text)
-                self.publish_diagnostics(uri, diagnostics)
+                self._publish_and_cache(uri, diagnostics)
 
         @self.feature(TEXT_DOCUMENT_CODE_ACTION)
         def code_action(params: CodeActionParams) -> list:
@@ -255,6 +266,27 @@ class NWChemLanguageServer(LanguageServer):
             """Handle server initialization completion."""
             # Request configuration from client
             pass
+
+        # ------------------------------------------------------------------
+        # Custom LSP command: diagnostics snapshot
+        # ------------------------------------------------------------------
+
+        @self.command("nwchem.diagnosticsSnapshot")
+        def diagnostics_snapshot(arguments: list[Any]) -> str:
+            """Return a JSON diagnostics snapshot.
+
+            Accepts an optional URI as the first argument.  When provided,
+            returns diagnostics for that single document.  Otherwise returns
+            diagnostics for every tracked URI.
+
+            Args:
+                arguments: Optional list with a single URI string.
+
+            Returns:
+                JSON string of diagnostics.
+            """
+            uri: str | None = arguments[0] if arguments else None
+            return self.diagnostic_provider.snapshot_to_json(uri)
 
 
 def create_server() -> NWChemLanguageServer:
