@@ -1,0 +1,22 @@
+# Test fixture: Valid NWChem input (no conflicts)
+# Should produce no validation warnings
+
+title "Valid input test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+  rhf
+  maxiter 100
+end
+
+task scf energy

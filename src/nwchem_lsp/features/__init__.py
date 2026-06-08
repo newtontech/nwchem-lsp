@@ -5,6 +5,7 @@ from .diagnostic import NwchemDiagnosticProvider
 from .formatting import NwchemFormattingProvider
 from .hover import NwchemHoverProvider
 from .symbols import NwchemSymbolProvider
+from .validation import NWChemValidationProvider
 
 __all__ = [
     "NwchemCompletionProvider",
@@ -12,4 +13,5 @@ __all__ = [
     "NwchemDiagnosticProvider",
     "NwchemSymbolProvider",
     "NwchemFormattingProvider",
+    "NWChemValidationProvider",
 ]

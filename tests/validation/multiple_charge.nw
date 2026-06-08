@@ -1,0 +1,23 @@
+# Test fixture: Multiple charge directives
+# Last charge value will be used by NWChem
+
+title "Multiple charge test"
+
+charge 0
+charge 1
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+end
+
+task scf energy

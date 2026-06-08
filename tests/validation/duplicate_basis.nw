@@ -1,0 +1,18 @@
+# Test fixture: Duplicate basis set definitions
+# Same element defined with different basis sets
+
+title "Duplicate basis set test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  H library 6-31g
+  O library 6-31g
+  H library cc-pvdz
+end
+
+task scf energy
