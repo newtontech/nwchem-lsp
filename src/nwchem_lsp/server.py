@@ -205,7 +205,7 @@ class NWChemLanguageServer(LanguageServer):
 
             text = self.documents[uri]
             diagnostics = params.context.diagnostics if params.context else []
-            return self.code_actions_provider.get_code_actions(text, diagnostics)
+            return self.code_actions_provider.get_code_actions(text, diagnostics, uri)
 
         @self.feature(TEXT_DOCUMENT_DEFINITION)
         def definition(params: DefinitionParams) -> Any:
