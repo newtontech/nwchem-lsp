@@ -1,0 +1,14 @@
+# Test fixture: Unknown task theory
+
+title "Unknown theory test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+task bogus energy

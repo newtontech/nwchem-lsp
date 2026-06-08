@@ -1,0 +1,18 @@
+# Test fixture: Unknown DFT functional
+
+title "Unknown functional test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+dft
+  xc bogus_functional
+end
+
+task dft energy

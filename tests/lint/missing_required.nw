@@ -1,0 +1,5 @@
+# Test fixture: Missing required sections (no geometry, no basis)
+
+title "Missing required sections"
+
+task scf energy

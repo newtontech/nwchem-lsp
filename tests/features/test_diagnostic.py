@@ -126,11 +126,12 @@ class TestDiagnosticsSnapshot:
         diagnostic_provider.update_cache(uri, diags)
 
         snapshot = diagnostic_provider.get_diagnostics_snapshot(uri)
-        assert len(snapshot) == 1
-        entry = snapshot[0]
+        assert len(snapshot) >= 1
+        # Find the entry from the original diagnostic provider (no code)
+        entry = next(e for e in snapshot if "fake-basis" in e["message"] and e.get("code") is None)
         assert entry["severity"] == 2  # DiagnosticSeverity.Warning
         assert entry["severity_label"] == "warning"
-        assert "fake-basis" in entry["message"]
+        assert entry["source"] == "nwchem-lsp"
         assert entry["source"] == "nwchem-lsp"
         assert isinstance(entry["range"], dict)
         assert "start" in entry["range"] and "end" in entry["range"]
@@ -142,11 +143,11 @@ class TestDiagnosticsSnapshot:
         diagnostic_provider.update_cache(uri, diags)
 
         snapshot = diagnostic_provider.get_diagnostics_snapshot(uri)
-        assert len(snapshot) == 1
-        entry = snapshot[0]
+        assert len(snapshot) >= 1
+        # Find the entry from the original diagnostic provider (no code)
+        entry = next(e for e in snapshot if "badtheory" in e["message"] and e.get("code") is None)
         assert entry["severity"] == 1  # DiagnosticSeverity.Error
         assert entry["severity_label"] == "error"
-        assert "badtheory" in entry["message"]
 
     def test_snapshot_fields_present(self, diagnostic_provider):
         """Every snapshot entry has all required fields."""
@@ -173,8 +174,8 @@ class TestDiagnosticsSnapshot:
         diags = diagnostic_provider.get_diagnostics(INPUT_WITH_ERRORS)
         diagnostic_provider.update_cache(uri, diags)
         snapshot = diagnostic_provider.get_diagnostics_snapshot(uri)
-        assert len(snapshot) == 1
-        assert snapshot[0]["severity_label"] == "error"
+        assert len(snapshot) >= 1
+        assert any(e["severity_label"] == "error" for e in snapshot)
 
     # -- get_all_snapshots --
 
@@ -196,7 +197,7 @@ class TestDiagnosticsSnapshot:
         all_snapshots = diagnostic_provider.get_all_snapshots()
         assert set(all_snapshots.keys()) == {uri_a, uri_b}
         assert all_snapshots[uri_a] == []
-        assert len(all_snapshots[uri_b]) == 1
+        assert len(all_snapshots[uri_b]) >= 1
 
     # -- snapshot_to_json --
 
@@ -209,8 +210,8 @@ class TestDiagnosticsSnapshot:
         json_str = diagnostic_provider.snapshot_to_json(uri)
         parsed = json.loads(json_str)
         assert isinstance(parsed, list)
-        assert len(parsed) == 1
-        assert "fake-basis" in parsed[0]["message"]
+        assert len(parsed) >= 1
+        assert any("fake-basis" in e["message"] for e in parsed)
 
     def test_snapshot_to_json_all_uris(self, diagnostic_provider):
         """snapshot_to_json without a URI produces a JSON object keyed by URI."""
@@ -222,7 +223,7 @@ class TestDiagnosticsSnapshot:
         parsed = json.loads(json_str)
         assert isinstance(parsed, dict)
         assert uri in parsed
-        assert len(parsed[uri]) == 1
+        assert len(parsed[uri]) >= 1
 
     def test_snapshot_json_deterministic(self, diagnostic_provider):
         """Calling snapshot_to_json twice yields identical output."""
