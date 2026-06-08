@@ -1,0 +1,25 @@
+# Test fixture: MP2 and CCSD sections both present
+# Post-HF methods that should not both be specified
+
+title "MP2 vs CCSD conflict test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+mp2
+  freeze atomic
+end
+
+ccsd
+  freeze atomic
+  thresh 1e-6
+end
+
+task mp2 energy

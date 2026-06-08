@@ -1,0 +1,27 @@
+# Test fixture: SCF and DFT sections both present
+# These are mutually exclusive methods
+
+title "SCF vs DFT conflict test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+  rhf
+  maxiter 100
+end
+
+dft
+  xc b3lyp
+  grid fine
+end
+
+task scf energy

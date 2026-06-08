@@ -1,0 +1,17 @@
+# Test fixture: Duplicate task directives
+# NWChem uses the last task directive, so this should trigger a warning
+
+title "Duplicate task test"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+  H  0.0 -0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+task scf energy
+task dft optimize
