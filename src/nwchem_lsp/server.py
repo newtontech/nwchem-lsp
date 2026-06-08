@@ -16,6 +16,7 @@ from lsprotocol.types import (
     TEXT_DOCUMENT_DOCUMENT_SYMBOL,
     TEXT_DOCUMENT_FOLDING_RANGE,
     TEXT_DOCUMENT_FORMATTING,
+    TEXT_DOCUMENT_RANGE_FORMATTING,
     TEXT_DOCUMENT_HOVER,
     TEXT_DOCUMENT_INLAY_HINT,
     TEXT_DOCUMENT_REFERENCES,
@@ -31,6 +32,7 @@ from lsprotocol.types import (
     DidOpenTextDocumentParams,
     DidSaveTextDocumentParams,
     DocumentFormattingParams,
+    DocumentRangeFormattingParams,
     DocumentSymbolParams,
     FoldingRangeParams,
     HoverParams,
@@ -149,6 +151,16 @@ class NWChemLanguageServer(LanguageServer):
 
             text = self.documents[uri]
             return self.formatting_provider.format_document(text, params)
+
+        @self.feature(TEXT_DOCUMENT_RANGE_FORMATTING)
+        def range_formatting(params: DocumentRangeFormattingParams) -> list[Any]:
+            """Handle range formatting request."""
+            uri = params.text_document.uri
+            if uri not in self.documents:
+                return []
+
+            text = self.documents[uri]
+            return self.formatting_provider.format_range(text, params)
 
         @self.feature(TEXT_DOCUMENT_DID_OPEN)
         def did_open(params: DidOpenTextDocumentParams) -> None:
