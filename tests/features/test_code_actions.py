@@ -1,7 +1,13 @@
 """Tests for code actions provider."""
 
 import pytest
-from lsprotocol.types import Diagnostic, DiagnosticSeverity, Position, Range
+from lsprotocol.types import (
+    CodeAction,
+    Diagnostic,
+    DiagnosticSeverity,
+    Position,
+    Range,
+)
 
 from nwchem_lsp.features.code_actions import CodeActionsProvider
 
