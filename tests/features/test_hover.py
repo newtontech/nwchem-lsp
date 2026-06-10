@@ -31,8 +31,7 @@ class TestNwchemHoverProvider:
         """Test hover for a keyword."""
         text = "geometry"
         hover = provider.get_hover(text, Position(line=0, character=3))
-        # Should return hover info for geometry
-        assert hover is not None or hover is None  # Either is acceptable
+        assert hover is not None, "Hover on 'geometry' should return info"
 
     def test_get_hover_in_section(self, provider):
         """Test hover inside a section."""
@@ -40,7 +39,7 @@ class TestNwchemHoverProvider:
   H 0 0 0
 end"""
         hover = provider.get_hover(text, Position(line=0, character=3))
-        assert hover is not None or hover is None
+        assert hover is not None, "Hover on 'geometry' section header should return info"
 
     def test_get_word_at_position(self, provider):
         """Test word extraction."""

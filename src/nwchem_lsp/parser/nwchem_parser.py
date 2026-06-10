@@ -62,7 +62,6 @@ class NwchemParser:
         "paw",
         "ofpw",
         "bq",
-        "charge",
         "cons",
     }
 
