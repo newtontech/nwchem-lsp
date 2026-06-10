@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import Any
 
 from lsprotocol.types import (
@@ -19,6 +20,8 @@ from ..parser.nwchem_parser import NwchemParser as NWChemParser
 from ..parser.nwchem_parser import NWchemSection
 
 from .lint import NwchemLintProvider
+
+logger = logging.getLogger(__name__)
 
 # Mapping from DiagnosticSeverity enum to human-readable strings.
 _SEVERITY_NAMES: dict[int, str] = {

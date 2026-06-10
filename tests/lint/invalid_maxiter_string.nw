@@ -1,0 +1,14 @@
+# SCF with non-numeric maxiter value
+geometry
+  H 0 0 0
+end
+
+basis
+  * library 6-31G*
+end
+
+scf
+  maxiter abc
+end
+
+task scf energy

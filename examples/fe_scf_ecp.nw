@@ -1,0 +1,29 @@
+# Iron atom - SCF with ECP
+# Example demonstrating ECP usage
+
+start fe_ecp
+
+title "Iron atom SCF with LANL2DZ ECP"
+
+charge 2
+
+geometry units angstroms
+  Fe  0.000000  0.000000  0.000000
+end
+
+basis
+  Fe library LANL2DZ
+end
+
+ecp
+  Fe library LANL2DZ
+end
+
+scf
+  quintet
+  uhf
+  maxiter 200
+  thresh 1e-6
+end
+
+task scf energy

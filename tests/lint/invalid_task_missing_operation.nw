@@ -1,0 +1,10 @@
+# Valid input but task with only theory, no operation
+geometry units angstroms
+  H 0 0 0
+end
+
+basis
+  * library 6-31G*
+end
+
+task scf

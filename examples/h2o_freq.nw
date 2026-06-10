@@ -1,0 +1,25 @@
+# Water - DFT frequencies
+# Example demonstrating frequency calculation
+
+start h2o_freq
+
+title "Water DFT/B3LYP/6-31G* frequency calculation"
+
+geometry units angstroms
+  O  0.000000  0.000000  0.000000
+  H  0.000000  0.790000  0.580000
+  H  0.000000 -0.790000  0.580000
+end
+
+basis spherical
+  * library 6-31G*
+end
+
+dft
+  xc b3lyp
+  grid fine
+  convergence energy 1e-8
+end
+
+task dft optimize
+task dft frequencies

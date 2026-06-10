@@ -1,0 +1,27 @@
+# Methane - CCSD(T) single point
+# Example demonstrating coupled cluster calculation
+
+start methane_ccsdt
+
+title "Methane CCSD(T)/cc-pVTZ single point"
+
+memory total 2 gb
+
+geometry units angstroms
+  C   0.000000   0.000000   0.000000
+  H   0.629118   0.629118   0.629118
+  H  -0.629118  -0.629118   0.629118
+  H  -0.629118   0.629118  -0.629118
+  H   0.629118  -0.629118  -0.629118
+end
+
+basis spherical
+  * library cc-pVTZ
+end
+
+ccsd
+  freeze atomic
+  thresh 1e-7
+end
+
+task ccsd(t) energy
