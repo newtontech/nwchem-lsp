@@ -30,6 +30,7 @@ dev = [
 
 [project.scripts]
 nwchem-lsp = "nwchem_lsp.server:main"
+nwchem-lsp-tool = "nwchem_lsp.tool:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nwchem_lsp"]
@@ -68,3 +69,4 @@ exclude_lines = [
     "pass",
     "..."
 ]
+
