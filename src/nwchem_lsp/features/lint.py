@@ -71,11 +71,34 @@ RULE_DESCRIPTIONS: dict[str, str] = {
     "NW2009": "Unknown top-level directive",
     "NW2010": "Duplicate section (only one allowed)",
     "NW2011": "Keyword not valid in this section",
+    "NW2012": "Geometry section has malformed atom coordinates",
     # -- Best-practice / hints (3000-3999) --
     "NW3001": "SCF maxiter outside typical range (1-500)",
     "NW3002": "Convergence threshold unusually loose",
     "NW3003": "Duplicate task directive",
     "NW3004": "Unusual charge/multiplicity combination",
+    # -- Issue-mapped codes (NWCHEM-Exxxx / NWCHEM-Wxxxx) --
+    "NWCHEM-E040": "Unknown section or directive name",
+    "NWCHEM-W040": "Same section declared twice",
+    "NWCHEM-E041": "Task directive missing operation (energy/optimize/etc)",
+    "NWCHEM-E042": "Task theory not in known set",
+    "NWCHEM-W041": "Basis set not recognized",
+    "NWCHEM-W042": "DFT functional not recognized",
+    "NWCHEM-W043": "Loose SCF convergence threshold",
+    "NWCHEM-E043": "Geometry section has errors",
+    "NWCHEM-E044": "Runtime parse error from NWChem log output",
+}
+
+# Mapping from NW code to issue-mapped NWCHEM code for dual emission
+_NW_TO_NWCHEM_MAP: dict[str, str] = {
+    "NW2009": "NWCHEM-E040",
+    "NW2010": "NWCHEM-W040",
+    "NW2006": "NWCHEM-E041",
+    "NW2005": "NWCHEM-E042",
+    "NW2007": "NWCHEM-W041",
+    "NW2008": "NWCHEM-W042",
+    "NW3002": "NWCHEM-W043",
+    "NW2012": "NWCHEM-E043",
 }
 
 # Sections that may appear at most once
@@ -169,13 +192,22 @@ class NwchemLintProvider:
         self._check_basis_references(sections, lines, diagnostics)
         self._check_dft_functionals(sections, lines, diagnostics)
         self._check_top_level_directives(lines, sections, diagnostics)
+        self._check_geometry_malformed(sections, lines, diagnostics)
+        self._check_task_missing_operation(lines, diagnostics)
 
         # Best-practice checks
         self._check_scf_maxiter(sections, lines, diagnostics)
         self._check_convergence_thresh(sections, lines, diagnostics)
         self._check_duplicate_tasks(lines, diagnostics)
 
+        # Append NWCHEM-prefixed dual codes
+        self._append_nwchem_codes(diagnostics)
+
         return diagnostics
+
+    def check(self, text: str) -> list[Diagnostic]:
+        """Alias for :meth:`lint` used by the agent API layer."""
+        return self.lint(text)
 
     # ------------------------------------------------------------------
     # Syntax checks (NW1xxx)
@@ -664,6 +696,129 @@ class NwchemLintProvider:
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
+
+    def _append_nwchem_codes(self, diagnostics: list[Diagnostic]) -> None:
+        """Append NWCHEM-prefixed dual codes for matched NW codes.
+
+        For each diagnostic whose code appears in the NW-to-NWCHEM mapping,
+        emit a second diagnostic with the mapped NWCHEM code so that agent
+        consumers see both the internal NW code and the issue-tracked code.
+        """
+        for diag in list(diagnostics):
+            nw_code = str(diag.code) if diag.code else ""
+            nwchem_code = _NW_TO_NWCHEM_MAP.get(nw_code)
+            if nwchem_code:
+                diagnostics.append(
+                    Diagnostic(
+                        range=diag.range,
+                        message=diag.message,
+                        severity=diag.severity,
+                        source=diag.source,
+                        code=nwchem_code,
+                    )
+                )
+
+    def _check_geometry_malformed(
+        self,
+        sections: dict[str, list[Any]],
+        lines: list[str],
+        diagnostics: list[Diagnostic],
+    ) -> None:
+        """NW2012 / NWCHEM-E043: Detect malformed atom coordinate lines in geometry."""
+        if "geometry" not in sections:
+            return
+
+        for section_obj in sections["geometry"]:
+            for idx, content_line in enumerate(section_obj.content):
+                stripped = content_line.strip()
+                lower = stripped.lower()
+                if not lower or lower.startswith("#") or lower == "end":
+                    continue
+
+                parts = lower.split()
+                if not parts:
+                    continue
+
+                # Skip the section header line itself
+                if parts[0] == "geometry":
+                    continue
+
+                # Skip known geometry sub-directives
+                if parts[0] in {
+                    "units", "angstroms", "bohr", "au", "nocenter",
+                    "center", "autosym", "noautoz", "system",
+                }:
+                    continue
+
+                # Check for atom coordinate lines: Element x y z
+                # If first token looks like an element, validate coords
+                if parts[0] in _ELEMENTS_LOWER:
+                    # Need at least 4 tokens: element x y z
+                    if len(parts) < 4:
+                        line_num = section_obj.start_line + idx
+                        col = _find_col(content_line, parts[0])
+                        diagnostics.append(
+                            _diag(
+                                line_num,
+                                col,
+                                col + len(parts[0]),
+                                f"Atom line for '{parts[0]}' has fewer than 3 coordinates",
+                                DiagnosticSeverity.Error,
+                                "NW2012",
+                            )
+                        )
+                        continue
+
+                    # Validate that coordinate tokens are numbers
+                    for coord_idx in range(1, min(4, len(parts))):
+                        try:
+                            float(parts[coord_idx])
+                        except ValueError:
+                            line_num = section_obj.start_line + idx
+                            col = _find_col(content_line, parts[coord_idx])
+                            diagnostics.append(
+                                _diag(
+                                    line_num,
+                                    col,
+                                    col + len(parts[coord_idx]),
+                                    f"Non-numeric coordinate '{parts[coord_idx]}' "
+                                    f"for atom '{parts[0]}'",
+                                    DiagnosticSeverity.Error,
+                                    "NW2012",
+                                )
+                            )
+
+    def _check_task_missing_operation(
+        self, lines: list[str], diagnostics: list[Diagnostic]
+    ) -> None:
+        """NWCHEM-E041: Task directive with no operation specified.
+
+        A valid task line is ``task <theory> <operation>``. If the operation
+        is missing (i.e. ``task dft`` with no third token), emit a warning
+        because NWChem will default to ``energy`` but the user likely wants
+        to be explicit.
+        """
+        for i, line in enumerate(lines):
+            stripped = line.strip().lower()
+            if not stripped.startswith("task") or stripped.startswith("#"):
+                continue
+
+            parts = stripped.split()
+            # parts[0]="task", parts[1]=theory, parts[2]=operation (optional)
+            if len(parts) == 2:
+                # Only theory, no operation
+                theory = parts[1]
+                if theory in _TASK_THEORIES_LOWER:
+                    col = _find_col(line, "task")
+                    diagnostics.append(
+                        _diag(
+                            i, col, col + len(line.lstrip()),
+                            f"Task directive for '{theory}' missing operation "
+                            f"(e.g. energy, optimize, gradient)",
+                            DiagnosticSeverity.Warning,
+                            "NWCHEM-E041",
+                        )
+                    )
 
     def _section_to_schema_key(self, section_name: str) -> str:
         """Map a parser section name to the keyword schema section key."""

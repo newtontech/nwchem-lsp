@@ -1,0 +1,12 @@
+# Geometry section with malformed atom coordinates
+geometry
+  O  0.0  0.0
+  H  abc  0.8  0.6
+  C  1.0  2.0  3.0
+end
+
+basis
+  * library 6-31g*
+end
+
+task scf energy
