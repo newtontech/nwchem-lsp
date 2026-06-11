@@ -1,15 +1,21 @@
 """Tests for the schema-aware lint provider."""
 
+import json
 import pathlib
 
 import pytest
 
 from lsprotocol.types import Diagnostic, DiagnosticSeverity
 
-from nwchem_lsp.features.lint import NwchemLintProvider, RULE_DESCRIPTIONS
+from nwchem_lsp.features.lint import (
+    NwchemLintProvider,
+    RULE_DESCRIPTIONS,
+    _NW_TO_NWCHEM_MAP,
+)
 
 
 FIXTURES_DIR = pathlib.Path(__file__).parent.parent / "lint"
+RULES_FIXTURES_DIR = pathlib.Path(__file__).parent.parent / "fixtures" / "rules"
 
 
 @pytest.fixture
@@ -47,7 +53,9 @@ class TestRuleRegistry:
         """Every rule code should have a description."""
         assert len(RULE_DESCRIPTIONS) > 0
         for code, desc in RULE_DESCRIPTIONS.items():
-            assert code.startswith("NW"), f"Rule code {code} does not start with NW"
+            assert code.startswith("NW") or code.startswith("NWCHEM-"), (
+                f"Rule code {code} does not start with NW or NWCHEM-"
+            )
             assert len(desc) > 0, f"Rule {code} has empty description"
 
     def test_syntax_rules_in_1000_range(self):
@@ -74,6 +82,41 @@ class TestRuleRegistry:
             num = int(rule[2:])
             assert 3000 <= num <= 3999
 
+    def test_nwchem_issue_mapped_codes_exist(self):
+        """NWCHEM-Exxxx / NWCHEM-Wxxxx issue-mapped codes should be present."""
+        issue_codes = {
+            c for c in RULE_DESCRIPTIONS if c.startswith("NWCHEM-")
+        }
+        expected = {
+            "NWCHEM-E040", "NWCHEM-W040", "NWCHEM-E041", "NWCHEM-E042",
+            "NWCHEM-W041", "NWCHEM-W042", "NWCHEM-W043", "NWCHEM-E043",
+            "NWCHEM-E044",
+        }
+        assert expected.issubset(issue_codes), (
+            f"Missing issue-mapped codes: {expected - issue_codes}"
+        )
+
+    def test_nw_to_nwchem_map_consistency(self):
+        """Each mapped NW code should exist in RULE_DESCRIPTIONS."""
+        for nw_code, nwchem_code in _NW_TO_NWCHEM_MAP.items():
+            assert nw_code in RULE_DESCRIPTIONS, (
+                f"Mapped NW code {nw_code} not in RULE_DESCRIPTIONS"
+            )
+            assert nwchem_code in RULE_DESCRIPTIONS, (
+                f"Mapped NWCHEM code {nwchem_code} not in RULE_DESCRIPTIONS"
+            )
+
+    def test_rules_fixture_matches_registry(self):
+        """Golden fixture should match the RULE_DESCRIPTIONS keys."""
+        fixture_path = RULES_FIXTURES_DIR / "nwchem_rules.json"
+        if fixture_path.exists():
+            with open(fixture_path) as f:
+                fixture_rules = json.load(f)["rules"]
+            for code in fixture_rules:
+                assert code in RULE_DESCRIPTIONS, (
+                    f"Fixture code {code} not in RULE_DESCRIPTIONS"
+                )
+
 
 # ------------------------------------------------------------------
 # Provider basics
@@ -94,8 +137,18 @@ class TestLintProvider:
 
     def test_lint_returns_diagnostics(self, provider):
         """Test that lint returns Diagnostic objects."""
-        result = provider.lint("geometry\n  H 0 0 0\nend\nbasis\n  H library 6-31g\nend\ntask scf energy\n")
+        result = provider.lint(
+            "geometry\n  H 0 0 0\nend\nbasis\n  H library 6-31g\nend\n"
+            "task scf energy\n"
+        )
         assert all(isinstance(d, Diagnostic) for d in result)
+
+    def test_check_alias(self, provider):
+        """check() should be an alias for lint()."""
+        text = "geometry\n  H 0 0 0\nend\nbasis\n  * library 6-31g\nend\ntask scf energy\n"
+        lint_result = provider.lint(text)
+        check_result = provider.check(text)
+        assert len(lint_result) == len(check_result)
 
 
 # ------------------------------------------------------------------
@@ -211,6 +264,119 @@ class TestSchemaChecks:
 
 
 # ------------------------------------------------------------------
+# New issue-mapped rules (#75-#83)
+# ------------------------------------------------------------------
+
+
+class TestIssueMappedRules:
+    """Tests for NWCHEM-Exxxx / NWCHEM-Wxxxx issue-mapped rule codes."""
+
+    def test_unknown_directive_emits_nwchem_e040(self, provider):
+        """NWCHEM-E040: Unknown section/directive emits dual code."""
+        diags = lint_fixture("unknown_directive.nw", provider)
+        assert "NWCHEM-E040" in codes(diags)
+        nwchem_diags = [d for d in diags if str(d.code) == "NWCHEM-E040"]
+        assert any("foobarbaz" in d.message for d in nwchem_diags)
+
+    def test_duplicate_section_emits_nwchem_w040(self, provider):
+        """NWCHEM-W040: Duplicate section emits dual code."""
+        diags = lint_fixture("duplicate_section.nw", provider)
+        assert "NWCHEM-W040" in codes(diags)
+
+    def test_unknown_task_operation_emits_nwchem_e041(self, provider):
+        """NWCHEM-E041: Task missing operation emits dual code."""
+        diags = lint_fixture("unknown_task_operation.nw", provider)
+        assert "NWCHEM-E041" in codes(diags)
+
+    def test_unknown_theory_emits_nwchem_e042(self, provider):
+        """NWCHEM-E042: Unknown task theory emits dual code."""
+        diags = lint_fixture("unknown_task_theory.nw", provider)
+        assert "NWCHEM-E042" in codes(diags)
+
+    def test_unknown_basis_emits_nwchem_w041(self, provider):
+        """NWCHEM-W041: Unknown basis set emits dual code."""
+        diags = lint_fixture("unknown_basis.nw", provider)
+        assert "NWCHEM-W041" in codes(diags)
+
+    def test_unknown_functional_emits_nwchem_w042(self, provider):
+        """NWCHEM-W042: Unknown DFT functional emits dual code."""
+        diags = lint_fixture("unknown_functional.nw", provider)
+        assert "NWCHEM-W042" in codes(diags)
+
+    def test_loose_convergence_emits_nwchem_w043(self, provider):
+        """NWCHEM-W043: Loose convergence threshold emits dual code."""
+        diags = lint_fixture("loose_convergence.nw", provider)
+        assert "NWCHEM-W043" in codes(diags)
+
+
+# ------------------------------------------------------------------
+# Geometry malformed (#82 -> NW2012 / NWCHEM-E043)
+# ------------------------------------------------------------------
+
+
+class TestGeometryMalformed:
+    """Tests for NW2012: Geometry section malformed atom coordinates."""
+
+    def test_geometry_missing_coords(self, provider):
+        """NW2012: Atom line with fewer than 3 coordinates."""
+        diags = lint_fixture("geometry_malformed.nw", provider)
+        assert "NW2012" in codes(diags)
+        malform_diags = [d for d in diags if str(d.code) == "NW2012"]
+        assert len(malform_diags) >= 1
+        # Should flag O (only 2 coords) or H (non-numeric)
+        messages = " ".join(d.message for d in malform_diags)
+        assert "fewer than 3 coordinates" in messages or "Non-numeric" in messages
+
+    def test_geometry_non_numeric_coords(self, provider):
+        """NW2012: Atom line with non-numeric coordinate values."""
+        diags = lint_fixture("geometry_malformed.nw", provider)
+        malform_diags = [d for d in diags if str(d.code) == "NW2012"]
+        messages = " ".join(d.message for d in malform_diags)
+        assert "Non-numeric" in messages or "abc" in messages
+
+    def test_geometry_malformed_emits_nwchem_e043(self, provider):
+        """NWCHEM-E043: Geometry malformed emits dual code."""
+        diags = lint_fixture("geometry_malformed.nw", provider)
+        assert "NWCHEM-E043" in codes(diags)
+
+    def test_valid_geometry_no_malformed(self, provider):
+        """Valid geometry should not produce NW2012."""
+        diags = lint_fixture("valid_input.nw", provider)
+        assert "NW2012" not in codes(diags)
+
+
+# ------------------------------------------------------------------
+# Task missing operation (#77 -> NWCHEM-E041)
+# ------------------------------------------------------------------
+
+
+class TestTaskMissingOperation:
+    """Tests for NWCHEM-E041: Task directive missing operation."""
+
+    def test_task_missing_operation(self, provider):
+        """Task with only theory and no operation should be flagged."""
+        diags = lint_fixture("task_missing_operation.nw", provider)
+        assert "NWCHEM-E041" in codes(diags)
+        missing_op = [d for d in diags if str(d.code) == "NWCHEM-E041"]
+        assert any("dft" in d.message for d in missing_op)
+
+    def test_task_with_operation_not_flagged(self, provider):
+        """Task with both theory and operation should not be flagged."""
+        diags = lint_fixture("valid_input.nw", provider)
+        assert "NWCHEM-E041" not in codes(diags)
+
+    def test_inline_task_missing_operation(self, provider):
+        """Inline test: task with no operation."""
+        text = (
+            "geometry\n  H 0 0 0\nend\n"
+            "basis\n  * library 6-31g\nend\n"
+            "task scf\n"
+        )
+        diags = provider.lint(text)
+        assert "NWCHEM-E041" in codes(diags)
+
+
+# ------------------------------------------------------------------
 # Best-practice checks (NW3xxx)
 # ------------------------------------------------------------------
 
@@ -262,6 +428,12 @@ class TestNoFalsePositives:
         diags = lint_fixture("valid_input.nw", provider)
         syntax_codes = {c for c in codes(diags) if c.startswith("NW1")}
         assert len(syntax_codes) == 0
+
+    def test_valid_input_no_nwchem_error_codes(self, provider):
+        """Valid fixture should not produce NWCHEM-E codes."""
+        diags = lint_fixture("valid_input.nw", provider)
+        error_codes = {c for c in codes(diags) if "NWCHEM-E" in c}
+        assert len(error_codes) == 0
 
 
 # ------------------------------------------------------------------
@@ -322,6 +494,9 @@ class TestLintFixtures:
         "invalid_grid.nw",
         "invalid_units.nw",
         "missing_required.nw",
+        "geometry_malformed.nw",
+        "task_missing_operation.nw",
+        "loose_convergence.nw",
     ]
 
     @pytest.mark.parametrize("fixture_name", FIXTURE_NAMES)

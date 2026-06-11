@@ -1,0 +1,58 @@
+{
+  "capabilities": [
+    {
+      "id": "describe_domain_language",
+      "issue": 65,
+      "description": "NWChem input language description",
+      "returns": "Dict[str, Any] with sections, keywords, task_directives"
+    },
+    {
+      "id": "lookup_section",
+      "issue": 66,
+      "description": "Schema lookup for section metadata",
+      "signature": "lookup_section(name: str) -> Optional[Dict[str, Any]]"
+    },
+    {
+      "id": "lookup_keyword",
+      "issue": 66,
+      "description": "Schema lookup for keyword within section",
+      "signature": "lookup_keyword(section: str, keyword: str) -> Optional[Dict[str, Any]]"
+    },
+    {
+      "id": "get_examples",
+      "issue": 67,
+      "description": "Curated NWChem input examples",
+      "returns": "List[Dict[str, str]] with name and source"
+    },
+    {
+      "id": "next_token_suggestions",
+      "issue": 67,
+      "description": "Context-aware token suggestions",
+      "signature": "next_token_suggestions(context: str, prefix: str) -> List[Dict[str, str]]"
+    },
+    {
+      "id": "parse_log",
+      "issue": 74,
+      "description": "Parse NWChem log output for errors and info",
+      "signature": "parse_log(text: str) -> List[Dict[str, Any]]"
+    },
+    {
+      "id": "parse_nwchem_output",
+      "issue": 74,
+      "description": "Parse NWChem output file from path",
+      "signature": "parse_nwchem_output(path: str) -> List[Dict[str, Any]]"
+    },
+    {
+      "id": "get_rule_manifest",
+      "issue": 84,
+      "description": "Full rule code catalog",
+      "returns": "Dict[str, Any] with rules and categories"
+    },
+    {
+      "id": "openqc_smoke",
+      "issue": 84,
+      "description": "Lightweight smoke test for OpenQC integration",
+      "returns": "Dict[str, Any] with status and checks"
+    }
+  ]
+}

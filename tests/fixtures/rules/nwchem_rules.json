@@ -1,0 +1,97 @@
+{
+  "provider": "nwchem-lsp",
+  "rules": {
+    "NW1001": {
+      "severity": "error",
+      "description": "Unclosed section"
+    },
+    "NW1002": {
+      "severity": "error",
+      "description": "Unexpected 'end' without matching section"
+    },
+    "NW2001": {
+      "severity": "warning",
+      "description": "Unknown keyword inside section"
+    },
+    "NW2004": {
+      "severity": "error",
+      "description": "Missing required section"
+    },
+    "NW2005": {
+      "severity": "error",
+      "description": "Unknown task theory"
+    },
+    "NW2006": {
+      "severity": "warning",
+      "description": "Unknown task operation"
+    },
+    "NW2007": {
+      "severity": "warning",
+      "description": "Unknown basis set name"
+    },
+    "NW2008": {
+      "severity": "warning",
+      "description": "Unknown DFT functional"
+    },
+    "NW2009": {
+      "severity": "warning",
+      "description": "Unknown top-level directive"
+    },
+    "NW2010": {
+      "severity": "warning",
+      "description": "Duplicate section (only one allowed)"
+    },
+    "NW2012": {
+      "severity": "error",
+      "description": "Geometry section has malformed atom coordinates"
+    },
+    "NW3001": {
+      "severity": "hint",
+      "description": "SCF maxiter outside typical range (1-500)"
+    },
+    "NW3002": {
+      "severity": "hint",
+      "description": "Convergence threshold unusually loose"
+    },
+    "NW3003": {
+      "severity": "information",
+      "description": "Duplicate task directive"
+    },
+    "NWCHEM-E040": {
+      "severity": "warning",
+      "description": "Unknown section or directive name"
+    },
+    "NWCHEM-W040": {
+      "severity": "warning",
+      "description": "Same section declared twice"
+    },
+    "NWCHEM-E041": {
+      "severity": "warning",
+      "description": "Task directive missing operation (energy/optimize/etc)"
+    },
+    "NWCHEM-E042": {
+      "severity": "error",
+      "description": "Task theory not in known set"
+    },
+    "NWCHEM-W041": {
+      "severity": "warning",
+      "description": "Basis set not recognized"
+    },
+    "NWCHEM-W042": {
+      "severity": "warning",
+      "description": "DFT functional not recognized"
+    },
+    "NWCHEM-W043": {
+      "severity": "hint",
+      "description": "Loose SCF convergence threshold"
+    },
+    "NWCHEM-E043": {
+      "severity": "error",
+      "description": "Geometry section has errors"
+    },
+    "NWCHEM-E044": {
+      "severity": "error",
+      "description": "Runtime parse error from NWChem log output"
+    }
+  }
+}
