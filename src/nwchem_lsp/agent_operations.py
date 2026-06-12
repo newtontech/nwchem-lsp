@@ -13,11 +13,13 @@ import re
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from .rich_diagnostics import agent_check_payload, diagnostic_to_dict
+from .rich_diagnostics import agent_check_payload
 
 OPERATIONS = ("check", "context", "complete", "hover", "symbols", "fix")
 _WORD_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.$%+-]*")
-_SECTION_RE = re.compile(r"^\s*(?:&(?P<section>[A-Za-z][A-Za-z0-9_.$-]*)|\[(?P<bracket>[^\]]+)\])")
+_SECTION_RE = re.compile(
+    r"^\s*(?:&(?P<section>[A-Za-z][A-Za-z0-9_.$-]*)|\[(?P<bracket>[^\]]+)\])"
+)
 _ASSIGNMENT_RE = re.compile(r"^\s*(?P<key>[A-Za-z_][A-Za-z0-9_.$%-]*)\s*(?:=|:|\s+)")
 
 
@@ -56,7 +58,11 @@ def operation_path(
     path = Path(path)
     file_type = file_type_func(path)
     text = _read_text(path)
-    diagnostics = _safe_collect_diagnostics(path, collect_diagnostics) if operation == "fix" else []
+    diagnostics = (
+        _safe_collect_diagnostics(path, collect_diagnostics)
+        if operation in {"context", "complete", "hover", "fix"}
+        else []
+    )
     payload = agent_check_payload(
         software=software,
         uri=path.resolve().as_uri(),
@@ -84,7 +90,11 @@ def operation_path(
             items = _generic_completion_items(text, payload["diagnostics"])
         payload["items"] = items
         status = "available" if items else "unavailable"
-        reason = None if items else "No completion provider or extractable symbols for this document."
+        reason = (
+            None
+            if items
+            else "No completion provider or extractable symbols for this document."
+        )
         return with_capabilities(payload, operation, status=status, reason=reason)
 
     if operation == "hover":
@@ -109,7 +119,11 @@ def operation_path(
         actions = _fix_actions(payload["diagnostics"], line=line, character=character)
         payload["actions"] = actions
         status = "available" if actions else "unavailable"
-        reason = None if actions else "No safe quick-fix hints are available for current diagnostics."
+        reason = (
+            None
+            if actions
+            else "No safe quick-fix hints are available for current diagnostics."
+        )
         return with_capabilities(payload, operation, status=status, reason=reason)
 
     return with_capabilities(
@@ -161,8 +175,8 @@ def _context_for(text: str, position: dict[str, int]) -> dict[str, Any]:
             "start": {"line": line_no, "character": start},
             "end": {"line": line_no, "character": end},
         },
-        "before": lines[max(0, line_no - 3):line_no],
-        "after": lines[line_no + 1:line_no + 4],
+        "before": lines[max(0, line_no - 3) : line_no],
+        "after": lines[line_no + 1 : line_no + 4],
     }
 
 
@@ -188,9 +202,11 @@ def _diagnostics_at_position(
         end_line = int(end.get("line", start_line) or start_line)
         start_char = int(start.get("character", 0) or 0)
         end_char = int(end.get("character", start_char + 1) or (start_char + 1))
-        if start_line <= line <= end_line and (
-            line != start_line or character >= start_char
-        ) and (line != end_line or character <= end_char):
+        if (
+            start_line <= line <= end_line
+            and (line != start_line or character >= start_char)
+            and (line != end_line or character <= end_char)
+        ):
             selected.append(item)
     return selected
 
@@ -286,7 +302,9 @@ def _generic_completion_items(
     for diagnostic in diagnostics:
         for hint in diagnostic.get("fix_hints") or []:
             if isinstance(hint, str) and hint.strip():
-                labels.setdefault(hint.strip(), f"Fix hint for {diagnostic.get('code', 'diagnostic')}")
+                labels.setdefault(
+                    hint.strip(), f"Fix hint for {diagnostic.get('code', 'diagnostic')}"
+                )
         manual_ref = diagnostic.get("manual_ref")
         if isinstance(manual_ref, str) and manual_ref.strip():
             labels.setdefault(manual_ref.strip(), "Manual reference")
@@ -338,7 +356,9 @@ def _nearby_symbols(symbols: list[dict[str, Any]], line: int) -> list[dict[str, 
     return sorted(symbols, key=distance)[:5]
 
 
-def _diagnostic_hover(diagnostics: list[dict[str, Any]], line: int, character: int) -> str | None:
+def _diagnostic_hover(
+    diagnostics: list[dict[str, Any]], line: int, character: int
+) -> str | None:
     selected = _diagnostics_at_position(diagnostics, line, character)
     if not selected:
         return None
@@ -400,7 +420,13 @@ def _call_provider(fn: Callable[..., Any], *values: Any) -> Any:
         if param.default is inspect.Parameter.empty
         and param.kind in (param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD)
     ]
-    attempts: list[tuple[Any, ...]] = [(), values[:1], values[:2], values[:3]]
+    attempts: list[tuple[Any, ...]] = [
+        (),
+        values[:1],
+        values[:2],
+        values[:3],
+        values[:4],
+    ]
     for args in attempts:
         if len(args) < len(required):
             continue
@@ -413,8 +439,12 @@ def _call_provider(fn: Callable[..., Any], *values: Any) -> Any:
 
 def _normalize_completion_item(item: Any) -> dict[str, Any]:
     if isinstance(item, dict):
-        label = str(item.get("label") or item.get("name") or item.get("insertText") or "")
-        detail = item.get("detail") or item.get("documentation") or item.get("description")
+        label = str(
+            item.get("label") or item.get("name") or item.get("insertText") or ""
+        )
+        detail = (
+            item.get("detail") or item.get("documentation") or item.get("description")
+        )
         kind = item.get("kind", 1)
     else:
         label = str(getattr(item, "label", item))
@@ -425,7 +455,10 @@ def _normalize_completion_item(item: Any) -> dict[str, Any]:
 
 def _normalize_symbol(item: Any) -> dict[str, Any]:
     if not isinstance(item, dict):
-        data = {"name": str(getattr(item, "name", item)), "kind": getattr(item, "kind", "symbol")}
+        data = {
+            "name": str(getattr(item, "name", item)),
+            "kind": getattr(item, "kind", "symbol"),
+        }
     else:
         data = dict(item)
     name = str(data.get("name") or data.get("label") or "symbol")
@@ -433,7 +466,9 @@ def _normalize_symbol(item: Any) -> dict[str, Any]:
         return data
     line = int(data.get("line", 1) or 1) - 1
     column = int(data.get("column", 1) or 1) - 1
-    result = _symbol(name, str(data.get("kind", "symbol")), max(line, 0), max(column, 0))
+    result = _symbol(
+        name, str(data.get("kind", "symbol")), max(line, 0), max(column, 0)
+    )
     if "detail" in data:
         result["detail"] = data["detail"]
     return result
