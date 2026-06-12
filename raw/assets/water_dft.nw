@@ -1,0 +1,24 @@
+# Water molecule - DFT geometry optimization
+# Example NWChem input file
+
+start water
+
+title "Water molecule DFT/B3LYP geometry optimization"
+
+geometry units angstroms
+  O  0.000000  0.000000  0.000000
+  H  0.000000  0.790000  0.580000
+  H  0.000000 -0.790000  0.580000
+end
+
+basis spherical
+  * library 6-31G*
+end
+
+dft
+  xc b3lyp
+  grid fine
+  convergence energy 1e-8
+end
+
+task dft optimize

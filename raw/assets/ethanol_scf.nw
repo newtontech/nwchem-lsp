@@ -1,0 +1,31 @@
+# Ethanol molecule - HF single point energy
+# Example NWChem input file
+
+start ethanol
+
+title "Ethanol HF/6-311G** single point energy"
+
+geometry units angstroms
+  C     0.000000    0.000000    0.000000
+  C     1.520000    0.000000    0.000000
+  O     2.072000    1.340000    0.000000
+  H    -0.360000   -0.510000    0.900000
+  H    -0.360000   -0.510000   -0.900000
+  H    -0.360000    1.020000    0.000000
+  H     1.880000   -0.510000    0.900000
+  H     1.880000   -0.510000   -0.900000
+  H     3.032000    1.340000    0.000000
+end
+
+basis
+  * library 6-311G**
+end
+
+scf
+  singlet
+  rhf
+  maxiter 100
+  thresh 1e-8
+end
+
+task scf energy

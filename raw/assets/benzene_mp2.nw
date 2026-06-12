@@ -1,0 +1,31 @@
+# Benzene molecule - MP2 geometry optimization
+# Example NWChem input file
+
+start benzene
+
+title "Benzene MP2/cc-pVTZ geometry optimization"
+
+geometry units angstroms
+  C    1.398000    0.000000    0.000000
+  C    0.699000    1.212000    0.000000
+  C   -0.699000    1.212000    0.000000
+  C   -1.398000    0.000000    0.000000
+  C   -0.699000   -1.212000    0.000000
+  C    0.699000   -1.212000    0.000000
+  H    2.482000    0.000000    0.000000
+  H    1.241000    2.152000    0.000000
+  H   -1.241000    2.152000    0.000000
+  H   -2.482000    0.000000    0.000000
+  H   -1.241000   -2.152000    0.000000
+  H    1.241000   -2.152000    0.000000
+end
+
+basis spherical
+  * library cc-pVTZ
+end
+
+mp2
+  freeze atomic
+end
+
+task mp2 optimize
