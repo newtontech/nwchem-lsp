@@ -1,0 +1,17 @@
+echo
+start tiny_memory
+title "Memory directive below the conservative workflow threshold"
+memory 64 mb
+geometry
+  O     0.000   0.000   0.000
+  H     0.757   0.587   0.000
+  H    -0.757   0.587   0.000
+end
+basis
+  O library 6-31g
+  H library 6-31g
+end
+dft
+  xc b3lyp
+end
+task dft energy

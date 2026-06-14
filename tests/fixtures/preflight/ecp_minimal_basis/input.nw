@@ -1,0 +1,16 @@
+echo
+start ecp_minimal
+title "ECP block paired with a minimal sto-3g basis library"
+memory 2000 mb
+geometry
+  Cl    0.000   0.000   0.000
+  H     1.200   0.000   0.000
+end
+basis
+  Cl library sto-3g
+  H  library sto-3g
+end
+ecp
+  Cl library def2-ecp
+end
+task scf energy
