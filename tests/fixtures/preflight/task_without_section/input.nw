@@ -1,0 +1,14 @@
+echo
+start no_dft_block
+title "task dft declared but no dft block present"
+memory 2000 mb
+geometry
+  O     0.000   0.000   0.000
+  H     0.757   0.587   0.000
+  H    -0.757   0.587   0.000
+end
+basis
+  O library 6-31g
+  H library 6-31g
+end
+task dft energy

@@ -1,0 +1,14 @@
+echo
+start mp2_min_basis
+title "Correlated MP2 task on a minimal sto-3g basis"
+memory 2000 mb
+geometry
+  O     0.000   0.000   0.000
+  H     0.757   0.587   0.000
+  H    -0.757   0.587   0.000
+end
+basis
+  O library sto-3g
+  H library sto-3g
+end
+task mp2

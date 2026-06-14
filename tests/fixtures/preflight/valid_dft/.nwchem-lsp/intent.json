@@ -1,0 +1,7 @@
+{
+  "software": "nwchem",
+  "software_version": "7.2.0",
+  "runtime_image": "ghcr.io/newtontech/nwchem:7.2.0",
+  "schema_source": "nwchem-lsp builtin",
+  "memory_warning_mb": 200.0
+}

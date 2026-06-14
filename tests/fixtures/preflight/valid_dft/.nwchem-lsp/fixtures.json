@@ -1,0 +1,47 @@
+{
+  "fixtures": [
+    {
+      "name": "valid_dft",
+      "case_dir": "tests/fixtures/preflight/valid_dft",
+      "expected_codes": ["NWCHEM608"],
+      "expected_codes_when_intent_loaded": [],
+      "blocking": false,
+      "summary": "clean DFT single point: full geometry/basis/dft/task; only the informational version-assumption note (NWCHEM608) fires when no intent version is declared, suppressed once the intent contract supplies software_version"
+    },
+    {
+      "name": "missing_required",
+      "case_dir": "tests/fixtures/preflight/missing_required",
+      "expected_codes": ["NWCHEM601"],
+      "blocking": true,
+      "summary": "geometry and task absent; mandatory blocks missing"
+    },
+    {
+      "name": "task_without_section",
+      "case_dir": "tests/fixtures/preflight/task_without_section",
+      "expected_codes": ["NWCHEM605"],
+      "blocking": true,
+      "summary": "task dft declared but no dft block present"
+    },
+    {
+      "name": "theory_basis_mismatch",
+      "case_dir": "tests/fixtures/preflight/theory_basis_mismatch",
+      "expected_codes": ["NWCHEM607"],
+      "blocking": true,
+      "summary": "correlated task mp2 on a minimal sto-3g basis"
+    },
+    {
+      "name": "ecp_minimal_basis",
+      "case_dir": "tests/fixtures/preflight/ecp_minimal_basis",
+      "expected_codes": ["NWCHEM604"],
+      "blocking": false,
+      "summary": "ecp block paired with a minimal sto-3g basis library"
+    },
+    {
+      "name": "low_memory",
+      "case_dir": "tests/fixtures/preflight/low_memory",
+      "expected_codes": ["NWCHEM606"],
+      "blocking": false,
+      "summary": "memory directive below the conservative workflow threshold"
+    }
+  ]
+}
