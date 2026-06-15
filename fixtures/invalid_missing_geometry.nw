@@ -1,0 +1,7 @@
+# Invalid: missing required geometry block
+# Expected diagnostics: error "Missing required 'geometry' block"
+basis
+  H library sto-3g
+end
+
+task scf energy

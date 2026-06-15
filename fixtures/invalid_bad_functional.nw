@@ -1,0 +1,15 @@
+# Invalid: unknown DFT functional
+# Expected diagnostics: warning on "not_a_functional" (unknown XC functional)
+geometry
+  H 0.0 0.0 0.0
+end
+
+basis
+  H library sto-3g
+end
+
+dft
+  xc not_a_functional
+end
+
+task dft energy
