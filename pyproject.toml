@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nwchem-lsp"
-version = "0.5.0"
+version = "0.5.1rc1"
 description = "Language Server Protocol for NWChem input files (.nw, .nwinp)"
 readme = "README.md"
 license = {text = "MIT"}
@@ -30,6 +30,11 @@ dev = [
 
 [project.scripts]
 nwchem-lsp = "nwchem_lsp.server:main"
+nwchem-lsp-tool = "nwchem_lsp.tool:main"
+
+
+[tool.hatch.build.force-include]
+"skill" = "skill"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/nwchem_lsp"]

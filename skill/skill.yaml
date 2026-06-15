@@ -1,0 +1,31 @@
+schema: scientific-lsp-skill/v1
+name: nwchem
+software: nwchem
+display_name: NWChem
+description: NWChem input preflight for generated .nw and .nwinp files.
+package:
+  name: nwchem-lsp
+  install: pip install nwchem-lsp
+entrypoints:
+  server: nwchem-lsp
+  tool: nwchem-lsp-tool
+file_patterns:
+  - *.nw
+  - *.nwinp
+operations:
+  - capabilities
+  - check
+  - context
+  - complete
+  - hover
+  - symbols
+  - fix
+diagnostic_contract: DiagnosticEnvelope/v1
+blocking_policy:
+  mode: warning-only
+  description: Use --fail-on-blocking when generated inputs must be launch-ready.
+source_provenance:
+  -
+    kind: official_docs
+    label: NWChem documentation
+    url: https://nwchemgit.github.io/
