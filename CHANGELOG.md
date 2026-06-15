@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `raw/assets/manifest.json` with checksums, stable IDs, and official NWChem documentation anchors (#93).
+- `scripts/refresh_provenance_manifest.py` to regenerate provenance metadata from captured assets.
+- Golden fixtures under `tests/fixtures/{valid,invalid,logs}` and `tests/test_closed_loop_fixtures.py` (#95).
+- Expanded `lsp-capabilities.json` provenance, output log patterns, and `output-log-diagnostics` capability flag.
+- `tests/test_provenance_manifest.py` for manifest/capabilities contract checks.
+
+### Fixed
+- `scripts/test.sh` uses `python3` via `PYTHON_BIN` for portable local/CI test runs.
+
 ## [0.5.0] - 2026-03-05
 
 ### Added

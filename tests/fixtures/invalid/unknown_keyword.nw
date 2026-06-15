@@ -1,0 +1,19 @@
+title "Unknown keyword warning"
+
+geometry units angstroms
+  O  0.0  0.0  0.0
+  H  0.0  0.8  0.6
+end
+
+basis spherical
+  * library 6-31g
+end
+
+scf
+  singlet
+  rhf
+  bogus_keyword 42
+  maxiter 100
+end
+
+task scf energy

@@ -30,6 +30,7 @@
     "manifest",
     "navigation",
     "openqc-context",
+    "output-log-diagnostics",
     "references-or-rename-where-implemented",
     "rich-diagnostics",
     "routing",
@@ -74,18 +75,70 @@
       "test/fixtures/logs"
     ]
   },
-  "outputLogPatterns": [],
+  "outputLogPatterns": [
+    {
+      "code": "NWCHEM-E044",
+      "severity": "error",
+      "description": "SCF convergence failure, runtime error, or memory failure in NWChem output",
+      "manifest_entry": "nwchem-agent-api-v1"
+    },
+    {
+      "code": "NWCHEM-INFO-001",
+      "severity": "info",
+      "description": "SCF energy extraction from NWChem output log",
+      "manifest_entry": "nwchem-agent-api-v1"
+    },
+    {
+      "code": "NWCHEM-INFO-004",
+      "severity": "info",
+      "description": "SCF converged marker in NWChem output log",
+      "manifest_entry": "nwchem-agent-api-v1"
+    }
+  ],
   "openqc": {
     "registryId": "nwchem-lsp",
     "repoName": "nwchem-lsp",
     "contextContract": "DSLAuthoringContext",
-    "diagnosticEnvelope": "DiagnosticEnvelope/v1"
+    "diagnosticEnvelope": "DiagnosticEnvelope/v1",
+    "refreshManifest": "python3 scripts/refresh_provenance_manifest.py"
   },
   "sourceProvenance": [
     {
       "kind": "official_docs",
       "label": "NWChem documentation",
-      "url": "https://nwchemgit.github.io/"
+      "url": "https://nwchemgit.github.io/",
+      "retrieval_date": "2026-06-15",
+      "software_version": "NWChem 7.2",
+      "license": "ECL-2.0",
+      "manifest_entry": "nwchem-raw-assets-readme-md-v1",
+      "diagnostic_codes_sourced": [
+        "NWCHEM-E001",
+        "NWCHEM-E002",
+        "NWCHEM-E044",
+        "NWCHEM-W001"
+      ],
+      "wiki_links": [
+        "wiki/synthesis/Diagnostics_Catalog.md",
+        "wiki/synthesis/NWChem_DSL_Reference.md"
+      ]
+    },
+    {
+      "kind": "internal_doc",
+      "label": "Diagnostic Engine v1",
+      "path": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "manifest_entry": "nwchem-diagnostic-engine-v1-md-v1",
+      "diagnostic_codes_sourced": ["all"]
+    },
+    {
+      "kind": "internal_doc",
+      "label": "Agent API log patterns",
+      "path": "src/nwchem_lsp/features/agent_api.py",
+      "manifest_entry": null,
+      "diagnostic_codes_sourced": [
+        "NWCHEM-E044",
+        "NWCHEM-INFO-001",
+        "NWCHEM-INFO-004"
+      ]
     }
   ]
 }
