@@ -10,8 +10,8 @@ entrypoints:
   server: nwchem-lsp
   tool: nwchem-lsp-tool
 file_patterns:
-  - *.nw
-  - *.nwinp
+  - "*.nw"
+  - "*.nwinp"
 operations:
   - capabilities
   - check
