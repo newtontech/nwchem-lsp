@@ -1,4 +1,9 @@
-"""Agent-facing CLI for Diagnostic Engine v1 operations."""
+"""Agent-facing CLI for Diagnostic Engine v1 operations.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server and tool CLI reference
+"""
 
 from __future__ import annotations
 
@@ -33,7 +38,15 @@ def _capabilities_payload() -> dict[str, Any]:
             "openqc-context",
         ],
         "agentCli": {
-            "operations": ["capabilities", "check", "context", "complete", "hover", "symbols", "fix"],
+            "operations": [
+                "capabilities",
+                "check",
+                "context",
+                "complete",
+                "hover",
+                "symbols",
+                "fix",
+            ],
             "jsonFormat": True,
             "failOnBlocking": True,
         },
@@ -217,16 +230,13 @@ def manifest_path(path: Path | None = None) -> dict[str, Any]:
             if isinstance(data, list):
                 fixtures = [item for item in data if isinstance(item, dict)]
             elif isinstance(data, dict) and isinstance(data.get("fixtures"), list):
-                fixtures = [
-                    item
-                    for item in data["fixtures"]
-                    if isinstance(item, dict)
-                ]
+                fixtures = [item for item in data["fixtures"] if isinstance(item, dict)]
     return fleet_manifest(fixtures=fixtures)
 
 
-
-def _operation_payload(path: Path, operation: str, line: int = 0, character: int = 0) -> dict[str, Any]:
+def _operation_payload(
+    path: Path, operation: str, line: int = 0, character: int = 0
+) -> dict[str, Any]:
     return operation_path(
         path,
         operation,
@@ -237,12 +247,22 @@ def _operation_payload(path: Path, operation: str, line: int = 0, character: int
         character=character,
     )
 
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="nwchem-lsp-tool")
     subparsers = parser.add_subparsers(dest="operation", required=True)
     capabilities = subparsers.add_parser("capabilities")
     capabilities.add_argument("--format", choices=["json"], default="json")
-    for operation in ("check", "preflight", "manifest", "context", "complete", "hover", "symbols", "fix"):
+    for operation in (
+        "check",
+        "preflight",
+        "manifest",
+        "context",
+        "complete",
+        "hover",
+        "symbols",
+        "fix",
+    ):
         sub = subparsers.add_parser(operation)
         if operation == "manifest":
             sub.add_argument(
@@ -254,8 +274,15 @@ def main(argv: list[str] | None = None) -> int:
         else:
             sub.add_argument("path", type=Path)
         sub.add_argument("--format", choices=["json"], default="json")
-        sub.add_argument("--line", type=int, default=0, help="0-based line for position-aware operations.")
-        sub.add_argument("--character", type=int, default=0, help="0-based character for position-aware operations.")
+        sub.add_argument(
+            "--line", type=int, default=0, help="0-based line for position-aware operations."
+        )
+        sub.add_argument(
+            "--character",
+            type=int,
+            default=0,
+            help="0-based character for position-aware operations.",
+        )
         if operation == "check":
             sub.add_argument("--fail-on-blocking", action="store_true")
         if operation == "preflight":

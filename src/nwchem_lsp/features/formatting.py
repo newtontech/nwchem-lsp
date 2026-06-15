@@ -3,6 +3,10 @@
 This module provides document and range formatting for NWChem input files,
 including section indentation, keyword normalization, comment preservation,
 and nested section support.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from __future__ import annotations
@@ -40,31 +44,89 @@ class NwchemFormattingProvider:
         | {s.lower() for s in DFT_FUNCTIONALS}
         | {s.lower() for s in TASK_OPERATIONS}
         | {
-            "start", "restart", "title", "echo", "set", "unset", "stop",
-            "task", "charge", "memory", "permanent_dir", "scratch_dir",
+            "start",
+            "restart",
+            "title",
+            "echo",
+            "set",
+            "unset",
+            "stop",
+            "task",
+            "charge",
+            "memory",
+            "permanent_dir",
+            "scratch_dir",
             "print",
             # SCF keywords
-            "singlet", "doublet", "triplet", "quartet", "quintet",
-            "rhf", "uhf", "rohf", "thresh", "maxiter", "direct", "semidirect",
+            "singlet",
+            "doublet",
+            "triplet",
+            "quartet",
+            "quintet",
+            "rhf",
+            "uhf",
+            "rohf",
+            "thresh",
+            "maxiter",
+            "direct",
+            "semidirect",
             # DFT keywords
-            "xc", "grid", "convergence", "iterations", "noio", "odft", "mult",
-            "coarse", "medium", "fine", "xfine", "ultrafine",
+            "xc",
+            "grid",
+            "convergence",
+            "iterations",
+            "noio",
+            "odft",
+            "mult",
+            "coarse",
+            "medium",
+            "fine",
+            "xfine",
+            "ultrafine",
             # Geometry keywords
-            "units", "angstroms", "bohr", "au", "autosym", "noautoz",
-            "center", "nocenter", "system",
+            "units",
+            "angstroms",
+            "bohr",
+            "au",
+            "autosym",
+            "noautoz",
+            "center",
+            "nocenter",
+            "system",
             # Basis keywords
-            "spherical", "cartesian", "file",
+            "spherical",
+            "cartesian",
+            "file",
             # MP2 keywords
-            "tight", "freeze", "ri", "cd",
+            "tight",
+            "freeze",
+            "ri",
+            "cd",
             # CC keywords
-            "tce", "diis",
+            "tce",
+            "diis",
             # General
-            "total", "stack", "heap", "global",
-            "none", "low", "high", "debug",
+            "total",
+            "stack",
+            "heap",
+            "global",
+            "none",
+            "low",
+            "high",
+            "debug",
             # Task theories
-            "scf", "dft", "mp2", "ccsd", "ccsd(t)", "mcscf", "semi", "rimp2",
+            "scf",
+            "dft",
+            "mp2",
+            "ccsd",
+            "ccsd(t)",
+            "mcscf",
+            "semi",
+            "rimp2",
             # Grid keywords for convergence
-            "energy", "density", "gradient",
+            "energy",
+            "density",
+            "gradient",
         }
     )
 
@@ -76,9 +138,7 @@ class NwchemFormattingProvider:
         """
         self.server = server
 
-    def format_document(
-        self, text: str, params: DocumentFormattingParams
-    ) -> List[TextEdit]:
+    def format_document(self, text: str, params: DocumentFormattingParams) -> List[TextEdit]:
         """Format the entire document.
 
         Args:
@@ -105,9 +165,7 @@ class NwchemFormattingProvider:
             )
         ]
 
-    def format_range(
-        self, text: str, params: DocumentRangeFormattingParams
-    ) -> List[TextEdit]:
+    def format_range(self, text: str, params: DocumentRangeFormattingParams) -> List[TextEdit]:
         """Format a specific range of the document.
 
         For range formatting, the provider formats only the selected line range.
@@ -161,9 +219,7 @@ class NwchemFormattingProvider:
                 )
 
             # Update indent level for next line based on this line
-            indent_level = self._update_indent_level(
-                formatted.strip(), indent_level
-            )
+            indent_level = self._update_indent_level(formatted.strip(), indent_level)
 
         return edits
 
@@ -198,9 +254,7 @@ class NwchemFormattingProvider:
             # End keyword: decrease indent before formatting
             if stripped.lower() == "end":
                 indent_level = max(0, indent_level - 1)
-                formatted_lines.append(
-                    indent_str * indent_level + self._normalize_line(stripped)
-                )
+                formatted_lines.append(indent_str * indent_level + self._normalize_line(stripped))
                 continue
 
             # Section start: format at current level, increase indent for children
@@ -221,9 +275,7 @@ class NwchemFormattingProvider:
 
         return result
 
-    def _format_line(
-        self, stripped_line: str, indent_level: int, indent_str: str
-    ) -> str:
+    def _format_line(self, stripped_line: str, indent_level: int, indent_str: str) -> str:
         """Format a single line with the given indent level.
 
         Args:
@@ -283,9 +335,7 @@ class NwchemFormattingProvider:
         return indent_level
 
     @staticmethod
-    def _update_indent_level(
-        stripped_line: str, current_level: int
-    ) -> int:
+    def _update_indent_level(stripped_line: str, current_level: int) -> int:
         """Update indent level after processing a line.
 
         Args:

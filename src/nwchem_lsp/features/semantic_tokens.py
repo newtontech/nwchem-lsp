@@ -2,6 +2,10 @@
 
 This module provides semantic highlighting for NWChem input files,
 enabling color-coded syntax based on token types.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from typing import List, Optional

@@ -3,6 +3,10 @@
 Provides infrastructure for measuring and reporting detection accuracy
 across categories: task conflicts, method conflicts, chemistry constraints,
 and basis set issues.
+
+Wiki
+----
+- `wiki/entities/Diagnostic_System.md`_ — Diagnostic system reference
 """
 
 from __future__ import annotations
@@ -25,6 +29,7 @@ class TestCase:
     expected_line: Optional[int] = None
     should_detect: bool = True
 
+
 @dataclass
 class TestResult:
     """Result of running a single test case."""
@@ -35,6 +40,7 @@ class TestResult:
     correct: bool
     expected_codes: List[str] = field(default_factory=list)
     actual_codes: List[str] = field(default_factory=list)
+
 
 @dataclass
 class AccuracyReport:
@@ -48,14 +54,17 @@ class AccuracyReport:
     by_category: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     def to_json(self) -> str:
-        return json.dumps({
-            "total": self.total,
-            "correct": self.correct,
-            "false_positives": self.false_positives,
-            "false_negatives": self.false_negatives,
-            "accuracy": round(self.accuracy, 4),
-            "by_category": self.by_category,
-        }, indent=2)
+        return json.dumps(
+            {
+                "total": self.total,
+                "correct": self.correct,
+                "false_positives": self.false_positives,
+                "false_negatives": self.false_negatives,
+                "accuracy": round(self.accuracy, 4),
+                "by_category": self.by_category,
+            },
+            indent=2,
+        )
 
 
 class ValidationAccuracyFramework:
@@ -72,7 +81,11 @@ class ValidationAccuracyFramework:
         """Run a single test case against the lint provider."""
         diagnostics = self._lint.lint(case.source)
         actual_codes = [str(d.code) for d in diagnostics]
-        detected = any(code in actual_codes for code in case.expected_codes) if case.expected_codes else len(diagnostics) > 0
+        detected = (
+            any(code in actual_codes for code in case.expected_codes)
+            if case.expected_codes
+            else len(diagnostics) > 0
+        )
 
         correct = detected == case.should_detect
 

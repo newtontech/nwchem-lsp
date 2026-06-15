@@ -22,6 +22,11 @@ Hint       3000   NW3001 Unusual convergence threshold
 =========  =====  ==============================================
 
 The full rule catalog is available at :attr:`RULE_DESCRIPTIONS`.
+
+Wiki
+----
+- `wiki/synthesis/Diagnostics_Catalog.md`_ — Full rule catalog
+- `wiki/entities/Diagnostic_System.md`_ — Diagnostic system architecture
 """
 
 from __future__ import annotations
@@ -213,9 +218,7 @@ class NwchemLintProvider:
     # Syntax checks (NW1xxx)
     # ------------------------------------------------------------------
 
-    def _check_syntax(
-        self, lines: list[str], diagnostics: list[Diagnostic]
-    ) -> None:
+    def _check_syntax(self, lines: list[str], diagnostics: list[Diagnostic]) -> None:
         """Check for parse-level syntax problems."""
         open_stack: list[tuple[str, int]] = []
 
@@ -274,7 +277,9 @@ class NwchemLintProvider:
             if name not in sections:
                 diagnostics.append(
                     _diag(
-                        0, 0, 0,
+                        0,
+                        0,
+                        0,
                         f"Missing required '{name}' block",
                         DiagnosticSeverity.Error,
                         "NW2004",
@@ -332,9 +337,11 @@ class NwchemLintProvider:
                     if kw == section_name:
                         if len(parts) > 1:
                             self._validate_section_header_args(
-                                section_name, parts[1:],
+                                section_name,
+                                parts[1:],
                                 section_obj.start_line + idx,
-                                content_line, diagnostics,
+                                content_line,
+                                diagnostics,
                             )
                         continue
 
@@ -359,8 +366,12 @@ class NwchemLintProvider:
 
                     # Enum validation for known keywords with allowed values
                     self._check_enum_value(
-                        kw, parts, section_name, section_obj.start_line + idx,
-                        content_line, diagnostics,
+                        kw,
+                        parts,
+                        section_name,
+                        section_obj.start_line + idx,
+                        content_line,
+                        diagnostics,
                     )
 
     def _check_enum_value(
@@ -385,7 +396,9 @@ class NwchemLintProvider:
             if value.lower() not in _DFT_FUNCTIONALS_LOWER:
                 diagnostics.append(
                     _diag(
-                        line_num, col, col + len(value),
+                        line_num,
+                        col,
+                        col + len(value),
                         f"Unknown DFT functional '{value}'",
                         DiagnosticSeverity.Warning,
                         "NW2008",
@@ -398,7 +411,9 @@ class NwchemLintProvider:
             if value.lower() not in valid_grids:
                 diagnostics.append(
                     _diag(
-                        line_num, col, col + len(value),
+                        line_num,
+                        col,
+                        col + len(value),
                         f"Invalid grid value '{value}' (expected one of: "
                         f"{', '.join(sorted(valid_grids))})",
                         DiagnosticSeverity.Warning,
@@ -411,7 +426,9 @@ class NwchemLintProvider:
             if value.lower() not in _BASIS_SETS_LOWER:
                 diagnostics.append(
                     _diag(
-                        line_num, col, col + len(value),
+                        line_num,
+                        col,
+                        col + len(value),
                         f"Unknown basis set '{value}'",
                         DiagnosticSeverity.Warning,
                         "NW2007",
@@ -424,7 +441,9 @@ class NwchemLintProvider:
             if value.lower() not in valid_units:
                 diagnostics.append(
                     _diag(
-                        line_num, col, col + len(value),
+                        line_num,
+                        col,
+                        col + len(value),
                         f"Invalid units '{value}' (expected one of: "
                         f"{', '.join(sorted(valid_units))})",
                         DiagnosticSeverity.Warning,
@@ -432,9 +451,7 @@ class NwchemLintProvider:
                     )
                 )
 
-    def _check_task_directives(
-        self, lines: list[str], diagnostics: list[Diagnostic]
-    ) -> None:
+    def _check_task_directives(self, lines: list[str], diagnostics: list[Diagnostic]) -> None:
         """Validate task directives for theory and operation."""
         for i, line in enumerate(lines):
             stripped = line.strip().lower()
@@ -451,7 +468,9 @@ class NwchemLintProvider:
             if theory not in _TASK_THEORIES_LOWER:
                 diagnostics.append(
                     _diag(
-                        i, col, col + len(theory),
+                        i,
+                        col,
+                        col + len(theory),
                         f"Unknown task theory '{theory}' (expected one of: "
                         f"{', '.join(sorted(_TASK_THEORIES_LOWER))})",
                         DiagnosticSeverity.Error,
@@ -465,7 +484,9 @@ class NwchemLintProvider:
                 if operation not in _TASK_OPERATIONS_LOWER:
                     diagnostics.append(
                         _diag(
-                            i, op_col, op_col + len(operation),
+                            i,
+                            op_col,
+                            op_col + len(operation),
                             f"Unknown task operation '{operation}'",
                             DiagnosticSeverity.Warning,
                             "NW2006",
@@ -496,7 +517,9 @@ class NwchemLintProvider:
                         col = _find_col(content_line, basis_name)
                         diagnostics.append(
                             _diag(
-                                line_num, col, col + len(basis_name),
+                                line_num,
+                                col,
+                                col + len(basis_name),
                                 f"Unknown basis set '{basis_name}'",
                                 DiagnosticSeverity.Warning,
                                 "NW2007",
@@ -527,7 +550,9 @@ class NwchemLintProvider:
                         col = _find_col(content_line, functional)
                         diagnostics.append(
                             _diag(
-                                line_num, col, col + len(functional),
+                                line_num,
+                                col,
+                                col + len(functional),
                                 f"Unknown DFT functional '{functional}'",
                                 DiagnosticSeverity.Warning,
                                 "NW2008",
@@ -557,11 +582,7 @@ class NwchemLintProvider:
             in_section = False
             for section_list in sections.values():
                 for section_obj in section_list:
-                    end = (
-                        section_obj.end_line
-                        if section_obj.end_line is not None
-                        else len(lines)
-                    )
+                    end = section_obj.end_line if section_obj.end_line is not None else len(lines)
                     if section_obj.start_line <= i <= end:
                         in_section = True
                         break
@@ -575,7 +596,9 @@ class NwchemLintProvider:
                 col = _find_col(line, keyword)
                 diagnostics.append(
                     _diag(
-                        i, col, col + len(keyword),
+                        i,
+                        col,
+                        col + len(keyword),
                         f"Unknown top-level directive '{keyword}'",
                         DiagnosticSeverity.Warning,
                         "NW2009",
@@ -613,7 +636,9 @@ class NwchemLintProvider:
                     col = _find_col(content_line, parts[1])
                     diagnostics.append(
                         _diag(
-                            line_num, col, col + len(parts[1]),
+                            line_num,
+                            col,
+                            col + len(parts[1]),
                             f"Non-integer maxiter value: '{parts[1]}'",
                             DiagnosticSeverity.Error,
                             "NW2003",
@@ -626,7 +651,9 @@ class NwchemLintProvider:
                     col = _find_col(content_line, parts[1])
                     diagnostics.append(
                         _diag(
-                            line_num, col, col + len(parts[1]),
+                            line_num,
+                            col,
+                            col + len(parts[1]),
                             f"SCF maxiter ({maxiter}) outside typical range 1-500",
                             DiagnosticSeverity.Hint,
                             "NW3001",
@@ -663,7 +690,9 @@ class NwchemLintProvider:
                     col = _find_col(content_line, parts[1])
                     diagnostics.append(
                         _diag(
-                            line_num, col, col + len(parts[1]),
+                            line_num,
+                            col,
+                            col + len(parts[1]),
                             f"Convergence threshold ({thresh}) is unusually loose "
                             f"(typical: < 1e-4)",
                             DiagnosticSeverity.Hint,
@@ -671,9 +700,7 @@ class NwchemLintProvider:
                         )
                     )
 
-    def _check_duplicate_tasks(
-        self, lines: list[str], diagnostics: list[Diagnostic]
-    ) -> None:
+    def _check_duplicate_tasks(self, lines: list[str], diagnostics: list[Diagnostic]) -> None:
         """Flag duplicate task directives."""
         task_lines: list[tuple[int, str]] = []
         for i, line in enumerate(lines):
@@ -686,7 +713,9 @@ class NwchemLintProvider:
                 col = _find_col(lines[line_num], "task")
                 diagnostics.append(
                     _diag(
-                        line_num, col, col + 4,
+                        line_num,
+                        col,
+                        col + 4,
                         "Duplicate task directive (NWChem uses the last one)",
                         DiagnosticSeverity.Information,
                         "NW3003",
@@ -745,8 +774,15 @@ class NwchemLintProvider:
 
                 # Skip known geometry sub-directives
                 if parts[0] in {
-                    "units", "angstroms", "bohr", "au", "nocenter",
-                    "center", "autosym", "noautoz", "system",
+                    "units",
+                    "angstroms",
+                    "bohr",
+                    "au",
+                    "nocenter",
+                    "center",
+                    "autosym",
+                    "noautoz",
+                    "system",
                 }:
                     continue
 
@@ -812,7 +848,9 @@ class NwchemLintProvider:
                     col = _find_col(line, "task")
                     diagnostics.append(
                         _diag(
-                            i, col, col + len(line.lstrip()),
+                            i,
+                            col,
+                            col + len(line.lstrip()),
                             f"Task directive for '{theory}' missing operation "
                             f"(e.g. energy, optimize, gradient)",
                             DiagnosticSeverity.Warning,
@@ -852,8 +890,14 @@ class NwchemLintProvider:
                     pass
             # Geometry sub-specifiers treated as data (not keyword lines)
             if parts[0] in {
-                "angstroms", "bohr", "au", "nocenter", "center",
-                "autosym", "noautoz", "system",
+                "angstroms",
+                "bohr",
+                "au",
+                "nocenter",
+                "center",
+                "autosym",
+                "noautoz",
+                "system",
             }:
                 return True
 
@@ -894,7 +938,9 @@ class NwchemLintProvider:
                     col = _find_col(raw_line, value)
                     diagnostics.append(
                         _diag(
-                            line_num, col, col + len(value),
+                            line_num,
+                            col,
+                            col + len(value),
                             f"Invalid units '{value}' (expected one of: "
                             f"{', '.join(sorted(valid_units))})",
                             DiagnosticSeverity.Warning,
@@ -908,7 +954,6 @@ class NwchemLintProvider:
                 i += 1  # valid flag
             else:
                 i += 1
-
 
 
 __all__ = ["NwchemLintProvider", "RULE_DESCRIPTIONS"]

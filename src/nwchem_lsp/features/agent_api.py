@@ -11,6 +11,11 @@ Capability issues implemented:
 - #67: ``get_examples()``, ``next_token_suggestions()`` -- examples and guidance
 - #74: ``parse_log()``, ``parse_nwchem_output()`` -- output/log diagnostics
 - #84: ``get_rule_manifest()``, ``openqc_smoke()`` -- OpenQC smoke test
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Agent API reference
+- `wiki/concepts/diagnostic-engine-v1.md`_ — Diagnostic engine v1 contract
 """
 
 from __future__ import annotations
@@ -32,7 +37,6 @@ from ..data.keywords import (
 )
 from .diagnostic import DiagnosticProvider
 from .lint import NwchemLintProvider, RULE_DESCRIPTIONS
-
 
 # ------------------------------------------------------------------
 # NWChem domain language description (#65)
@@ -64,15 +68,34 @@ _DOMAIN_LANGUAGE_DESCRIPTION: Dict[str, Any] = {
             "name": "scf",
             "required": False,
             "description": "Self-Consistent Field (Hartree-Fock) options",
-            "keywords": ["singlet", "doublet", "triplet", "rhf", "uhf", "rohf",
-                         "maxiter", "thresh", "direct", "semidirect"],
+            "keywords": [
+                "singlet",
+                "doublet",
+                "triplet",
+                "rhf",
+                "uhf",
+                "rohf",
+                "maxiter",
+                "thresh",
+                "direct",
+                "semidirect",
+            ],
         },
         {
             "name": "dft",
             "required": False,
             "description": "Density Functional Theory options",
-            "keywords": ["xc", "grid", "convergence", "iterations", "direct",
-                         "noio", "odft", "cdft", "mult"],
+            "keywords": [
+                "xc",
+                "grid",
+                "convergence",
+                "iterations",
+                "direct",
+                "noio",
+                "odft",
+                "cdft",
+                "mult",
+            ],
         },
         {
             "name": "mp2",
@@ -355,22 +378,17 @@ class AgentAPIProvider:
                     {
                         "type": "module_start",
                         "line": i,
-                        "name": (
-                            stripped.split()[1] if len(stripped.split()) > 1 else ""
-                        ),
+                        "name": (stripped.split()[1] if len(stripped.split()) > 1 else ""),
                     }
                 )
             elif stripped.startswith("task "):
                 outline.append({"type": "task", "line": i, "text": stripped})
             elif not stripped.startswith("end") and (
-                stripped
-                in ("geometry", "basis", "scf", "dft", "mp2", "ccsd", "tce")
+                stripped in ("geometry", "basis", "scf", "dft", "mp2", "ccsd", "tce")
                 or stripped.startswith("geometry ")
                 or stripped.startswith("basis ")
             ):
-                outline.append(
-                    {"type": "section", "line": i, "name": stripped.split()[0]}
-                )
+                outline.append({"type": "section", "line": i, "name": stripped.split()[0]})
 
         return AgentAPISnapshot(
             uri=uri,
@@ -524,49 +542,31 @@ class AgentAPIProvider:
         if context == "top_level":
             for sec in TOP_LEVEL_SECTIONS:
                 if sec.startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": sec, "description": f"Section: {sec}"}
-                    )
-            suggestions.append(
-                {"text": "task", "description": "Execute a computational task"}
-            )
-            suggestions.append(
-                {"text": "title", "description": "Set calculation title"}
-            )
-            suggestions.append(
-                {"text": "charge", "description": "Set molecular charge"}
-            )
-            suggestions.append(
-                {"text": "memory", "description": "Set memory limits"}
-            )
+                    suggestions.append({"text": sec, "description": f"Section: {sec}"})
+            suggestions.append({"text": "task", "description": "Execute a computational task"})
+            suggestions.append({"text": "title", "description": "Set calculation title"})
+            suggestions.append({"text": "charge", "description": "Set molecular charge"})
+            suggestions.append({"text": "memory", "description": "Set memory limits"})
 
         elif context == "task_theory":
             for theory in sorted(TASK_THEORIES):
                 if theory.startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": theory, "description": f"Theory: {theory}"}
-                    )
+                    suggestions.append({"text": theory, "description": f"Theory: {theory}"})
 
         elif context == "task_operation":
             for op in sorted(TASK_OPERATIONS):
                 if op.startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": op, "description": f"Operation: {op}"}
-                    )
+                    suggestions.append({"text": op, "description": f"Operation: {op}"})
 
         elif context == "basis_set":
             for bs in sorted(BASIS_SETS):
                 if bs.lower().startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": bs, "description": f"Basis set: {bs}"}
-                    )
+                    suggestions.append({"text": bs, "description": f"Basis set: {bs}"})
 
         elif context == "dft_functional":
             for func in sorted(DFT_FUNCTIONALS):
                 if func.lower().startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": func, "description": f"Functional: {func}"}
-                    )
+                    suggestions.append({"text": func, "description": f"Functional: {func}"})
 
         else:
             # Section-specific keyword suggestions
@@ -574,9 +574,7 @@ class AgentAPIProvider:
             section_dict = ALL_KEYWORDS.get(section_key, {})
             for kw_name, kw_info in section_dict.items():
                 if kw_name.startswith(prefix_lower):
-                    suggestions.append(
-                        {"text": kw_name, "description": kw_info.description}
-                    )
+                    suggestions.append({"text": kw_name, "description": kw_info.description})
 
         return suggestions
 
@@ -649,23 +647,13 @@ class AgentAPIProvider:
             "provider": "nwchem-lsp",
             "language": "nwchem",
             "version": "1.0.0",
-            "rules": {
-                code: desc for code, desc in RULE_DESCRIPTIONS.items()
-            },
+            "rules": {code: desc for code, desc in RULE_DESCRIPTIONS.items()},
             "rule_count": len(RULE_DESCRIPTIONS),
             "categories": {
-                "syntax": [
-                    c for c in RULE_DESCRIPTIONS if c.startswith("NW1")
-                ],
-                "schema": [
-                    c for c in RULE_DESCRIPTIONS if c.startswith("NW2")
-                ],
-                "best_practice": [
-                    c for c in RULE_DESCRIPTIONS if c.startswith("NW3")
-                ],
-                "issue_mapped": [
-                    c for c in RULE_DESCRIPTIONS if c.startswith("NWCHEM-")
-                ],
+                "syntax": [c for c in RULE_DESCRIPTIONS if c.startswith("NW1")],
+                "schema": [c for c in RULE_DESCRIPTIONS if c.startswith("NW2")],
+                "best_practice": [c for c in RULE_DESCRIPTIONS if c.startswith("NW3")],
+                "issue_mapped": [c for c in RULE_DESCRIPTIONS if c.startswith("NWCHEM-")],
             },
         }
 
@@ -685,7 +673,9 @@ class AgentAPIProvider:
         # Check 1: Lint provider instantiation
         try:
             lint = NwchemLintProvider()
-            diags = lint.lint("geometry\n  H 0 0 0\nend\nbasis\n  * library 6-31g\nend\ntask scf energy\n")
+            diags = lint.lint(
+                "geometry\n  H 0 0 0\nend\nbasis\n  * library 6-31g\nend\ntask scf energy\n"
+            )
             checks.append(
                 {
                     "name": "lint_provider",
@@ -694,9 +684,7 @@ class AgentAPIProvider:
                 }
             )
         except Exception as exc:
-            checks.append(
-                {"name": "lint_provider", "status": "fail", "error": str(exc)}
-            )
+            checks.append({"name": "lint_provider", "status": "fail", "error": str(exc)})
 
         # Check 2: Domain language description
         try:
@@ -729,9 +717,7 @@ class AgentAPIProvider:
                 }
             )
         except Exception as exc:
-            checks.append(
-                {"name": "lookup_section", "status": "fail", "error": str(exc)}
-            )
+            checks.append({"name": "lookup_section", "status": "fail", "error": str(exc)})
 
         # Check 4: Keyword lookup
         try:
@@ -744,9 +730,7 @@ class AgentAPIProvider:
                 }
             )
         except Exception as exc:
-            checks.append(
-                {"name": "lookup_keyword", "status": "fail", "error": str(exc)}
-            )
+            checks.append({"name": "lookup_keyword", "status": "fail", "error": str(exc)})
 
         # Check 5: Examples
         try:
@@ -760,9 +744,7 @@ class AgentAPIProvider:
                 }
             )
         except Exception as exc:
-            checks.append(
-                {"name": "get_examples", "status": "fail", "error": str(exc)}
-            )
+            checks.append({"name": "get_examples", "status": "fail", "error": str(exc)})
 
         # Check 6: Token suggestions
         try:
@@ -787,8 +769,7 @@ class AgentAPIProvider:
         # Check 7: Log parser
         try:
             findings = AgentAPIProvider.parse_log(
-                "SCF failed to converge after 100 iterations\n"
-                "Total SCF energy = -76.0234\n"
+                "SCF failed to converge after 100 iterations\n" "Total SCF energy = -76.0234\n"
             )
             ok = len(findings) >= 2
             checks.append(
@@ -799,9 +780,7 @@ class AgentAPIProvider:
                 }
             )
         except Exception as exc:
-            checks.append(
-                {"name": "parse_log", "status": "fail", "error": str(exc)}
-            )
+            checks.append({"name": "parse_log", "status": "fail", "error": str(exc)})
 
         # Check 8: Rule manifest
         try:

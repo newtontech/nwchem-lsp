@@ -29,6 +29,11 @@ cross-artifact graph models the *logical* artifacts (structure, basis, scf
 control, etc.) rather than separate physical files. The roles are the same
 generic fleet roles the parent router understands; only the NWChem-specific
 binding (block/directive name -> role) lives here.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP architecture and preflight integration
+- `wiki/concepts/diagnostic-engine-v1.md`_ — Diagnostic engine v1 contract
 """
 
 from __future__ import annotations
@@ -358,9 +363,7 @@ def _block_line(parser: NwchemParser, block_name: str) -> int:
     return (instances[0].start_line + 1) if instances else 1
 
 
-def _missing_block_diagnostics(
-    graph: ArtifactGraph, parser: NwchemParser
-) -> list[dict[str, Any]]:
+def _missing_block_diagnostics(graph: ArtifactGraph, parser: NwchemParser) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     # geometry is mandatory for any molecular calculation; task drives what
     # gets computed. Without either, NWChem has nothing runnable.
@@ -373,8 +376,7 @@ def _missing_block_diagnostics(
                     code=CODE_MISSING_BLOCK,
                     severity="error",
                     message=(
-                        f"'{block_name}' is missing; NWChem requires it for "
-                        f"the {role} artifact"
+                        f"'{block_name}' is missing; NWChem requires it for " f"the {role} artifact"
                     ),
                     path=graph.input_path,
                     line=1,
@@ -517,9 +519,7 @@ def _basis_diagnostics(parser: NwchemParser, path: Path) -> list[dict[str, Any]]
         _diag(
             code=CODE_MISSING_BASIS,
             severity="warning",
-            message=(
-                "no 'basis' block declared; NWChem will apply a default basis set"
-            ),
+            message=("no 'basis' block declared; NWChem will apply a default basis set"),
             path=path,
             line=_block_line(parser, "task"),
             category="cross-file reference",
@@ -549,9 +549,7 @@ def _basis_diagnostics(parser: NwchemParser, path: Path) -> list[dict[str, Any]]
     return out
 
 
-def _task_without_section_diagnostics(
-    parser: NwchemParser, path: Path
-) -> list[dict[str, Any]]:
+def _task_without_section_diagnostics(parser: NwchemParser, path: Path) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     task_lines = _task_directive_lines(parser)
     if not task_lines:
@@ -614,9 +612,7 @@ def _low_memory_diagnostics(
     memory_mb, memory_line = _memory_directive(parser)
     if memory_mb is None:
         return out
-    threshold = float(
-        (intent or {}).get("memory_warning_mb", DEFAULT_MEMORY_WARNING_MB)
-    )
+    threshold = float((intent or {}).get("memory_warning_mb", DEFAULT_MEMORY_WARNING_MB))
     if memory_mb < threshold:
         out.append(
             _diag(
@@ -734,9 +730,7 @@ def _task_basis_mismatch_diagnostics(
     basis = parser.sections.get("basis", [])
     if not task_lines or basis:
         return out
-    has_dft_task = any(
-        (_task_theory_at_line(parser, line_no) == "dft") for line_no in task_lines
-    )
+    has_dft_task = any((_task_theory_at_line(parser, line_no) == "dft") for line_no in task_lines)
     if not has_dft_task:
         return out
     out.append(
@@ -797,8 +791,7 @@ def _dft_without_functional_diagnostics(
                 code=CODE_DFT_WITHOUT_FUNCTIONAL,
                 severity="warning",
                 message=(
-                    "dft block declares no 'xc' functional; NWChem will use a "
-                    "default functional"
+                    "dft block declares no 'xc' functional; NWChem will use a " "default functional"
                 ),
                 path=path,
                 line=instance.start_line + 1,
@@ -1197,14 +1190,12 @@ def _dft_xc(instance: NWchemSection, parser: NwchemParser) -> tuple[int | None, 
             continue
         parts = stripped.split()
         if parts and parts[0] == "xc":
-            value = stripped[len(parts[0]):].strip() if len(parts) > 1 else ""
+            value = stripped[len(parts[0]) :].strip() if len(parts) > 1 else ""
             return index + 1, value
     return None, None
 
 
-def _first_top_level_directive_line(
-    parser: NwchemParser, names: set[str]
-) -> int | None:
+def _first_top_level_directive_line(parser: NwchemParser, names: set[str]) -> int | None:
     """Return the 1-based line of the first top-level directive in ``names``.
 
     A top-level directive appears outside any block; the NWChem parser already

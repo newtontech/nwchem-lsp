@@ -2,6 +2,10 @@
 
 This module provides find-references support for NWChem input files,
 enabling users to find all references to a symbol.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from typing import List, Optional

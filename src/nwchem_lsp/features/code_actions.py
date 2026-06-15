@@ -16,6 +16,10 @@ NW2007  Unknown basis set -> suggest closest known basis set
 NW2008  Unknown DFT functional -> suggest closest known functional
 NW2009  Unknown top-level directive -> casing / typo correction
 NW2010  Duplicate section -> remove the duplicate block
+
+Wiki
+----
+- `wiki/synthesis/Diagnostics_Catalog.md`_ — Diagnostics catalog
 """
 
 from __future__ import annotations

@@ -2,6 +2,10 @@
 
 This module provides keyword completions based on the current context
 in an NWChem input file.
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
 """
 
 from typing import Any, List, Optional

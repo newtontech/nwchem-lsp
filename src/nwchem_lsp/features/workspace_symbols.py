@@ -2,6 +2,10 @@
 
 This module provides workspace-wide symbols for NWChem input files,
 enabling global symbol search across all open documents.
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
 """
 
 import re
