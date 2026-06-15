@@ -21,12 +21,13 @@ NW2010  Duplicate section -> remove the duplicate block
 from __future__ import annotations
 
 import re
-from typing import Optional
+from typing import Any, Optional
 
 from lsprotocol.types import (
     CodeAction,
     CodeActionKind,
     Diagnostic,
+    DiagnosticSeverity,
     Position,
     Range,
     TextEdit,
@@ -51,8 +52,19 @@ _TASK_OPERATIONS_LOWER: set[str] = {o.lower() for o in TASK_OPERATIONS}
 _TOP_LEVEL_LOWER: set[str] = {s.lower() for s in TOP_LEVEL_SECTIONS} | {
     k.lower()
     for k in (
-        "start", "restart", "title", "echo", "set", "unset", "stop",
-        "task", "charge", "memory", "permanent_dir", "scratch_dir", "print",
+        "start",
+        "restart",
+        "title",
+        "echo",
+        "set",
+        "unset",
+        "stop",
+        "task",
+        "charge",
+        "memory",
+        "permanent_dir",
+        "scratch_dir",
+        "print",
     )
 }
 
@@ -110,11 +122,13 @@ def _similarity(s1: str, s2: str) -> float:
     for i, c1 in enumerate(s1):
         current = [i + 1]
         for j, c2 in enumerate(s2):
-            current.append(min(
-                previous[j + 1] + 1,
-                current[j] + 1,
-                previous[j] + (c1 != c2),
-            ))
+            current.append(
+                min(
+                    previous[j + 1] + 1,
+                    current[j] + 1,
+                    previous[j] + (c1 != c2),
+                )
+            )
         previous = current
 
     return 1.0 - previous[-1] / max(len(s1), len(s2))
@@ -233,7 +247,10 @@ class CodeActionsProvider:
     # ------------------------------------------------------------------
 
     def _fix_unclosed_section(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> CodeAction:
         """Add 'end' to close an unclosed section (NW1001)."""
         lines = source.split("\n")
@@ -270,7 +287,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unexpected_end(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Remove a stray 'end' (NW1002)."""
         line_num = diag.range.start.line
@@ -278,7 +298,11 @@ class CodeActionsProvider:
 
         if line_num < len(lines) and lines[line_num].strip().lower() == "end":
             start_pos = Position(line=line_num, character=0)
-            end_pos = Position(line=line_num + 1, character=0) if line_num + 1 < len(lines) else Position(line=line_num, character=len(lines[line_num]))
+            end_pos = (
+                Position(line=line_num + 1, character=0)
+                if line_num + 1 < len(lines)
+                else Position(line=line_num, character=len(lines[line_num]))
+            )
             return CodeAction(
                 title="Remove unexpected 'end' keyword",
                 kind=CodeActionKind.QuickFix,
@@ -301,7 +325,10 @@ class CodeActionsProvider:
     # ------------------------------------------------------------------
 
     def _fix_unknown_keyword(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Correct a misspelled / wrongly-cased keyword (NW2001)."""
         unknown_kw = _extract_quoted(diag.message).lower()
@@ -324,7 +351,10 @@ class CodeActionsProvider:
         )
 
     def _fix_invalid_enum(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Suggest the closest valid value for an enum violation (NW2002)."""
         value = _extract_quoted(diag.message).lower()
@@ -359,7 +389,10 @@ class CodeActionsProvider:
         )
 
     def _fix_missing_section(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Insert a stub for a missing required section (NW2004)."""
         msg_lower = diag.message.lower()
@@ -397,7 +430,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unknown_task_theory(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Correct a misspelled task theory (NW2005)."""
         value = _extract_quoted(diag.message).lower()
@@ -420,7 +456,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unknown_task_operation(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Correct a misspelled task operation (NW2006)."""
         value = _extract_quoted(diag.message).lower()
@@ -443,7 +482,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unknown_basis_set(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Suggest the closest known basis set (NW2007)."""
         value = _extract_quoted(diag.message).lower()
@@ -469,7 +511,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unknown_functional(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Suggest the closest known DFT functional (NW2008)."""
         value = _extract_quoted(diag.message).lower()
@@ -495,7 +540,10 @@ class CodeActionsProvider:
         )
 
     def _fix_unknown_directive(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Correct an unknown top-level directive (NW2009)."""
         value = _extract_quoted(diag.message).lower()
@@ -520,7 +568,10 @@ class CodeActionsProvider:
         )
 
     def _fix_duplicate_section(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Remove a duplicate section block (NW2010)."""
         line_num = diag.range.start.line
@@ -578,7 +629,10 @@ class CodeActionsProvider:
     # ------------------------------------------------------------------
 
     def _fallback_by_message(
-        self, source: str, diag: Diagnostic, uri: str,
+        self,
+        source: str,
+        diag: Diagnostic,
+        uri: str,
     ) -> Optional[CodeAction]:
         """Handle diagnostics that lack a stable rule code."""
         msg = diag.message.lower()
@@ -651,3 +705,269 @@ class CodeActionsProvider:
     def _similarity_score(self, s1: str, s2: str) -> float:
         """Calculate similarity score between two strings (0-1)."""
         return _similarity(s1, s2)
+
+
+# ======================================================================
+# Agent CLI integration (closed-loop repair previews)
+# ======================================================================
+#
+# The block below wires the LSP-side CodeActionsProvider into the agent CLI
+# (`nwchem-lsp-tool fix`). The CLI sees diagnostics as plain dicts and needs
+# the same deterministic edit previews the editor shows in code-action
+# tooltips, so we provide:
+# - :meth:`CodeActionsProvider.build_agent_actions` -- one entry point that
+#   turns a source string + diagnostics-as-dicts into the JSON action list
+#   the agent CLI returns. Each action carries `safe_to_auto_apply`,
+#   `edit.edits`, and a stable `refusal_reason` so agents can decide which
+#   preview to apply without re-running the LSP.
+# - :func:`code_action_to_agent_json` -- pure helper that converts an LSP
+#   CodeAction/WorkspaceEdit object into the JSON dict shape.Kept at module
+#   scope so tests can call it directly.
+
+
+def _position_to_json(pos: Position) -> dict[str, int]:
+    return {"line": int(pos.line), "character": int(pos.character)}
+
+
+def _range_to_json(range_: Range) -> dict[str, dict[str, int]]:
+    return {
+        "start": _position_to_json(range_.start),
+        "end": _position_to_json(range_.end),
+    }
+
+
+def _text_edit_to_json(edit: TextEdit) -> dict[str, Any]:
+    return {
+        "range": _range_to_json(edit.range),
+        "new_text": edit.new_text,
+    }
+
+
+def _workspace_edit_to_json(
+    edit: Optional[WorkspaceEdit],
+) -> Optional[dict[str, list[dict[str, Any]]]]:
+    """Convert an LSP WorkspaceEdit to the JSON changes shape.
+
+    Returns ``{"edits": [...]}`` where every edit carries its absolute
+    ``range`` (line/character are 0-based) and ``new_text``. The shape
+    mirrors the cif-lsp agent CLI so OpenQC can consume both LSPs with the
+    same parser.
+    """
+    if edit is None or not edit.changes:
+        return None
+    edits: list[dict[str, Any]] = []
+    # Iterate in insertion order; the agent CLI does not depend on the URI
+    # key because all edits are anchored to the same input file.
+    for changes in edit.changes.values():
+        for change in changes:
+            edits.append(_text_edit_to_json(change))
+    if not edits:
+        return None
+    return {"edits": edits}
+
+
+def code_action_to_agent_json(
+    action: CodeAction,
+    *,
+    confidence: float = 1.0,
+    blocking: bool = False,
+    safe_to_auto_apply: bool = True,
+    refusal_reason: Optional[str] = None,
+    diagnostic_code: Optional[str] = None,
+    diagnostic_range: Optional[Range] = None,
+) -> dict[str, Any]:
+    """Convert an LSP CodeAction to the agent CLI JSON shape."""
+    payload: dict[str, Any] = {
+        "title": action.title,
+        "kind": str(action.kind) if action.kind is not None else "quickfix",
+        "diagnostic_code": diagnostic_code,
+        "diagnostic_range": (
+            _range_to_json(diagnostic_range) if diagnostic_range is not None else None
+        ),
+        "confidence": confidence,
+        "blocking": blocking,
+        "safe_to_auto_apply": safe_to_auto_apply,
+        "edit": _workspace_edit_to_json(action.edit),
+        "refusal_reason": refusal_reason,
+        "data": {"source": "nwchem-lsp"},
+    }
+    return payload
+
+
+# Rule codes that the CodeActionsProvider can repair deterministically.
+# Diagnostics with these codes are eligible for `safe_to_auto_apply: true`
+# (subject to the provider returning a non-None action).
+_REPAIRABLE_RULE_CODES: frozenset[str] = frozenset(
+    {
+        "NW1001",  # unclosed section -> insert 'end'
+        "NW1002",  # unexpected end -> remove stray 'end'
+        "NW2001",  # unknown keyword -> typo correction
+        "NW2002",  # invalid enum -> suggest closest valid value
+        "NW2004",  # missing required section -> insert stub
+        "NW2005",  # unknown task theory -> suggest closest
+        "NW2006",  # unknown task operation -> suggest closest
+        "NW2007",  # unknown basis set -> suggest closest
+        "NW2008",  # unknown DFT functional -> suggest closest
+        "NW2009",  # unknown top-level directive -> typo correction
+        "NW2010",  # duplicate section -> remove the duplicate block
+    }
+)
+
+
+def _refusal_reason_for_code(code: str) -> str:
+    """Stable rule-scoped refusal reason for codes we cannot auto-repair.
+
+    The string is the contract surface that OpenQC agents and the
+    closed-loop test gate match against.
+    """
+    if code in {"NWCHEM-E044"}:
+        return (
+            "NWCHEM-E044 is a runtime/output finding; the LSP cannot rewrite the "
+            "input deterministically without knowing which iteration failed."
+        )
+    if code in {"NW2003"}:
+        return (
+            "NW2003 is a type-mismatch finding; the LSP cannot pick a replacement "
+            "value without knowing the caller's scientific intent."
+        )
+    if code in {"NW2011"}:
+        return (
+            "NW2011 reports a keyword that is invalid in the current section; the "
+            "LSP cannot tell whether to move or delete it without user intent."
+        )
+    if code in {"NW2012"}:
+        return (
+            "NW2012 reports malformed atom coordinates; the LSP cannot invent "
+            "numeric coordinates without destroying the author's geometry."
+        )
+    if code in {"NW1003"}:
+        return (
+            "NW1003 reports an empty section block; the LSP cannot decide whether "
+            "to delete the block or leave it as a placeholder."
+        )
+    return (
+        "This diagnostic requires user intent before a safe automatic repair " "can be generated."
+    )
+
+
+def _diagnostic_dict_to_lsp(diag: dict[str, Any]) -> Diagnostic:
+    """Rebuild an LSP Diagnostic from the agent CLI's JSON shape."""
+    rng = diag.get("range") or {}
+    start = rng.get("start") or {}
+    end = rng.get("end") or {}
+    severity_raw = diag.get("severity", "error")
+    severity_map = {
+        "error": DiagnosticSeverity.Error,
+        "warning": DiagnosticSeverity.Warning,
+        "information": DiagnosticSeverity.Information,
+        "hint": DiagnosticSeverity.Hint,
+    }
+    if isinstance(severity_raw, int):
+        # lsprotocol enum members are ints, so accept the raw value directly.
+        severity = severity_raw  # type: ignore[assignment]
+    else:
+        severity = severity_map.get(str(severity_raw).lower(), DiagnosticSeverity.Error)
+    return Diagnostic(
+        range=Range(
+            start=Position(
+                line=int(start.get("line", 0) or 0),
+                character=int(start.get("character", 0) or 0),
+            ),
+            end=Position(
+                line=int(end.get("line", start.get("line", 0) or 0) or 0),
+                character=int(end.get("character", start.get("character", 0) or 0) or 0),
+            ),
+        ),
+        message=str(diag.get("message", "")),
+        severity=severity,  # type: ignore[arg-type]
+        source=str(diag.get("source", "nwchem-lsp")),
+        code=str(diag.get("code", "")),
+    )
+
+
+def build_agent_actions(
+    source: str,
+    diagnostics: list[dict[str, Any]],
+    *,
+    uri: str = "file:///",
+    selected_only: Optional[list[dict[str, Any]]] = None,
+) -> list[dict[str, Any]]:
+    """Return closed-loop agent CLI fix actions for the given diagnostics.
+
+    Args:
+        source: Full document text the diagnostics were computed against.
+        diagnostics: All diagnostics for the document (JSON shape from the
+            agent CLI check operation).
+        uri: Document URI used inside WorkspaceEdit changes.
+        selected_only: Optional pre-filtered list of diagnostics to act on.
+            When provided, only those diagnostics are turned into actions.
+            Otherwise every diagnostic in ``diagnostics`` is processed.
+
+    Returns:
+        List of action dicts in the agent CLI JSON shape. Each action carries
+        ``safe_to_auto_apply``, ``edit`` (dict or ``None``),
+        ``refusal_reason`` (str or ``None``), and the diagnostic's stable code.
+    """
+    provider = CodeActionsProvider()
+    selected = selected_only if selected_only is not None else diagnostics
+    actions: list[dict[str, Any]] = []
+    seen_codes: set[str] = set()
+    for diag in selected:
+        code = str(diag.get("code", "") or "")
+        lsp_diag = _diagnostic_dict_to_lsp(diag)
+        handler_action: Optional[CodeAction] = None
+        if code in _REPAIRABLE_RULE_CODES:
+            try:
+                handler_action = provider._action_for_diagnostic(source, lsp_diag, uri)
+            except Exception:
+                handler_action = None
+        if handler_action is not None and handler_action.edit is not None:
+            actions.append(
+                code_action_to_agent_json(
+                    handler_action,
+                    confidence=float(diag.get("confidence", 1.0) or 1.0),
+                    blocking=bool(diag.get("blocking", False)),
+                    safe_to_auto_apply=True,
+                    refusal_reason=None,
+                    diagnostic_code=code,
+                    diagnostic_range=lsp_diag.range,
+                )
+            )
+            seen_codes.add(code)
+            continue
+        # Refusal: deterministic repair not available. Surface the rule's
+        # stable refusal reason (and the existing fix_hints text) so agents
+        # know exactly why the LSP won't auto-rewrite this region.
+        hints = diag.get("fix_hints") or []
+        if hints:
+            for hint in hints[:1]:
+                actions.append(
+                    {
+                        "title": str(hint),
+                        "kind": "quickfix",
+                        "diagnostic_code": code,
+                        "diagnostic_range": _range_to_json(lsp_diag.range),
+                        "confidence": float(diag.get("confidence", 1.0) or 1.0),
+                        "blocking": bool(diag.get("blocking", False)),
+                        "safe_to_auto_apply": False,
+                        "edit": None,
+                        "refusal_reason": _refusal_reason_for_code(code),
+                        "data": {"source": diag.get("source", "nwchem-lsp")},
+                    }
+                )
+        else:
+            actions.append(
+                {
+                    "title": f"Review {code or 'diagnostic'}: {lsp_diag.message}",
+                    "kind": "quickfix",
+                    "diagnostic_code": code,
+                    "diagnostic_range": _range_to_json(lsp_diag.range),
+                    "confidence": float(diag.get("confidence", 1.0) or 1.0),
+                    "blocking": bool(diag.get("blocking", False)),
+                    "safe_to_auto_apply": False,
+                    "edit": None,
+                    "refusal_reason": _refusal_reason_for_code(code),
+                    "data": {"source": diag.get("source", "nwchem-lsp")},
+                }
+            )
+    return actions
