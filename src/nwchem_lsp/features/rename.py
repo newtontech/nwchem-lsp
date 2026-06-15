@@ -1,6 +1,10 @@
 """LSP rename provider for NWChem.
 
 This module provides rename refactoring support for NWChem input files.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from typing import Dict, List, Optional

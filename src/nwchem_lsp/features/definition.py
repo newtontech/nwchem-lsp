@@ -1,6 +1,10 @@
 """Definition provider for NWChem LSP.
 
 Provides go-to-definition functionality for NWChem input files.
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
 """
 
 from typing import Optional

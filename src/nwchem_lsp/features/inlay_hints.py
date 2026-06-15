@@ -2,6 +2,10 @@
 
 This module provides inlay hints for NWChem input files,
 showing additional inline information like units and defaults.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from typing import List, Optional

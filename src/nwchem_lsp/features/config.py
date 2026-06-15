@@ -2,6 +2,10 @@
 
 This module provides configuration options for the NWChem LSP server,
 enabling customization via LSP settings.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server configuration reference
 """
 
 from dataclasses import dataclass, field

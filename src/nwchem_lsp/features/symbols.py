@@ -2,6 +2,10 @@
 
 This module provides document symbols for NWChem input files,
 enabling outline view and navigation.
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
 """
 
 from typing import List

@@ -3,6 +3,10 @@
 This module provides comprehensive data structures and functions for NWChem
 input file keywords, including top-level sections, task operations,
 DFT functionals, basis sets, and chemical elements.
+
+Wiki
+----
+- `wiki/synthesis/NWChem_DSL_Reference.md`_ — DSL reference for keywords
 """
 
 from dataclasses import dataclass, field

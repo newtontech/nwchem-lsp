@@ -3,6 +3,10 @@
 This module provides parsing capabilities for NWChem input files (.nw),
 including section identification, line context extraction, and completion
 context determination.
+
+Wiki
+----
+- `wiki/synthesis/Parser_API.md`_ — Parser API reference
 """
 
 from __future__ import annotations

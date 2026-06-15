@@ -1,4 +1,9 @@
-"""Custom exceptions for NWChem LSP."""
+"""Custom exceptions for NWChem LSP.
+
+Wiki
+----
+- `wiki/synthesis/Parser_API.md`_ — Parser API exception reference
+"""
 
 from __future__ import annotations
 
@@ -14,7 +19,9 @@ class NWChemLSPError(Exception):
 class ParseError(NWChemLSPError):
     """Raised when parsing NWChem input fails."""
 
-    def __init__(self, message: str = "Failed to parse NWChem input", line: int | None = None) -> None:
+    def __init__(
+        self, message: str = "Failed to parse NWChem input", line: int | None = None
+    ) -> None:
         self.line = line
         super().__init__(message)
 

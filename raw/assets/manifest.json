@@ -1,7 +1,7 @@
 {
   "manifest_version": "1.0.0",
   "schema_version": "provenance-manifest-v1",
-  "created_at": "2026-06-15T08:50:02+00:00",
+  "created_at": "2026-06-15T19:54:58+00:00",
   "repository": "newtontech/nwchem-lsp",
   "pipeline": "official-docs -> raw/assets -> wiki/entities+concepts+synthesis -> versioned schema/rules -> provenance -> fixtures/eval -> LSP runtime/OpenQC integration",
   "official_source_anchors": [

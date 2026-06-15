@@ -1,6 +1,10 @@
 """LSP hover provider for NWChem.
 
 This module provides hover documentation for NWChem keywords.
+
+Wiki
+----
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
 """
 
 from __future__ import annotations

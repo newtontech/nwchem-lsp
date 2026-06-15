@@ -1,0 +1,885 @@
+{
+  "schemaVersion": "openqc.lsp.traceability.v1",
+  "serverId": "nwchem-lsp",
+  "repository": "newtontech/nwchem-lsp",
+  "languageId": "nwchem",
+  "generatedAt": "2026-06-15T20:01:30+00:00",
+  "summary": {
+    "docstringsTotal": 33,
+    "docstringsLinked": 33,
+    "brokenWikiLinks": 0,
+    "wikiSourcesTotal": 50,
+    "wikiSourcesWithoutRaw": 0,
+    "rawManifestEntries": 18,
+    "rawManifestFailures": 0,
+    "ruleIdsTotal": 65,
+    "sourceUrlsTotal": 45
+  },
+  "docstrings": [
+    {
+      "path": "src/nwchem_lsp/agent_lsp.py",
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "symbol": "AgentLSP"
+    },
+    {
+      "path": "src/nwchem_lsp/agent_lsp.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "AgentLSP"
+    },
+    {
+      "path": "src/nwchem_lsp/agent_operations.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "AgentOperations"
+    },
+    {
+      "path": "src/nwchem_lsp/data/keywords.py",
+      "wikiPath": "wiki/synthesis/NWChem_DSL_Reference.md",
+      "symbol": "KeywordDatabase"
+    },
+    {
+      "path": "src/nwchem_lsp/exceptions.py",
+      "wikiPath": "wiki/synthesis/Parser_API.md",
+      "symbol": "NWChemExceptions"
+    },
+    {
+      "path": "src/nwchem_lsp/features/agent_api.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "AgentAPI"
+    },
+    {
+      "path": "src/nwchem_lsp/features/agent_api.py",
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "symbol": "DiagnosticEngineV1"
+    },
+    {
+      "path": "src/nwchem_lsp/features/code_actions.py",
+      "wikiPath": "wiki/synthesis/Diagnostics_Catalog.md",
+      "symbol": "CodeActionsProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/completion.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "NwchemCompletionProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/config.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "NwchemConfig"
+    },
+    {
+      "path": "src/nwchem_lsp/features/definition.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "DefinitionProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/diagnostic.py",
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "symbol": "DiagnosticProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/diagnostic.py",
+      "wikiPath": "wiki/synthesis/Diagnostics_Catalog.md",
+      "symbol": "DiagnosticsCatalog"
+    },
+    {
+      "path": "src/nwchem_lsp/features/folding_range.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "FoldingRangeProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/formatting.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "NwchemFormattingProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/hover.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "NwchemHoverProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/inlay_hints.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "InlayHintsProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/lint.py",
+      "wikiPath": "wiki/synthesis/Diagnostics_Catalog.md",
+      "symbol": "NwchemLintProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/lint.py",
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "symbol": "DiagnosticSystem"
+    },
+    {
+      "path": "src/nwchem_lsp/features/references.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "ReferencesProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/rename.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "RenameProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/semantic_tokens.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "SemanticTokensProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/symbols.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "NwchemSymbolProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/test_runner.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "TestRunnerProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/features/test_runner.py",
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "symbol": "DiagnosticEngineV1"
+    },
+    {
+      "path": "src/nwchem_lsp/features/validation_accuracy.py",
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "symbol": "ValidationAccuracy"
+    },
+    {
+      "path": "src/nwchem_lsp/features/workspace_symbols.py",
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "symbol": "WorkspaceSymbolProvider"
+    },
+    {
+      "path": "src/nwchem_lsp/parser/nwchem_parser.py",
+      "wikiPath": "wiki/synthesis/Parser_API.md",
+      "symbol": "NwchemParser"
+    },
+    {
+      "path": "src/nwchem_lsp/preflight.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "PreflightModule"
+    },
+    {
+      "path": "src/nwchem_lsp/preflight.py",
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "symbol": "DiagnosticEngineV1"
+    },
+    {
+      "path": "src/nwchem_lsp/rich_diagnostics.py",
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "symbol": "DiagnosticEngine"
+    },
+    {
+      "path": "src/nwchem_lsp/server.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "NWChemLanguageServer"
+    },
+    {
+      "path": "src/nwchem_lsp/tool.py",
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "symbol": "ToolCLI"
+    }
+  ],
+  "wikiSources": [
+    {
+      "wikiPath": "wiki/concepts/Basis_Set_Selection.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Basis_Set_Selection.md",
+      "rawPath": "raw/assets/benzene_mp2.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/benzene_mp2.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Convergence_Control.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Convergence_Control.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Geometry_Input_Formats.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Geometry_Input_Formats.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Geometry_Input_Formats.md",
+      "rawPath": "raw/assets/3carbo.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/3carbo.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Quantum_Chemistry_Methods.md",
+      "rawPath": "raw/assets/PLAN.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/PLAN.md"
+    },
+    {
+      "wikiPath": "wiki/concepts/Quantum_Chemistry_Methods.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/concepts/Spin_and_Multiplicity.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/Spin_and_Multiplicity.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "rawPath": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/DIAGNOSTIC_ENGINE_V1.md"
+    },
+    {
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/concepts/diagnostic-engine-v1.md",
+      "rawPath": "raw/assets/PLAN.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/PLAN.md"
+    },
+    {
+      "wikiPath": "wiki/entities/Basis_Set.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Basis_Set.md",
+      "rawPath": "raw/assets/benzene_mp2.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/benzene_mp2.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/CCSD.md",
+      "rawPath": "raw/assets/methane_ccsd.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/methane_ccsd.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/CCSD.md",
+      "rawPath": "raw/assets/ccsd_polar_small.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ccsd_polar_small.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Chemical_Elements.md",
+      "rawPath": "raw/assets/keywords_data.py",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/keywords_data.py"
+    },
+    {
+      "wikiPath": "wiki/entities/DFT.md",
+      "rawPath": "raw/assets/water_dft.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/water_dft.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/DFT.md",
+      "rawPath": "raw/assets/3carbo_dft.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/3carbo_dft.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "rawPath": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/DIAGNOSTIC_ENGINE_V1.md"
+    },
+    {
+      "wikiPath": "wiki/entities/Diagnostic_System.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/entities/ECP.md",
+      "rawPath": "raw/assets/fe_scf_ecp.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/fe_scf_ecp.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Geometry_Section.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Geometry_Section.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "rawPath": "raw/assets/architecture.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/architecture.md"
+    },
+    {
+      "wikiPath": "wiki/entities/LSP_Server.md",
+      "rawPath": "raw/assets/PLAN.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/PLAN.md"
+    },
+    {
+      "wikiPath": "wiki/entities/MP2.md",
+      "rawPath": "raw/assets/benzene_mp2.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/benzene_mp2.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/NWChem.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/entities/SCF.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/SCF.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/SCF.md",
+      "rawPath": "raw/assets/fe_scf_ecp.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/fe_scf_ecp.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Task_Operation.md",
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/ethanol_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/Task_Operation.md",
+      "rawPath": "raw/assets/methane_ccsd.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/methane_ccsd.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/XC_Functional.md",
+      "rawPath": "raw/assets/water_dft.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/water_dft.nw"
+    },
+    {
+      "wikiPath": "wiki/entities/XC_Functional.md",
+      "rawPath": "raw/assets/3carbo_dft.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/3carbo_dft.nw"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Diagnostics_Catalog.md",
+      "rawPath": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/DIAGNOSTIC_ENGINE_V1.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Diagnostics_Catalog.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "rawPath": "raw/assets/architecture.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/architecture.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Feature_Providers_API.md",
+      "rawPath": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/DIAGNOSTIC_ENGINE_V1.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/NWChem_DSL_Reference.md",
+      "rawPath": "raw/assets/keywords_data.py",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/keywords_data.py"
+    },
+    {
+      "wikiPath": "wiki/synthesis/NWChem_DSL_Reference.md",
+      "rawPath": "raw/assets/nwchem_parser.py",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/nwchem_parser.py"
+    },
+    {
+      "wikiPath": "wiki/synthesis/NWChem_DSL_Reference.md",
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/h2o_scf.nw"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Parser_API.md",
+      "rawPath": "raw/assets/nwchem_parser.py",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/nwchem_parser.py"
+    },
+    {
+      "wikiPath": "wiki/synthesis/Parser_API.md",
+      "rawPath": "raw/assets/keywords_data.py",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/keywords_data.py"
+    },
+    {
+      "wikiPath": "wiki/synthesis/openqc-agent-context.md",
+      "rawPath": "raw/assets/AGENTS.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/AGENTS.md"
+    },
+    {
+      "wikiPath": "wiki/synthesis/openqc-agent-context.md",
+      "rawPath": "raw/assets/README.md",
+      "sourceUrl": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    }
+  ],
+  "ruleIds": [
+    {
+      "code": "NWCHEM-AGENT-TRACE-001",
+      "sourcePath": "src/nwchem_lsp/agent_lsp.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-001",
+      "sourcePath": "src/nwchem_lsp/agent_lsp.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-TRACE-002",
+      "sourcePath": "src/nwchem_lsp/agent_lsp.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-002",
+      "sourcePath": "src/nwchem_lsp/agent_lsp.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-TRACE-003",
+      "sourcePath": "src/nwchem_lsp/agent_operations.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-003",
+      "sourcePath": "src/nwchem_lsp/agent_operations.py"
+    },
+    {
+      "code": "NWCHEM-DATA-TRACE-001",
+      "sourcePath": "src/nwchem_lsp/data/keywords.py"
+    },
+    {
+      "code": "NWCHEM-PARS-TRACE-001",
+      "sourcePath": "src/nwchem_lsp/exceptions.py"
+    },
+    {
+      "code": "NWCHEM-PARS-LINK-001",
+      "sourcePath": "src/nwchem_lsp/exceptions.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-TRACE-004",
+      "sourcePath": "src/nwchem_lsp/features/agent_api.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-004",
+      "sourcePath": "src/nwchem_lsp/features/agent_api.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-TRACE-005",
+      "sourcePath": "src/nwchem_lsp/features/agent_api.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-005",
+      "sourcePath": "src/nwchem_lsp/features/agent_api.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-001",
+      "sourcePath": "src/nwchem_lsp/features/code_actions.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-001",
+      "sourcePath": "src/nwchem_lsp/features/code_actions.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-002",
+      "sourcePath": "src/nwchem_lsp/features/completion.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-002",
+      "sourcePath": "src/nwchem_lsp/features/completion.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-003",
+      "sourcePath": "src/nwchem_lsp/features/config.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-003",
+      "sourcePath": "src/nwchem_lsp/features/config.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-004",
+      "sourcePath": "src/nwchem_lsp/features/definition.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-004",
+      "sourcePath": "src/nwchem_lsp/features/definition.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-005",
+      "sourcePath": "src/nwchem_lsp/features/diagnostic.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-005",
+      "sourcePath": "src/nwchem_lsp/features/diagnostic.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-006",
+      "sourcePath": "src/nwchem_lsp/features/diagnostic.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-006",
+      "sourcePath": "src/nwchem_lsp/features/diagnostic.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-007",
+      "sourcePath": "src/nwchem_lsp/features/folding_range.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-007",
+      "sourcePath": "src/nwchem_lsp/features/folding_range.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-008",
+      "sourcePath": "src/nwchem_lsp/features/formatting.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-008",
+      "sourcePath": "src/nwchem_lsp/features/formatting.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-009",
+      "sourcePath": "src/nwchem_lsp/features/hover.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-009",
+      "sourcePath": "src/nwchem_lsp/features/hover.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-010",
+      "sourcePath": "src/nwchem_lsp/features/inlay_hints.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-010",
+      "sourcePath": "src/nwchem_lsp/features/inlay_hints.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-011",
+      "sourcePath": "src/nwchem_lsp/features/lint.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-011",
+      "sourcePath": "src/nwchem_lsp/features/lint.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-012",
+      "sourcePath": "src/nwchem_lsp/features/lint.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-012",
+      "sourcePath": "src/nwchem_lsp/features/lint.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-013",
+      "sourcePath": "src/nwchem_lsp/features/references.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-013",
+      "sourcePath": "src/nwchem_lsp/features/references.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-014",
+      "sourcePath": "src/nwchem_lsp/features/rename.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-014",
+      "sourcePath": "src/nwchem_lsp/features/rename.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-015",
+      "sourcePath": "src/nwchem_lsp/features/semantic_tokens.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-015",
+      "sourcePath": "src/nwchem_lsp/features/semantic_tokens.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-016",
+      "sourcePath": "src/nwchem_lsp/features/symbols.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-016",
+      "sourcePath": "src/nwchem_lsp/features/symbols.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-017",
+      "sourcePath": "src/nwchem_lsp/features/test_runner.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-017",
+      "sourcePath": "src/nwchem_lsp/features/test_runner.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-018",
+      "sourcePath": "src/nwchem_lsp/features/test_runner.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-018",
+      "sourcePath": "src/nwchem_lsp/features/test_runner.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-019",
+      "sourcePath": "src/nwchem_lsp/features/validation_accuracy.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-019",
+      "sourcePath": "src/nwchem_lsp/features/validation_accuracy.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-020",
+      "sourcePath": "src/nwchem_lsp/features/workspace_symbols.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-020",
+      "sourcePath": "src/nwchem_lsp/features/workspace_symbols.py"
+    },
+    {
+      "code": "NWCHEM-PARS-TRACE-002",
+      "sourcePath": "src/nwchem_lsp/parser/nwchem_parser.py"
+    },
+    {
+      "code": "NWCHEM-PARS-LINK-002",
+      "sourcePath": "src/nwchem_lsp/parser/nwchem_parser.py"
+    },
+    {
+      "code": "NWCHEM-PROV-TRACE-001",
+      "sourcePath": "src/nwchem_lsp/preflight.py"
+    },
+    {
+      "code": "NWCHEM-PROV-SOURCE-001",
+      "sourcePath": "src/nwchem_lsp/preflight.py"
+    },
+    {
+      "code": "NWCHEM-PROV-TRACE-002",
+      "sourcePath": "src/nwchem_lsp/preflight.py"
+    },
+    {
+      "code": "NWCHEM-PROV-SOURCE-002",
+      "sourcePath": "src/nwchem_lsp/preflight.py"
+    },
+    {
+      "code": "NWCHEM-PROV-TRACE-003",
+      "sourcePath": "src/nwchem_lsp/rich_diagnostics.py"
+    },
+    {
+      "code": "NWCHEM-PROV-SOURCE-003",
+      "sourcePath": "src/nwchem_lsp/rich_diagnostics.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-TRACE-021",
+      "sourcePath": "src/nwchem_lsp/server.py"
+    },
+    {
+      "code": "NWCHEM-FEAT-LINK-021",
+      "sourcePath": "src/nwchem_lsp/server.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-TRACE-006",
+      "sourcePath": "src/nwchem_lsp/tool.py"
+    },
+    {
+      "code": "NWCHEM-AGENT-LINK-006",
+      "sourcePath": "src/nwchem_lsp/tool.py"
+    }
+  ],
+  "sourceUrls": [
+    {
+      "rawPath": "src/nwchem_lsp/agent_lsp.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/agent_lsp.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/agent_operations.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/agent_operations.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/data/keywords.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/data/keywords.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/exceptions.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/exceptions.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/agent_api.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/agent_api.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/code_actions.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/code_actions.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/completion.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/completion.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/config.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/config.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/definition.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/definition.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/diagnostic.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/diagnostic.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/folding_range.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/folding_range.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/formatting.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/formatting.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/hover.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/hover.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/inlay_hints.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/inlay_hints.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/lint.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/lint.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/references.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/references.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/rename.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/rename.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/semantic_tokens.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/semantic_tokens.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/symbols.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/symbols.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/test_runner.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/test_runner.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/validation_accuracy.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/validation_accuracy.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/features/workspace_symbols.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/features/workspace_symbols.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/parser/nwchem_parser.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/parser/nwchem_parser.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/preflight.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/preflight.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/rich_diagnostics.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/rich_diagnostics.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/server.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/server.py"
+    },
+    {
+      "rawPath": "src/nwchem_lsp/tool.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/src/nwchem_lsp/tool.py"
+    },
+    {
+      "rawPath": "raw/assets/3carbo.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/3carbo_dft.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/AGENTS.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/AGENTS.md"
+    },
+    {
+      "rawPath": "raw/assets/CHANGELOG.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/CHANGELOG.md"
+    },
+    {
+      "rawPath": "raw/assets/DIAGNOSTIC_ENGINE_V1.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/DIAGNOSTIC_ENGINE_V1.md"
+    },
+    {
+      "rawPath": "raw/assets/PLAN.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/PLAN.md"
+    },
+    {
+      "rawPath": "raw/assets/README.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/README.md"
+    },
+    {
+      "rawPath": "raw/assets/architecture.md",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/architecture.md"
+    },
+    {
+      "rawPath": "raw/assets/benzene_mp2.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/ccsd_polar_small.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/ethanol_scf.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/fe_scf_ecp.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/h2o_freq.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/h2o_scf.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/keywords_data.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/keywords_data.py"
+    },
+    {
+      "rawPath": "raw/assets/methane_ccsd.nw",
+      "url": "https://nwchemgit.github.io/"
+    },
+    {
+      "rawPath": "raw/assets/nwchem_parser.py",
+      "url": "https://github.com/newtontech/nwchem-lsp/raw/main/raw/assets/nwchem_parser.py"
+    },
+    {
+      "rawPath": "raw/assets/water_dft.nw",
+      "url": "https://nwchemgit.github.io/"
+    }
+  ],
+  "rawManifest": {
+    "path": "raw/assets/manifest.json",
+    "ok": true
+  }
+}

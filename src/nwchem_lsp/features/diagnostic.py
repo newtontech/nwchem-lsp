@@ -1,4 +1,10 @@
-"""LSP diagnostic provider for NWChem."""
+"""LSP diagnostic provider for NWChem.
+
+Wiki
+----
+- `wiki/entities/Diagnostic_System.md`_ — Diagnostic system architecture
+- `wiki/synthesis/Diagnostics_Catalog.md`_ — Full diagnostic catalog
+"""
 
 from __future__ import annotations
 
@@ -133,7 +139,8 @@ class DiagnosticProvider:
             diagnostics.append(
                 Diagnostic(
                     range=Range(
-                        start=Position(line=0, character=0), end=Position(line=0, character=1),
+                        start=Position(line=0, character=0),
+                        end=Position(line=0, character=1),
                     ),
                     message=str(exc),
                     severity=DiagnosticSeverity.Error,
@@ -145,7 +152,8 @@ class DiagnosticProvider:
             diagnostics.append(
                 Diagnostic(
                     range=Range(
-                        start=Position(line=0, character=0), end=Position(line=0, character=1),
+                        start=Position(line=0, character=0),
+                        end=Position(line=0, character=1),
                     ),
                     message=f"Parser error: {exc}",
                     severity=DiagnosticSeverity.Error,

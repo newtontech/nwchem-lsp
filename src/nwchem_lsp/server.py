@@ -1,4 +1,11 @@
-"""nwchem Language Server Protocol implementation."""
+"""nwchem Language Server Protocol implementation.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server architecture and feature
+  provider overview
+- `wiki/synthesis/Feature_Providers_API.md`_ — Provider API reference
+"""
 
 from __future__ import annotations
 

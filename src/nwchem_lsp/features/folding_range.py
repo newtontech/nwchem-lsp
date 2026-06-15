@@ -2,6 +2,10 @@
 
 This module provides folding range support for NWChem input files,
 enabling code folding for sections and blocks.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
 """
 
 from typing import List, Optional

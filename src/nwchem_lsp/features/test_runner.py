@@ -6,6 +6,11 @@ diagnostics.
 
 The feature is disabled by default (no executable configured). CI uses
 captured output fixtures so tests never depend on a live NWChem binary.
+
+Wiki
+----
+- `wiki/entities/LSP_Server.md`_ — LSP Server features
+- `wiki/concepts/diagnostic-engine-v1.md`_ — Diagnostic engine v1 contract
 """
 
 from __future__ import annotations
@@ -20,10 +25,10 @@ from typing import Any, Dict, List, Optional
 
 from lsprotocol.types import Diagnostic, DiagnosticSeverity, Position, Range
 
-
 # ------------------------------------------------------------------
 # Data structures
 # ------------------------------------------------------------------
+
 
 @dataclass
 class TestRunnerConfig:
@@ -160,6 +165,7 @@ def solver_output_to_diagnostics(output: SolverOutput) -> List[Diagnostic]:
 # Test Runner Provider
 # ------------------------------------------------------------------
 
+
 class TestRunnerProvider:
     """Provides test-runner / dry-run functionality for NWChem inputs."""
 
@@ -215,6 +221,7 @@ class TestRunnerProvider:
 
         # Check if executable exists
         import shutil
+
         if not shutil.which(self._config.executable):
             return [
                 Diagnostic(
@@ -231,9 +238,7 @@ class TestRunnerProvider:
 
         # Write to temp file and run
         try:
-            with tempfile.NamedTemporaryFile(
-                mode="w", suffix=".nw", delete=False
-            ) as f:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".nw", delete=False) as f:
                 f.write(source)
                 temp_path = f.name
 
