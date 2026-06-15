@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
 from lsprotocol.types import (
     Diagnostic,
@@ -28,6 +29,144 @@ _SEVERITY_NAMES: dict[int, str] = {
     DiagnosticSeverity.Information: "information",
     DiagnosticSeverity.Hint: "hint",
 }
+
+RULE_REGISTRY: Dict[str, Dict[str, Any]] = {
+    "NW000": {
+        "description": "Catch-all / generic diagnostic",
+        "severity": "warning",
+        "blocking": False,
+        "source_provenance": "",
+        "version_scope": None,
+    },
+    "NW001": {
+        "description": "Unknown theory level in task directive",
+        "severity": "error",
+        "blocking": True,
+        "source_provenance": "https://nwchemgit.github.io/Task.html",
+        "version_scope": None,
+    },
+    "NW002": {
+        "description": "Missing required block (geometry, basis, or task)",
+        "severity": "error",
+        "blocking": True,
+        "source_provenance": "https://nwchemgit.github.io/Input.html",
+        "version_scope": None,
+    },
+    "NW003": {
+        "description": "Unknown basis set in library reference",
+        "severity": "warning",
+        "blocking": False,
+        "source_provenance": "https://nwchemgit.github.io/Basis.html",
+        "version_scope": None,
+    },
+    "NW004": {
+        "description": "Unknown task operation",
+        "severity": "warning",
+        "blocking": False,
+        "source_provenance": "https://nwchemgit.github.io/Task.html",
+        "version_scope": None,
+    },
+    "NW005": {
+        "description": "Unknown DFT XC functional",
+        "severity": "warning",
+        "blocking": False,
+        "source_provenance": "https://nwchemgit.github.io/DFT.html",
+        "version_scope": None,
+    },
+    "NW006": {
+        "description": "Unusual SCF maxiter value",
+        "severity": "warning",
+        "blocking": False,
+        "source_provenance": "https://nwchemgit.github.io/SCF.html",
+        "version_scope": None,
+    },
+    "NW007": {
+        "description": "Invalid maxiter value (non-integer)",
+        "severity": "error",
+        "blocking": True,
+        "source_provenance": "https://nwchemgit.github.io/SCF.html",
+        "version_scope": None,
+    },
+    "NW008": {
+        "description": "Unexpected 'end' keyword with no matching section",
+        "severity": "error",
+        "blocking": True,
+        "source_provenance": "https://nwchemgit.github.io/Input.html",
+        "version_scope": None,
+    },
+    "NW009": {
+        "description": "Unclosed section block",
+        "severity": "error",
+        "blocking": True,
+        "source_provenance": "https://nwchemgit.github.io/Input.html",
+        "version_scope": None,
+    },
+}
+
+
+@dataclass
+class FixPreview:
+
+    rule_id: str
+    description: str
+    action: str
+    range: Optional[Dict[str, Any]] = None
+    replacement: Optional[str] = None
+    alternatives: List[str] = field(default_factory=list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        result: Dict[str, Any] = {
+            "rule_id": self.rule_id,
+            "description": self.description,
+            "action": self.action,
+        }
+        if self.range is not None:
+            result["range"] = self.range
+        if self.replacement is not None:
+            result["replacement"] = self.replacement
+        if self.alternatives:
+            result["alternatives"] = list(self.alternatives)
+        return result
+
+
+@dataclass
+class DiagnosticEnvelope:
+    """DiagnosticEnvelope/v1 — agent-compatible diagnostic wrapper.
+
+    Extends the standard LSP Diagnostic with metadata required by agent CLI
+    and OpenQC gates: rule ID, blocking flag, source provenance, and version
+    scope.
+    """
+
+    range: Dict[str, Any]
+    message: str
+    severity: int
+    severity_label: str
+    source: str
+    code: Optional[str]
+    rule_id: str
+    blocking: bool
+    source_provenance: str
+    version_scope: Optional[str]
+    fix_preview: Optional[Dict[str, Any]] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize to a JSON-compatible dictionary."""
+        result: Dict[str, Any] = {
+            "range": self.range,
+            "message": self.message,
+            "severity": self.severity,
+            "severity_label": self.severity_label,
+            "source": self.source,
+            "code": self.code,
+            "rule_id": self.rule_id,
+            "blocking": self.blocking,
+            "source_provenance": self.source_provenance,
+            "version_scope": self.version_scope,
+        }
+        if self.fix_preview is not None:
+            result["fix_preview"] = self.fix_preview
+        return result
 
 
 class NwchemDiagnosticProvider:
@@ -102,24 +241,11 @@ class NwchemDiagnosticProvider:
     }
 
     def __init__(self, server: LanguageServer) -> None:
-        """Initialize diagnostic provider.
-
-        Args:
-            server: The language server instance.
-        """
         self.server = server
         # Per-URI cache of the most recent diagnostics, used for snapshots.
         self._diagnostics_cache: dict[str, list[Diagnostic]] = {}
 
     def get_diagnostics(self, text: str) -> list[Diagnostic]:
-        """Get diagnostics for the document.
-
-        Args:
-            text: Document text.
-
-        Returns:
-            List of diagnostics.
-        """
         diagnostics: list[Diagnostic] = []
 
         try:
@@ -171,34 +297,63 @@ class NwchemDiagnosticProvider:
         return diagnostics
 
     def update_cache(self, uri: str, diagnostics: list[Diagnostic]) -> None:
-        """Store diagnostics in the per-URI cache.
-
-        Called by the server after every publish_diagnostics so snapshots
-        always reflect the latest state.
-
-        Args:
-            uri: Document URI.
-            diagnostics: Diagnostics to cache.
-        """
         self._diagnostics_cache[uri] = list(diagnostics)
 
     # ------------------------------------------------------------------
-    # Snapshot API
+    # Snapshot / Envelope API
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _assign_rule_id(message: str) -> str:
+        msg_lower = message.lower()
+        if "unknown theory level" in msg_lower:
+            return "NW001"
+        if "missing required" in msg_lower and "geometry" in msg_lower:
+            return "NW002"
+        if "missing required" in msg_lower and "basis" in msg_lower:
+            return "NW002"
+        if "missing required" in msg_lower and "task" in msg_lower:
+            return "NW002"
+        if "unknown basis set" in msg_lower:
+            return "NW003"
+        if "unknown task operation" in msg_lower:
+            return "NW004"
+        if "unknown xc functional" in msg_lower:
+            return "NW005"
+        if "unusual maxiter" in msg_lower:
+            return "NW006"
+        if "invalid maxiter" in msg_lower:
+            return "NW007"
+        if "unexpected 'end'" in msg_lower:
+            return "NW008"
+        if "unclosed section" in msg_lower:
+            return "NW009"
+        return "NW000"
+
+    @staticmethod
+    def _is_blocking(rule_id: str) -> bool:
+        meta = RULE_REGISTRY.get(rule_id)
+        if meta is not None:
+            return meta.get("blocking", False)
+        return rule_id in {"NW001", "NW002", "NW007", "NW008", "NW009"}
+
+    @staticmethod
+    def _get_source_provenance(rule_id: str) -> str:
+        meta = RULE_REGISTRY.get(rule_id)
+        if meta is not None:
+            return meta.get("source_provenance", "")
+        return ""
+
+    @staticmethod
+    def _get_version_scope(rule_id: str) -> Optional[str]:
+        meta = RULE_REGISTRY.get(rule_id)
+        if meta is not None:
+            return meta.get("version_scope")
+        return None
+
     def _diagnostic_to_dict(self, diag: Diagnostic) -> dict[str, Any]:
-        """Convert an LSP Diagnostic to a JSON-serializable dict.
-
-        The output is deterministic: fields are ordered and severity is
-        represented as both a numeric code and a human-readable string.
-
-        Args:
-            diag: LSP Diagnostic object.
-
-        Returns:
-            JSON-serializable dictionary.
-        """
         severity_value = diag.severity if diag.severity is not None else DiagnosticSeverity.Error
+        rule_id = self._assign_rule_id(diag.message)
         return {
             "range": {
                 "start": {
@@ -215,47 +370,140 @@ class NwchemDiagnosticProvider:
             "source": diag.source or "nwchem-lsp",
             "code": str(diag.code) if diag.code is not None else None,
             "message": diag.message,
+            "rule_id": rule_id,
+            "blocking": self._is_blocking(rule_id),
+            "source_provenance": self._get_source_provenance(rule_id),
+            "version_scope": self._get_version_scope(rule_id),
         }
 
+    def to_envelope(self, diag: Diagnostic) -> DiagnosticEnvelope:
+        severity_value = diag.severity if diag.severity is not None else DiagnosticSeverity.Error
+        rule_id = self._assign_rule_id(diag.message)
+        range_dict = {
+            "start": {
+                "line": diag.range.start.line,
+                "character": diag.range.start.character,
+            },
+            "end": {
+                "line": diag.range.end.line,
+                "character": diag.range.end.character,
+            },
+        }
+        fix = self.generate_fix_preview(diag, rule_id)
+        return DiagnosticEnvelope(
+            range=range_dict,
+            message=diag.message,
+            severity=severity_value,
+            severity_label=_SEVERITY_NAMES.get(severity_value, "unknown"),
+            source=diag.source or "nwchem-lsp",
+            code=str(diag.code) if diag.code is not None else None,
+            rule_id=rule_id,
+            blocking=self._is_blocking(rule_id),
+            source_provenance=self._get_source_provenance(rule_id),
+            version_scope=self._get_version_scope(rule_id),
+            fix_preview=fix.to_dict() if fix is not None else None,
+        )
+
+    @staticmethod
+    def generate_fix_preview(
+        diag: Diagnostic, rule_id: str
+    ) -> Optional[FixPreview]:
+        msg = diag.message
+        rng = {
+            "start": {"line": diag.range.start.line, "character": diag.range.start.character},
+            "end": {"line": diag.range.end.line, "character": diag.range.end.character},
+        }
+
+        if rule_id == "NW001":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Replace unknown theory with a valid theory (scf, dft, mp2, ccsd, mcscf, semi)",
+                action="replace",
+                range=rng,
+                replacement="scf",
+                alternatives=["scf", "dft", "mp2", "ccsd", "mcscf", "semi"],
+            )
+        if rule_id == "NW002":
+            if "geometry" in msg.lower():
+                return FixPreview(
+                    rule_id=rule_id,
+                    description="Insert a minimal geometry block at the top of the file",
+                    action="insert",
+                    range={"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 0}},
+                    replacement="geometry\n  H 0.0 0.0 0.0\nend\n\n",
+                )
+            if "basis" in msg.lower():
+                return FixPreview(
+                    rule_id=rule_id,
+                    description="Insert a minimal basis block",
+                    action="insert",
+                    range={"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 0}},
+                    replacement="basis\n  H library sto-3g\nend\n\n",
+                )
+            if "task" in msg.lower():
+                return FixPreview(
+                    rule_id=rule_id,
+                    description="Insert a task directive at the end of the file",
+                    action="insert",
+                    range={"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 0}},
+                    replacement="task scf energy\n",
+                )
+        if rule_id == "NW003":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Replace unknown basis set with a common alternative",
+                action="replace",
+                range=rng,
+                replacement="sto-3g",
+                alternatives=["sto-3g", "3-21g", "6-31g", "cc-pvdz", "def2-svp"],
+            )
+        if rule_id == "NW004":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Replace unknown task operation with a valid operation",
+                action="replace",
+                range=rng,
+                replacement="energy",
+                alternatives=["energy", "optimize", "frequencies", "gradient", "hessian"],
+            )
+        if rule_id == "NW005":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Replace unknown XC functional with a common functional",
+                action="replace",
+                range=rng,
+                replacement="b3lyp",
+                alternatives=["b3lyp", "pbe", "pbe0", "m06-2x", "wb97x-d", "cam-b3lyp"],
+            )
+        if rule_id == "NW006":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Adjust maxiter to a typical value (100)",
+                action="replace",
+                range=rng,
+                replacement="100",
+            )
+        if rule_id == "NW007":
+            return FixPreview(
+                rule_id=rule_id,
+                description="Replace non-integer maxiter with a valid integer",
+                action="replace",
+                range=rng,
+                replacement="100",
+            )
+        return None
+
     def get_diagnostics_snapshot(self, uri: str) -> list[dict[str, Any]]:
-        """Return a JSON-serializable snapshot of diagnostics for a single URI.
-
-        The snapshot reflects the most recently published diagnostics for the
-        document.  Returns an empty list when the URI has not been seen.
-
-        Args:
-            uri: Document URI.
-
-        Returns:
-            List of diagnostic dicts suitable for JSON serialization.
-        """
         diagnostics = self._diagnostics_cache.get(uri, [])
         return [self._diagnostic_to_dict(d) for d in diagnostics]
 
     def get_all_snapshots(self) -> dict[str, list[dict[str, Any]]]:
-        """Return snapshots for every tracked URI.
-
-        Returns:
-            Mapping of URI to its list of diagnostic dicts.
-        """
         return {
             uri: [self._diagnostic_to_dict(d) for d in diags]
             for uri, diags in self._diagnostics_cache.items()
         }
 
     def snapshot_to_json(self, uri: str | None = None) -> str:
-        """Render diagnostics as a JSON string.
-
-        When *uri* is provided, returns a JSON array of diagnostics for that
-        single document.  When *uri* is ``None``, returns a JSON object keyed
-        by URI.
-
-        Args:
-            uri: Optional document URI to scope the snapshot.
-
-        Returns:
-            Deterministic JSON string.
-        """
         if uri is not None:
             data: Any = self.get_diagnostics_snapshot(uri)
         else:
@@ -271,12 +519,6 @@ class NwchemDiagnosticProvider:
         blocks: list,
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check for required blocks.
-
-        Args:
-            blocks: Parsed blocks.
-            diagnostics: List to append diagnostics to.
-        """
         has_geometry = any(b.name == "geometry" for b in blocks)
         has_basis = any(b.name == "basis" for b in blocks)
         has_task = any(b.name == "task" for b in blocks)
@@ -323,13 +565,6 @@ class NwchemDiagnosticProvider:
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check a specific block for issues.
-
-        Args:
-            block: Parsed block.
-            lines: Document lines.
-            diagnostics: List to append diagnostics to.
-        """
         if block.name == "basis":
             self._check_basis_block(block, lines, diagnostics)
         elif block.name == "dft":
@@ -345,13 +580,6 @@ class NwchemDiagnosticProvider:
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check basis block for issues.
-
-        Args:
-            block: Parsed block.
-            lines: Document lines.
-            diagnostics: List to append diagnostics to.
-        """
         for i, line in enumerate(block.content, block.line_start + 1):
             stripped = line.strip().lower()
 
@@ -381,13 +609,6 @@ class NwchemDiagnosticProvider:
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check DFT block for issues.
-
-        Args:
-            block: Parsed block.
-            lines: Document lines.
-            diagnostics: List to append diagnostics to.
-        """
         for i, line in enumerate(block.content, block.line_start + 1):
             stripped = line.strip().lower()
 
@@ -416,14 +637,6 @@ class NwchemDiagnosticProvider:
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check task block for issues.
-
-        Args:
-            block: Parsed block.
-            lines: Document lines.
-            diagnostics: List to append diagnostics to.
-        """
-        # Task is a single line directive
         task_line = lines[block.line_start - 1].strip().lower()
         parts = task_line.split()
 
@@ -470,13 +683,6 @@ class NwchemDiagnosticProvider:
         lines: list[str],
         diagnostics: list[Diagnostic],
     ) -> None:
-        """Check SCF block for issues.
-
-        Args:
-            block: Parsed block.
-            lines: Document lines.
-            diagnostics: List to append diagnostics to.
-        """
         for i, line in enumerate(block.content, block.line_start + 1):
             stripped = line.strip().lower()
 

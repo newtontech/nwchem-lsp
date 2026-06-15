@@ -1,0 +1,11 @@
+# Invalid: unknown theory level in task directive
+# Expected diagnostics: error on "badtheory" (unknown theory level)
+geometry
+  H 0.0 0.0 0.0
+end
+
+basis
+  H library sto-3g
+end
+
+task badtheory energy

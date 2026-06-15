@@ -1,0 +1,11 @@
+# Minimal valid NWChem input: geometry + basis + task
+# Expected diagnostics: none (clean file)
+geometry
+  H 0.0 0.0 0.0
+end
+
+basis
+  H library sto-3g
+end
+
+task scf energy

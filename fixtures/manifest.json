@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "description": "NWChem LSP fixture manifest — maps each fixture to expected diagnostic outcomes",
+  "fixtures": [
+    {
+      "file": "valid_minimal.nw",
+      "role": "valid",
+      "description": "Minimal valid NWChem input with geometry, basis, and task",
+      "expected_diagnostics": [],
+      "expected_severity": "clean",
+      "source_provenance": "NWChem input syntax (https://nwchemgit.github.io/Input.html)"
+    },
+    {
+      "file": "valid_water_dft.nw",
+      "role": "valid",
+      "description": "Full water molecule DFT optimization with all standard blocks",
+      "expected_diagnostics": [],
+      "expected_severity": "clean",
+      "source_provenance": "NWChem input syntax (https://nwchemgit.github.io/Input.html)"
+    },
+    {
+      "file": "invalid_unknown_theory.nw",
+      "role": "invalid",
+      "description": "Task directive uses unknown theory level 'badtheory'",
+      "expected_diagnostics": [
+        {
+          "rule_id": "NW001",
+          "message_contains": "badtheory",
+          "severity": "error",
+          "blocking": true,
+          "source_provenance": "NWChem task directive syntax"
+        }
+      ],
+      "expected_severity": "error"
+    },
+    {
+      "file": "invalid_missing_geometry.nw",
+      "role": "invalid",
+      "description": "Missing required geometry block",
+      "expected_diagnostics": [
+        {
+          "rule_id": "NW002",
+          "message_contains": "geometry",
+          "severity": "error",
+          "blocking": true,
+          "source_provenance": "NWChem required blocks (geometry, basis, task)"
+        }
+      ],
+      "expected_severity": "error"
+    },
+    {
+      "file": "warning_unknown_basis.nw",
+      "role": "warning",
+      "description": "Basis block references unknown basis set 'fake-basis'",
+      "expected_diagnostics": [
+        {
+          "rule_id": "NW003",
+          "message_contains": "fake-basis",
+          "severity": "warning",
+          "blocking": false,
+          "source_provenance": "NWChem basis set library (https://nwchemgit.github.io/Basis.html)"
+        }
+      ],
+      "expected_severity": "warning"
+    },
+    {
+      "file": "invalid_unknown_operation.nw",
+      "role": "invalid",
+      "description": "Task directive uses unknown operation 'fly'",
+      "expected_diagnostics": [
+        {
+          "rule_id": "NW004",
+          "message_contains": "fly",
+          "severity": "warning",
+          "blocking": false,
+          "source_provenance": "NWChem task operations (https://nwchemgit.github.io/Task.html)"
+        }
+      ],
+      "expected_severity": "warning"
+    },
+    {
+      "file": "invalid_bad_functional.nw",
+      "role": "invalid",
+      "description": "DFT block references unknown XC functional",
+      "expected_diagnostics": [
+        {
+          "rule_id": "NW005",
+          "message_contains": "not_a_functional",
+          "severity": "warning",
+          "blocking": false,
+          "source_provenance": "NWChem DFT functionals (https://nwchemgit.github.io/DFT.html)"
+        }
+      ],
+      "expected_severity": "warning"
+    }
+  ]
+}

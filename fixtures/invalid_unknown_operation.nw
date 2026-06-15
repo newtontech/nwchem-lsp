@@ -1,0 +1,11 @@
+# Invalid: unknown task operation
+# Expected diagnostics: warning on "fly" (unknown task operation)
+geometry
+  H 0.0 0.0 0.0
+end
+
+basis
+  H library sto-3g
+end
+
+task scf fly
