@@ -17,9 +17,7 @@ from .rich_diagnostics import agent_check_payload
 
 OPERATIONS = ("check", "context", "complete", "hover", "symbols", "fix")
 _WORD_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_.$%+-]*")
-_SECTION_RE = re.compile(
-    r"^\s*(?:&(?P<section>[A-Za-z][A-Za-z0-9_.$-]*)|\[(?P<bracket>[^\]]+)\])"
-)
+_SECTION_RE = re.compile(r"^\s*(?:&(?P<section>[A-Za-z][A-Za-z0-9_.$-]*)|\[(?P<bracket>[^\]]+)\])")
 _ASSIGNMENT_RE = re.compile(r"^\s*(?P<key>[A-Za-z_][A-Za-z0-9_.$%-]*)\s*(?:=|:|\s+)")
 
 
@@ -91,9 +89,7 @@ def operation_path(
         payload["items"] = items
         status = "available" if items else "unavailable"
         reason = (
-            None
-            if items
-            else "No completion provider or extractable symbols for this document."
+            None if items else "No completion provider or extractable symbols for this document."
         )
         return with_capabilities(payload, operation, status=status, reason=reason)
 
@@ -116,13 +112,17 @@ def operation_path(
         return with_capabilities(payload, operation, status=status, reason=reason)
 
     if operation == "fix":
-        actions = _fix_actions(payload["diagnostics"], line=line, character=character)
+        actions = _fix_actions(
+            payload["diagnostics"],
+            line=line,
+            character=character,
+            source=text,
+            uri=path.resolve().as_uri(),
+        )
         payload["actions"] = actions
         status = "available" if actions else "unavailable"
         reason = (
-            None
-            if actions
-            else "No safe quick-fix hints are available for current diagnostics."
+            None if actions else "No safe quick-fix hints are available for current diagnostics."
         )
         return with_capabilities(payload, operation, status=status, reason=reason)
 
@@ -293,9 +293,7 @@ def _symbols_for(path: Path, text: str) -> list[dict[str, Any]]:
     return _generic_symbols(text)
 
 
-def _generic_completion_items(
-    text: str, diagnostics: list[dict[str, Any]]
-) -> list[dict[str, Any]]:
+def _generic_completion_items(text: str, diagnostics: list[dict[str, Any]]) -> list[dict[str, Any]]:
     labels: dict[str, str] = {}
     for symbol in _generic_symbols(text):
         labels.setdefault(symbol["name"], symbol.get("detail", "Document symbol"))
@@ -356,9 +354,7 @@ def _nearby_symbols(symbols: list[dict[str, Any]], line: int) -> list[dict[str, 
     return sorted(symbols, key=distance)[:5]
 
 
-def _diagnostic_hover(
-    diagnostics: list[dict[str, Any]], line: int, character: int
-) -> str | None:
+def _diagnostic_hover(diagnostics: list[dict[str, Any]], line: int, character: int) -> str | None:
     selected = _diagnostics_at_position(diagnostics, line, character)
     if not selected:
         return None
@@ -374,9 +370,26 @@ def _diagnostic_hover(
 
 
 def _fix_actions(
-    diagnostics: list[dict[str, Any]], *, line: int, character: int
+    diagnostics: list[dict[str, Any]],
+    *,
+    line: int,
+    character: int,
+    source: str = "",
+    uri: str = "file:///",
 ) -> list[dict[str, Any]]:
     selected = _diagnostics_at_position(diagnostics, line, character) or diagnostics
+    # Prefer deterministic LSP-side repairs when source text is available so
+    # agents can apply text edits without re-running the LSP. Fall back to the
+    # review-only hints path for callers that do not pass the source.
+    if source:
+        try:
+            from .features.code_actions import build_agent_actions
+
+            return build_agent_actions(source, diagnostics, uri=uri, selected_only=selected)
+        except Exception:
+            # Fall through to the legacy review-only path; the closed-loop
+            # test gate will still observe the refusal reason.
+            pass
     actions: list[dict[str, Any]] = []
     for diagnostic in selected:
         hints = diagnostic.get("fix_hints") or []
@@ -393,7 +406,14 @@ def _fix_actions(
                     "blocking": bool(diagnostic.get("blocking", False)),
                     "safe_to_auto_apply": False,
                     "edit": None,
-                    "data": {"hint_index": index, "source": diagnostic.get("source")},
+                    "refusal_reason": (
+                        "nwchem-lsp could not load the source text for this fix "
+                        "operation; only review-only hints are available."
+                    ),
+                    "data": {
+                        "hint_index": index,
+                        "source": diagnostic.get("source"),
+                    },
                 }
             )
     return actions
@@ -439,12 +459,8 @@ def _call_provider(fn: Callable[..., Any], *values: Any) -> Any:
 
 def _normalize_completion_item(item: Any) -> dict[str, Any]:
     if isinstance(item, dict):
-        label = str(
-            item.get("label") or item.get("name") or item.get("insertText") or ""
-        )
-        detail = (
-            item.get("detail") or item.get("documentation") or item.get("description")
-        )
+        label = str(item.get("label") or item.get("name") or item.get("insertText") or "")
+        detail = item.get("detail") or item.get("documentation") or item.get("description")
         kind = item.get("kind", 1)
     else:
         label = str(getattr(item, "label", item))
@@ -466,9 +482,7 @@ def _normalize_symbol(item: Any) -> dict[str, Any]:
         return data
     line = int(data.get("line", 1) or 1) - 1
     column = int(data.get("column", 1) or 1) - 1
-    result = _symbol(
-        name, str(data.get("kind", "symbol")), max(line, 0), max(column, 0)
-    )
+    result = _symbol(name, str(data.get("kind", "symbol")), max(line, 0), max(column, 0))
     if "detail" in data:
         result["detail"] = data["detail"]
     return result
