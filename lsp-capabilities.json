@@ -2,6 +2,9 @@
   "schema": "OpenQCLspCapabilities",
   "version": 1,
   "id": "nwchem-lsp",
+  "releaseVersion": "0.5.0",
+  "releaseTag": "v0.5.0",
+  "repository": "newtontech/nwchem-lsp",
   "software": "nwchem",
   "displayName": "NWChem",
   "languageId": "nwchem",
@@ -42,6 +45,7 @@
     "operations": [
       "capabilities",
       "check",
+      "logs",
       "context",
       "complete",
       "hover",

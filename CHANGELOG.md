@@ -17,9 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `scripts/test.sh` uses `python3` via `PYTHON_BIN` for portable local/CI test runs.
 
-## [0.5.0] - 2026-03-05
+## [0.5.0] - 2026-07-16
 
 ### Added
+- Reproducible PyPI OIDC and GitHub Release workflow with source/wheel
+  verification and fresh-environment CLI smoke tests.
+- Stable `nwchem-lsp --help` and `--version` output for runtime probes.
+- Agent CLI `logs` operation for NWChem output fixtures.
 - **Folding Ranges**: Code folding support for NWChem sections
   - Fold/unfold geometry, basis, dft, and other sections
   - Visual indicators for collapsible regions

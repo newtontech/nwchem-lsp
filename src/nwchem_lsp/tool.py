@@ -22,7 +22,9 @@ def _capabilities_payload() -> dict[str, Any]:
     for parent in Path(__file__).resolve().parents:
         manifest_path = parent / "lsp-capabilities.json"
         if manifest_path.exists():
-            return json.loads(manifest_path.read_text(encoding="utf-8"))
+            payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+            if isinstance(payload, dict):
+                return payload
     return {
         "schema": "OpenQCLspCapabilities",
         "version": 1,
@@ -209,6 +211,24 @@ def preflight_path(path: Path) -> dict[str, Any]:
     return with_capabilities(payload, "preflight")
 
 
+def logs_path(path: Path) -> dict[str, Any]:
+    """Parse an NWChem output log into the stable agent JSON envelope."""
+    from .features.agent_api import AgentAPIProvider
+
+    findings = AgentAPIProvider.parse_log(path.read_text(encoding="utf-8"))
+    return {
+        "uri": path.resolve().as_uri(),
+        "operation": "logs",
+        "ok": not any(item.get("severity") == "error" for item in findings),
+        "software": SOFTWARE,
+        "findings": findings,
+        "summary": {
+            "count": len(findings),
+            "errors": sum(item.get("severity") == "error" for item in findings),
+        },
+    }
+
+
 def manifest_path(path: Path | None = None) -> dict[str, Any]:
     """Return the fleet preflight manifest.
 
@@ -257,6 +277,7 @@ def main(argv: list[str] | None = None) -> int:
         "check",
         "preflight",
         "manifest",
+        "logs",
         "context",
         "complete",
         "hover",
@@ -302,6 +323,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1 if getattr(args, "fail_on_blocking", False) and not payload["ok"] else 0
     if args.operation == "manifest":
         payload = manifest_path(getattr(args, "path", None))
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0
+    if args.operation == "logs":
+        payload = with_capabilities(logs_path(args.path), "logs")
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0
     payload = _operation_payload(args.path, args.operation, args.line, args.character)

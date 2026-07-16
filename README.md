@@ -6,6 +6,13 @@
 
 Language Server Protocol implementation for NWChem quantum chemistry software.
 
+Current release: `0.5.0`.
+
+Release tags are built once, verified in a fresh virtual environment, and
+published to PyPI with OIDC Trusted Publishing through the protected `pypi`
+environment. The GitHub Release is created only after PyPI succeeds and reuses
+the exact same wheel and source distribution.
+
 ## Features
 
 ### Core LSP Features
@@ -54,6 +61,9 @@ pip install nwchem-lsp
 ### Command Line
 ```bash
 nwchem-lsp
+nwchem-lsp --help
+nwchem-lsp-tool capabilities --format json
+nwchem-lsp-tool logs calculation.out --format json
 ```
 
 ### Editor Configuration

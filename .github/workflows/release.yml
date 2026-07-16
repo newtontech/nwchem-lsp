@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install project and release tooling
+        run: python -m pip install -e ".[dev]" build twine
+      - name: Run repository gate
+        run: make check
+      - name: Verify source metadata
+        run: python scripts/verify_release.py --tag "$GITHUB_REF_NAME"
+      - name: Build distributions once
+        run: python -m build
+      - name: Check distributions
+        run: python -m twine check dist/*
+      - name: Verify and smoke-test wheel
+        run: |
+          python scripts/verify_release.py --tag "$GITHUB_REF_NAME" --wheel dist/*.whl
+          bash scripts/smoke_wheel.sh dist/*.whl
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish-pypi:
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@cef221092ed1c7041f130b6d4c3ae14794f19c4e
+
+  finalize-github-release:
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-distributions
+          path: dist/
+      - name: Create GitHub Release from the published artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
