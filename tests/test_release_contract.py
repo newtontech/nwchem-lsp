@@ -41,7 +41,9 @@ def test_release_workflow_uses_one_artifact_and_scoped_oidc() -> None:
     assert "cancel-in-progress: false" in workflow
     assert "environment: pypi" in workflow
     assert "id-token: write" in workflow
-    assert "pypa/gh-action-pypi-publish@" in workflow
+    assert "pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b" in workflow
+    assert workflow.count("actions/checkout@v4") >= 2
+    assert "GH_REPO: ${{ github.repository }}" in workflow
     assert "release-distributions" in workflow
     assert "gh release create" in workflow
     assert "scripts/verify_release.py" in workflow

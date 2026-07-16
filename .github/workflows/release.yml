@@ -50,7 +50,7 @@ jobs:
         with:
           name: release-distributions
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@cef221092ed1c7041f130b6d4c3ae14794f19c4e
+      - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b
 
   finalize-github-release:
     needs: publish-pypi
@@ -58,6 +58,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
       - uses: actions/download-artifact@v4
         with:
           name: release-distributions
@@ -65,4 +69,5 @@ jobs:
       - name: Create GitHub Release from the published artifacts
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --generate-notes --title "$GITHUB_REF_NAME"
