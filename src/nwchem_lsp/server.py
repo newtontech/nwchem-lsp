@@ -9,6 +9,7 @@ Wiki
 
 from __future__ import annotations
 
+import argparse
 import json
 from typing import Any
 
@@ -322,8 +323,11 @@ def create_server() -> NWChemLanguageServer:
 server = create_server()
 
 
-def main() -> None:
-    """Main entry point for the language server."""
+def main(argv: list[str] | None = None) -> None:
+    """Run the language server or print its release metadata."""
+    parser = argparse.ArgumentParser(description="NWChem language server")
+    parser.add_argument("--version", action="version", version="nwchem-lsp 0.5.0")
+    parser.parse_args(argv)
     server.start_io()
 
 

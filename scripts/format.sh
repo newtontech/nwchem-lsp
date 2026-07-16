@@ -3,6 +3,17 @@ set -euo pipefail
 
 ran=0
 
+python_format_targets() {
+  local targets=""
+  [ -d src ] && targets="$targets src"
+  [ -d tests ] && targets="$targets tests"
+  if [ -z "${targets# }" ]; then
+    echo "."
+  else
+    echo "$targets"
+  fi
+}
+
 has_npm_script() {
   local script="$1"
   [ -f package.json ] || return 1
